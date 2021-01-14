@@ -400,6 +400,10 @@ public class EnquiryImpl implements EnquiryService {
                     quoteMate.setQtMateDesc(enquiryMate.getEqMateDesc());
                     quoteMate.setCreatedTime(new Date());
                     quoteMate.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+                    //20210108-fyx-新增品牌和品牌料号
+                    quoteMate.setBsCusCode(enquiryMate.getBsCusCode());
+                    quoteMate.setBsCusName(enquiryMate.getBsCusName());
+                    //--end
                     quoteMateList.add(quoteMate);
                 }
                 if(quoteMateList.size() > 0){
@@ -552,6 +556,10 @@ public class EnquiryImpl implements EnquiryService {
                 mateNew.setEqBasePrice(mateOld.getEqBasePrice());
                 mateNew.setEqUnitPrice(mateOld.getEqUnitPrice());
                 mateNew.setEqTotalPrice(mateOld.getEqTotalPrice());
+                //20210108-fyx
+                mateNew.setBsCusCode(mateOld.getBsCusCode());
+                mateNew.setBsCusName(mateOld.getBsCusName());
+                //--end
                 mateListNew.add(mateNew);
             }
             enquiryMaterielDao.saveAll(mateListNew);

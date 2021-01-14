@@ -77,6 +77,10 @@ public class EnquiryMaterielImpl implements EnquiryMaterielService {
         o.setEqMateNum(enquiryMateriel.getEqMateNum());
         o.setEqMateDesc(enquiryMateriel.getEqMateDesc());
         o.setEqBasePrice(enquiryMateriel.getEqBasePrice());
+        //20210108-fyx-新增品牌和品牌料号
+        o.setBsCusCode(enquiryMateriel.getBsCusCode());
+        o.setBsCusName(enquiryMateriel.getBsCusName());
+        //--end
         o.setModifiedTime(new Date());
         o.setPkModifiedBy((currUser!=null) ? (currUser.getId()) : null);
         enquiryMaterielDao.save(o);

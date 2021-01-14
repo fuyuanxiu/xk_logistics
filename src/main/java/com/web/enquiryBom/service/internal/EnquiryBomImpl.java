@@ -814,6 +814,10 @@ public class EnquiryBomImpl implements EnquiryBomService {
                         eqMate.setBsCusCode(detail.getBsCusCode());//品牌料号
                         eqMate.setCreatedTime(new Date());
                         eqMate.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+                        //20210108-fyx-新增 品牌和品牌型号
+                        eqMate.setBsCusCode(detail.getBsCusCode());
+                        eqMate.setBsCusName(detail.getBsCusName());
+                        //--end
                         eqMateList.add(eqMate);
 
                         //2.2修改详情状态
