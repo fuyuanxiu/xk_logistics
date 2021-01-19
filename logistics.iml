@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
+    <facet type="jpa" name="JPA">
+      <configuration>
+        <setting name="validation-enabled" value="true" />
+        <setting name="provider-name" value="Hibernate" />
+        <datasource-mapping>
+          <factory-entry name="Entities" />
+          <factory-entry name="entityManagerFactory" />
+        </datasource-mapping>
+        <naming-strategy-map />
+      </configuration>
+    </facet>
     <facet type="Spring" name="Spring">
       <configuration />
     </facet>
@@ -66,7 +77,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-orm:5.0.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.0.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aspects:5.0.6.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.46" level="project" />
+    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.47" level="project" />
     <orderEntry type="library" name="Maven: oracle:ojdbc6:11.2.0.3" level="project" />
     <orderEntry type="library" name="Maven: com.microsoft.sqlserver:sqljdbc4:4.0" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:druid:1.1.10" level="project" />

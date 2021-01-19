@@ -54,4 +54,7 @@ public interface MarketReportService {
 
     //导出报价单报表（包含工时、钢网夹具）
     public ApiResponseResult getExcelAll(Long reportId, Long feeId2, Long feeId3, HttpServletResponse response) throws Exception;
+
+    //审核
+    public ApiResponseResult editCheck(Long id) throws Exception;
 }

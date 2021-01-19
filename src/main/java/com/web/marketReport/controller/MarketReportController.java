@@ -237,7 +237,18 @@ public class MarketReportController extends WebController {
             e.printStackTrace();
         }
     }
-    
+    @ApiOperation(value="审批", notes="审批操作")
+    @RequestMapping(value = "/editCheck", method = RequestMethod.PUT)
+    public ApiResponseResult editCheck(Long id){
+        try {
+           return marketReportService.editCheck(id);
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+            e.printStackTrace();
+            return ApiResponseResult.failure("审批失败！");
+        }
+    }
+
     /*@ApiOperation(value = "获取市场报价BOM详情列表", notes = "获取市场报价BOM详情列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "keyword", value = "搜索关键字", required = false, dataType = "String", paramType = "query", defaultValue = ""),

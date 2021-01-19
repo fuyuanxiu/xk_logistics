@@ -142,7 +142,7 @@ public class MarketReportImpl implements MarketReportService {
             		marketReportDetailDao.saveAll(lml);
             	}
             	//20201215-fyx-根据工序流创建详情
-                
+
                 //初始化
                 List<ProcessInfo> processList = new ArrayList<>();
 
@@ -154,7 +154,7 @@ public class MarketReportImpl implements MarketReportService {
                 }
                 //
                 List<MarketReportDetail> lmd = new ArrayList<MarketReportDetail>();
-                
+
                 List<Fee> fee2 = feeDao.findByIsDelAndBsNameLike(0, "工时");
                 List<Fee> fee3 = feeDao.findByIsDelAndBsNameLike(0, "夹具");
                 if(fee2.size() > 0 && fee2.get(0) != null){
@@ -170,7 +170,7 @@ public class MarketReportImpl implements MarketReportService {
                     	md.setBsType(1);
                     	md.setCreatedTime(new Date());
                     	md.setPkCreatedBy((currUser != null) ? currUser.getId() : null);
-                    	
+
                     	lmd.add(md);
                     }
                 }
@@ -187,7 +187,7 @@ public class MarketReportImpl implements MarketReportService {
                     	md.setBsType(1);
                     	md.setCreatedTime(new Date());
                     	md.setPkCreatedBy((currUser != null) ? currUser.getId() : null);
-                    	
+
                     	lmd.add(md);
                     }
                 }
@@ -217,7 +217,7 @@ public class MarketReportImpl implements MarketReportService {
         		marketReportDetailDao.saveAll(lml);
         	}
         	//20201215-fyx-根据工序流创建详情
-            
+
             //初始化
             List<ProcessInfo> processList = new ArrayList<>();
 
@@ -229,7 +229,7 @@ public class MarketReportImpl implements MarketReportService {
             }
             //
             List<MarketReportDetail> lmd = new ArrayList<MarketReportDetail>();
-            
+
             List<Fee> fee2 = feeDao.findByIsDelAndBsNameLike(0, "工时");
             List<Fee> fee3 = feeDao.findByIsDelAndBsNameLike(0, "夹具");
             if(fee2.size() > 0 && fee2.get(0) != null){
@@ -245,7 +245,7 @@ public class MarketReportImpl implements MarketReportService {
                 	md.setBsType(1);
                 	md.setCreatedTime(new Date());
                 	md.setPkCreatedBy((currUser != null) ? currUser.getId() : null);
-                	
+
                 	lmd.add(md);
                 }
             }
@@ -262,7 +262,7 @@ public class MarketReportImpl implements MarketReportService {
                 	md.setBsType(1);
                 	md.setCreatedTime(new Date());
                 	md.setPkCreatedBy((currUser != null) ? currUser.getId() : null);
-                	
+
                 	lmd.add(md);
                 }
             }
@@ -420,7 +420,7 @@ public class MarketReportImpl implements MarketReportService {
         o.setBsDiscountId(marketReport.getBsDiscountId());
         o.setBsFlowId(marketReport.getBsFlowId());
         marketReportDao.save(o);
-        
+
         //20210107-fyx-把原来配置的工作流删除
         marketReportDetailDao.deleteByReportId(marketReport.getId());
       //20210107-fyx
@@ -523,7 +523,7 @@ public class MarketReportImpl implements MarketReportService {
             return ApiResponseResult.failure("项目流不能为空！");
         }
         SysUser currUser = UserUtil.getCurrUser();  //获取当前用户
-        
+
         //初始化
         List<ProcessInfo> processList = new ArrayList<>();
 
@@ -535,7 +535,7 @@ public class MarketReportImpl implements MarketReportService {
         }
         //
         List<MarketReportDetail> lmd = new ArrayList<MarketReportDetail>();
-        
+
         List<Fee> fee2 = feeDao.findByIsDelAndBsNameLike(0, "工时");
         List<Fee> fee3 = feeDao.findByIsDelAndBsNameLike(0, "夹具");
         if(fee2.size() > 0 && fee2.get(0) != null){
@@ -551,7 +551,7 @@ public class MarketReportImpl implements MarketReportService {
             	md.setBsType(1);
             	md.setCreatedTime(new Date());
             	md.setPkCreatedBy((currUser != null) ? currUser.getId() : null);
-            	
+
             	lmd.add(md);
             }
         }
@@ -568,12 +568,12 @@ public class MarketReportImpl implements MarketReportService {
             	md.setBsType(1);
             	md.setCreatedTime(new Date());
             	md.setPkCreatedBy((currUser != null) ? currUser.getId() : null);
-            	
+
             	lmd.add(md);
             }
         }
         marketReportDetailDao.saveAll(lmd);
-        
+
 
         /*detail.setCreatedTime(new Date());
         detail.setPkCreatedBy((currUser != null) ? currUser.getId() : null);
@@ -739,12 +739,12 @@ public class MarketReportImpl implements MarketReportService {
 
         return ApiResponseResult.success().data(DataGrid.create(page.getContent(), (int) page.getTotalElements(), pageRequest.getPageNumber() +1 ,pageRequest.getPageSize()));
     }
-    
+
     private Map<String, String> getCountBomMeter(Long fileId) throws Exception{
     	Map<String, String> bom = new HashMap<String, String>();
     	ApiResponseResult api = this.getQtReport(fileId);
     	if(api.isResult()){
-    		//List<Map<String, String>> results = 
+    		//List<Map<String, String>> results =
     		Map<String, Object>	map = (Map<String, Object>) api.getData();
     		List<Map<String, String>> results = (List<Map<String, String>>) map.get("results");
 
@@ -771,8 +771,8 @@ public class MarketReportImpl implements MarketReportService {
             			}
         			}
     			}
-    			
-    			
+
+
     		}
     	}
     	return bom;
@@ -3585,5 +3585,17 @@ public class MarketReportImpl implements MarketReportService {
         workbook.write(outputStream);
 
         return ApiResponseResult.failure("导出成功！");
+    }
+//审核
+    @Override
+    public ApiResponseResult editCheck(Long id) throws Exception {
+        if(id == null){
+            return ApiResponseResult.failure("ID不能为空！");
+        }
+        int i = marketReportDetailDao.updateCheckById(id);
+        if (i>0){
+            return ApiResponseResult.success("审批成功");
+        }
+        return ApiResponseResult.failure("审批失败");
     }
 }
