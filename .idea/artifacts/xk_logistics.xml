@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="xk_logistics">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="xk_logistics.war">
+      <element id="artifact" artifact-name="xk_logistics:war exploded" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: com.microsoft.sqlserver:sqljdbc4:4.0" />
+        </element>
+        <element id="directory" name="classes">
+          <element id="jpa-descriptors" facet="logistics/jpa/JPA" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
