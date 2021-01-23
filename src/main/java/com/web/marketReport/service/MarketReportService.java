@@ -33,13 +33,14 @@ public interface MarketReportService {
     public ApiResponseResult deleteDetail(Long id) throws Exception;
 
     //获取详情
-    public ApiResponseResult getDetailList(String keyword, Long reportId,Long fileId, PageRequest pageRequest) throws Exception;
+    public ApiResponseResult getDetailList(String keyword, Long reportId, Long fileId, PageRequest pageRequest) throws Exception;
 
     //导出报表
     public ApiResponseResult getExcel(String bomCode, HttpServletResponse response) throws Exception;
 
     //获取BOM物料清单报表
     public ApiResponseResult getQtReport(Long fileId) throws Exception;
+
     //导出BOM物料清单报表
     public ApiResponseResult getQtReportExcel(Long fileId, HttpServletResponse response) throws Exception;
 
@@ -57,4 +58,9 @@ public interface MarketReportService {
 
     //审核
     public ApiResponseResult editCheck(Long id) throws Exception;
+
+    //反审核
+    public ApiResponseResult editUnCheck(Long id) throws Exception;
+    //查询是否审核
+    public Boolean getCheckStatusById(Long id) throws Exception;
 }

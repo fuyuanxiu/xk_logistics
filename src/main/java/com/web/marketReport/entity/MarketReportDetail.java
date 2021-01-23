@@ -158,21 +158,6 @@ public class MarketReportDetail extends BaseEntity {
     @Column(length = 500)
     protected String bsRemark;
 
-    /**
-     * 是否审核
-     */
-    @ApiModelProperty(name = "isChecked", value = "备注")
-    @Column(name = "is_checked",columnDefinition = "tinyint default 0")
-    protected Boolean isChecked;
-
-    public Boolean getChecked() {
-        return isChecked;
-    }
-
-    public void setChecked(Boolean checked) {
-        isChecked = checked;
-    }
-
     public Long getBsReportId() {
         return bsReportId;
     }

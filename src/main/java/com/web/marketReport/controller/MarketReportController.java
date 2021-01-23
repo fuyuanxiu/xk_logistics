@@ -238,7 +238,7 @@ public class MarketReportController extends WebController {
         }
     }
     @ApiOperation(value="审批", notes="审批操作")
-    @RequestMapping(value = "/editCheck", method = RequestMethod.PUT)
+    @RequestMapping(value = "/editCheck", method = RequestMethod.POST)
     public ApiResponseResult editCheck(Long id){
         try {
            return marketReportService.editCheck(id);
@@ -248,7 +248,29 @@ public class MarketReportController extends WebController {
             return ApiResponseResult.failure("审批失败！");
         }
     }
+//获取审核状态
+    @RequestMapping(value = "/getStatus",method = RequestMethod.GET)
+    public ApiResponseResult getCkStatus(Long id){
+        try {
+            Boolean checkStatusById = marketReportService.getCheckStatusById(id);
+            return ApiResponseResult.success("查询成功").data(checkStatusById);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseResult.failure("获取审核状态失败！");
+        }
 
+
+    }
+
+    @RequestMapping(value = "/editUncheck",method = RequestMethod.POST)
+    public ApiResponseResult editUnCheck(Long id){
+        try {
+           return marketReportService.editUnCheck(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseResult.failure("反审核失败！");
+        }
+    }
     /*@ApiOperation(value = "获取市场报价BOM详情列表", notes = "获取市场报价BOM详情列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "keyword", value = "搜索关键字", required = false, dataType = "String", paramType = "query", defaultValue = ""),
