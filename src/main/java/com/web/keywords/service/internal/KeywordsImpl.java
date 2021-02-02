@@ -152,4 +152,25 @@ public class KeywordsImpl implements KeywordsService {
 
         return ApiResponseResult.success().data(DataGrid.create(page.getContent(), (int) page.getTotalElements(), pageRequest.getPageNumber() +1 ,pageRequest.getPageSize()));
     }
+
+    @Override
+    @Transactional
+    public ApiResponseResult updateCheckByCid(Long id) {
+        int i = keywordsDao.updateCheckById(id);
+        if (i>0){
+            return ApiResponseResult.success("审核成功");
+        }
+        return ApiResponseResult.failure("审核失败");
+    }
+
+    @Override
+    @Transactional
+    public ApiResponseResult reverseCheckByCid(Long id) throws Exception {
+        int i = keywordsDao.reverseCheck(id);
+        if (i>0){
+            return ApiResponseResult.success("反审核成功");
+        }
+        return ApiResponseResult.failure("反审核失败");
+    }
+
 }

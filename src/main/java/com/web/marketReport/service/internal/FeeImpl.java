@@ -170,4 +170,26 @@ public class FeeImpl implements FeeService {
 
         return ApiResponseResult.success().data(DataGrid.create(page.getContent(), (int) page.getTotalElements(), pageRequest.getPageNumber() +1 ,pageRequest.getPageSize()));
     }
+
+    //审核
+    @Override
+    @Transactional
+    public ApiResponseResult modifyCheckByid(Long id) throws Exception {
+        int i = feeDao.updateCheckStatu(id);
+        if (i>0){
+            return ApiResponseResult.success("审核成功");
+        }
+        return ApiResponseResult.failure("审核失败");
+    }
+
+    //反审核
+    @Override
+    @Transactional
+    public ApiResponseResult reverseReviewByid(Long id) throws Exception {
+        int i = feeDao.reverseCheck(id);
+        if (i>0){
+            return ApiResponseResult.success("反审核成功");
+        }
+        return ApiResponseResult.failure("反审核失败");
+    }
 }

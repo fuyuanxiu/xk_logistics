@@ -2,6 +2,8 @@ package com.web.marketReport.dao;
 
 import com.web.marketReport.entity.Fee;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -20,4 +22,15 @@ public interface FeeDao extends CrudRepository<Fee, Long>, JpaSpecificationExecu
     public int countByIsDelAndBsCodeAndIdNot(Integer isDel, String bsCode, Long id);
 
     public List<Fee> findByIsDelAndBsNameLike(Integer isDel, String BsName);
+
+    //审核
+    @Modifying
+    @Query("update Fee f set f.isChecked=1 where f.id=?1")
+    public int updateCheckStatu(Long id);
+
+    //反审核
+    @Modifying
+    @Query("update Fee f set f.isChecked=0 where f.id=?1")
+    public int reverseCheck(Long id);
+
 }

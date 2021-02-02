@@ -295,4 +295,30 @@ public class ProcessFlowImpl implements ProcessFlowService {
 
         return ApiResponseResult.success().data(processList);
     }
+
+    /**
+     * 审核
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @Override
+    @Transactional
+    public ApiResponseResult reviewByid(Long id) throws Exception {
+        int i = processFlowDao.updateCheckStatu(id);
+        if (i>0){
+            return ApiResponseResult.success("审核成功");
+        }
+        return ApiResponseResult.failure("审核失败");
+    }
+
+    @Override
+    @Transactional
+    public ApiResponseResult reverseReview(Long id) throws Exception {
+        int i = processFlowDao.reverseCheck(id);
+        if (i>0){
+            return ApiResponseResult.success("反审核成功");
+        }
+        return ApiResponseResult.failure("反审核失败");
+    }
 }

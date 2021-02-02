@@ -94,4 +94,28 @@ public class DiscountController extends WebController {
             return ApiResponseResult.failure("操作失败！");
         }
     }
+
+    //审核
+    @RequestMapping(value = "/check",method = RequestMethod.POST)
+    public ApiResponseResult updateCheck(Long id){
+        try {
+            ApiResponseResult apiResponseResult = discountService.updateCheckByid(id);
+            return apiResponseResult;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseResult.failure("审核失败");
+        }
+
+    }
+
+    //反审核
+    @RequestMapping(value = "/reverse",method = RequestMethod.POST)
+    public ApiResponseResult reverseCheck(Long id){
+        try {
+            return discountService.reverseCheckByid(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseResult.failure("反审核失败");
+        }
+    }
 }

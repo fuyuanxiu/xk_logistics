@@ -16,4 +16,10 @@ public interface FeeService {
     public ApiResponseResult delete(Long id) throws Exception;
 
     public ApiResponseResult getlist(String keyword, PageRequest pageRequest) throws Exception;
+
+    //审核
+    public ApiResponseResult modifyCheckByid(Long id) throws Exception;
+
+    //反审核
+    public ApiResponseResult reverseReviewByid(Long id) throws Exception;
 }

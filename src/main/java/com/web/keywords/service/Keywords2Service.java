@@ -17,4 +17,10 @@ public interface Keywords2Service {
     public ApiResponseResult delete(Long id) throws Exception;
 
     public ApiResponseResult getlist(Long cateId, String keyword, PageRequest pageRequest) throws Exception;
+
+    //审核
+    public ApiResponseResult updateCheckByCid(Long id) throws Exception;
+
+    //反审核
+    public ApiResponseResult reverseCheckByCid(Long id) throws Exception;
 }

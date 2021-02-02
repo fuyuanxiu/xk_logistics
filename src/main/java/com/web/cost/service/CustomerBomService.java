@@ -29,9 +29,9 @@ public interface CustomerBomService {
     public ApiResponseResult delete(Long fileId) throws Exception;
 
     public ApiResponseResult getBomData(Long fileId) throws Exception;
-    
+
     public ApiResponseResult doCheckMateriel(Long id, int checkStatus) throws Exception;
-    
+
     public ApiResponseResult doSendTodo(Long fileId, String bomIds, Long todoerBy, Date startDate, Date endDate, String bsRemark) throws Exception;
 
     //复制BOM
@@ -43,4 +43,10 @@ public interface CustomerBomService {
 
     //测试
     public ApiResponseResult test(String cateValue, String brandValue, String modelValue, String packageValue, Long fileId);
+
+    public ApiResponseResult review(Long id) throws Exception;
+
+    public ApiResponseResult reserveReview(Long id) throws Exception;
+
+    public Boolean getCheckStatus(Long id) throws Exception;
 }

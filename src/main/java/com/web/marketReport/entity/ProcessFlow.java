@@ -75,6 +75,22 @@ public class ProcessFlow extends BaseEntity {
     @Column
     protected Integer bsIsBan = 0;
 
+
+    /**
+     * 审核
+     */
+    @ApiModelProperty(name = "isChecked", value = "审核")
+    @Column(name = "is_checked",columnDefinition = "tinyint default 0")
+    protected Boolean isChecked;
+
+    public Boolean getChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(Boolean checked) {
+        isChecked = checked;
+    }
+
     public Long getBsCateId() {
         return bsCateId;
     }

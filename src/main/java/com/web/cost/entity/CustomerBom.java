@@ -56,7 +56,7 @@ public class CustomerBom extends BaseEntity {
     @ApiModelProperty(name = "bomType", value = "类型（0：BOM表数据 / 1：BOM表头）")
     @Column
     protected Integer bomType;
-    
+
     /**
      * 是否选中（0：未选中 / 1：选中）
      */
@@ -313,7 +313,7 @@ public class CustomerBom extends BaseEntity {
     @ApiModelProperty(name = "fStockQty", value = "库存数量")
     @Column(precision = 24, scale = 6)
     protected BigDecimal fStockQty;
-    
+
     /**
      * 匹配分类
      */
@@ -398,6 +398,21 @@ public class CustomerBom extends BaseEntity {
     @ApiModelProperty(name = "smtFeetQty", value = "smt焊脚数量")
     @Column
     protected Integer smtFeetQty;
+
+    /**
+     * 审核
+     */
+    @ApiModelProperty(name = "isChecked", value = "审核")
+    @Column(name = "is_checked",columnDefinition = "tinyint default 0")
+    protected Boolean isChecked;
+
+    public Boolean getChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(Boolean checked) {
+        isChecked = checked;
+    }
 
     public Long getFileId() {
         return fileId;

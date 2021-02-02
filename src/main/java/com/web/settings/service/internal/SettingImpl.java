@@ -429,4 +429,24 @@ public class SettingImpl implements SettingService {
 
         return ApiResponseResult.success("手动同步K3发票价信息成功！");
     }
+
+    @Override
+    @Transactional
+    public ApiResponseResult updateCheckStatus(Long id) throws Exception {
+        int i = settingDao.updateCheckStatu(id);
+        if (i>0){
+            return ApiResponseResult.success("审核成功");
+        }
+        return ApiResponseResult.failure("审核失败");
+    }
+
+    @Override
+    @Transactional
+    public ApiResponseResult reverseCheckStatus(Long id) throws Exception {
+        int i = settingDao.reverseCheck(id);
+        if (i>0){
+            return ApiResponseResult.success("反审核成功");
+        }
+        return ApiResponseResult.failure("反审核失败");
+    }
 }

@@ -3668,6 +3668,7 @@ public class MarketReportImpl implements MarketReportService {
 
     //审核
     @Override
+    @Transactional
     public ApiResponseResult editCheck(Long id) throws Exception {
         if (id == null) {
             return ApiResponseResult.failure("ID不能为空！");
@@ -3680,6 +3681,7 @@ public class MarketReportImpl implements MarketReportService {
     }
     //反审核
     @Override
+    @Transactional
     public ApiResponseResult editUnCheck(Long id) throws Exception {
         if (id == null) {
             return ApiResponseResult.failure("ID不能为空！");

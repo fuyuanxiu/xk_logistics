@@ -81,4 +81,30 @@ public class Keywords2Controller extends WebController {
             return ApiResponseResult.failure("获取类别匹配关键字信息失败！");
         }
     }
+
+    //审核
+    @RequestMapping(value = "/check",method = RequestMethod.POST)
+    public ApiResponseResult updateCheck(Long id){
+        try {
+            ApiResponseResult apiResponseResult = keywords2Service.updateCheckByCid(id);
+            return ApiResponseResult.success("审核成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseResult.failure("审核失败");
+        }
+
+    }
+
+    //反审核
+    @RequestMapping(value = "/reverse",method = RequestMethod.POST)
+    public ApiResponseResult reverseCheck(Long id){
+        try {
+            keywords2Service.reverseCheckByCid(id);
+            return ApiResponseResult.success("反审核成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseResult.failure("反审核失败");
+        }
+    }
+
 }

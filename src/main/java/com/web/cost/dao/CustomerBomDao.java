@@ -28,12 +28,26 @@ public interface CustomerBomDao extends CrudRepository<CustomerBom, Long>, JpaSp
     public List<CustomerBom> findByIsDelAndFileIdAndBomTypeAndCheckStatus(Integer isDel, Long fileId, Integer bomType, Integer checkStatus);
 
     public List<CustomerBom> findByIsDelAndFileIdAndIdIn(Integer isDel, Long fileId, List<Long> idList);
-    
+
     @Modifying
 	@Query(value = "update CustomerBom set mateCategory =?2 where id =?1")
 	public void updateCategoryById(Long customId, String category);
-    
+
     @Modifying
 	@Query(value = "update CustomerBom set isDel =1 where fileId =?1")
 	public void updateIsDelByFileId(Long fileId);
+
+    //审核
+    @Modifying
+    @Query("update CustomerBom c set c.isChecked=1 where c.id=?1")
+    public int updateCheckStatu(Long id);
+
+    //反审核
+    @Modifying
+    @Query("update CustomerBom c set c.isChecked=0 where c.id=?1")
+    public int reverseCheck(Long id);
+
+    //获取检查状态
+    @Query("Select  c.isChecked from  CustomerBom as c  where c.id =?1")
+    public Boolean getCheckStatus(Long id);
 }

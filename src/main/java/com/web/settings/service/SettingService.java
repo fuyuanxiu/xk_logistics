@@ -21,4 +21,8 @@ public interface SettingService {
     public ApiResponseResult updateOrderBillData() throws Exception;
 
     public ApiResponseResult updateInvoiceBillData() throws  Exception;
+
+    public ApiResponseResult updateCheckStatus(Long id) throws  Exception;
+
+    public ApiResponseResult reverseCheckStatus(Long id) throws Exception;
 }

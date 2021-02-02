@@ -80,7 +80,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 客户BOM成本预估
- *
  */
 @Service(value = "CustomerBomService")
 @Transactional(propagation = Propagation.REQUIRED)
@@ -104,7 +103,7 @@ public class CustomerBomImpl implements CustomerBomService {
     private SettingDao settingDao;
     @Autowired
     private MaterielCategoryK3Dao materielCategoryK3Dao;
-    
+
     @Autowired
     private TodoInfoService todoInfoService;
     @Autowired
@@ -132,6 +131,7 @@ public class CustomerBomImpl implements CustomerBomService {
 
     /**
      * 上传客户BOM
+     *
      * @param file
      * @param startRow
      * @return
@@ -141,10 +141,10 @@ public class CustomerBomImpl implements CustomerBomService {
     @Transactional
     public ApiResponseResult importBom(MultipartFile file, Integer startRow) throws Exception {
         //文件和起始行数不能为空
-        if(file == null || file.isEmpty()) {
+        if (file == null || file.isEmpty()) {
             return ApiResponseResult.failure("上传文件不能为空！");
         }
-        if(startRow == null){
+        if (startRow == null) {
             return ApiResponseResult.failure("起始行数不能为空！");
         }
         SysUser currUser = UserUtil.getCurrUser();  //获取当前用户
@@ -156,11 +156,11 @@ public class CustomerBomImpl implements CustomerBomService {
         //1.上传文件
         FsFile fsFile = new FsFile();
         ApiResponseResult result = fileService.upload(fsFile, file);
-        if(!result.isResult()){
+        if (!result.isResult()) {
             return ApiResponseResult.failure("文件上传失败！请重新上传！");
         }
         fsFile = (FsFile) result.getData();
-        if(fsFile.getId() == null){
+        if (fsFile.getId() == null) {
             return ApiResponseResult.failure("上传文件不存在！请重新上传！");
         }
 
@@ -181,7 +181,7 @@ public class CustomerBomImpl implements CustomerBomService {
         Sheet sheet = wb.getSheetAt(0);
         List<CustomerBom> customerBomList = new ArrayList<CustomerBom>();
         //从 startRow-1 行开始读取（表头和表数据都要读取）
-        for (int i = startRow - 1; i < sheet.getLastRowNum()+1; i++){
+        for (int i = startRow - 1; i < sheet.getLastRowNum() + 1; i++) {
             Row row = sheet.getRow(i);
             if (row == null || ((row.getCell(0) == null || row.getCell(0).getCellType() == Cell.CELL_TYPE_BLANK)
                     && (row.getCell(1) == null || row.getCell(1).getCellType() == Cell.CELL_TYPE_BLANK))) {
@@ -192,28 +192,28 @@ public class CustomerBomImpl implements CustomerBomService {
             List<String> list = new ArrayList<String>();
 
             //3.数据库定义了20个字段来存储BOM数据
-            for(int j = 0; j < 20; j++){
+            for (int j = 0; j < 20; j++) {
                 String prop = "";
-                if(row.getCell(j) != null){
+                if (row.getCell(j) != null) {
                     int cellType = row.getCell(j).getCellType();
-                    if(cellType == Cell.CELL_TYPE_NUMERIC){
+                    if (cellType == Cell.CELL_TYPE_NUMERIC) {
                         Long propTemp = (long) row.getCell(j).getNumericCellValue();
                         prop = propTemp.toString();
                     }
-                    if(cellType == Cell.CELL_TYPE_STRING){
+                    if (cellType == Cell.CELL_TYPE_STRING) {
                         String propTemp = row.getCell(j).getStringCellValue();
                         prop = StringUtils.isNotEmpty(propTemp) ? propTemp.trim() : "";
                     }
-                    if(cellType == Cell.CELL_TYPE_FORMULA){
-                        try{
+                    if (cellType == Cell.CELL_TYPE_FORMULA) {
+                        try {
                             String propTemp = row.getCell(j).getStringCellValue();
                             prop = StringUtils.isNotEmpty(propTemp) ? propTemp.trim() : "";
-                        }catch (IllegalStateException e){
-                            try{
+                        } catch (IllegalStateException e) {
+                            try {
                                 //Boolean abc = row.getCell(j).getBooleanCellValue();
                                 Long propTemp = (long) row.getCell(j).getNumericCellValue();
                                 prop = propTemp.toString();
-                            }catch (IllegalStateException ex){
+                            } catch (IllegalStateException ex) {
                                 //System.out.println("行数：" + i +","+ j);
                                 prop = "";
                             }
@@ -225,18 +225,18 @@ public class CustomerBomImpl implements CustomerBomService {
 
             //4.将获取到的每一行数据list封装到CustomerBom对象中
             customerBom.setCreatedTime(new Date());
-            customerBom.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);  //创建时，创建人和修改人信息一致
-            customerBom.setCreatedName((currUser!=null) ? (currUser.getUserName()) : null);
-            customerBom.setPkModifiedBy((currUser!=null) ? (currUser.getId()) : null);
-            customerBom.setModifiedName((currUser!=null) ? (currUser.getUserName()) : null);
+            customerBom.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);  //创建时，创建人和修改人信息一致
+            customerBom.setCreatedName((currUser != null) ? (currUser.getUserName()) : null);
+            customerBom.setPkModifiedBy((currUser != null) ? (currUser.getId()) : null);
+            customerBom.setModifiedName((currUser != null) ? (currUser.getUserName()) : null);
             customerBom.setFileId(fileId);
             customerBom.setFileName(fsFile.getBsName());
             customerBom.setBomCode(bomCode);
             customerBom.setStartRow(startRow);
             //如果是表头，则bomType为1
-            if(i == startRow - 1){
+            if (i == startRow - 1) {
                 customerBom.setBomType(1);
-            }else{
+            } else {
                 customerBom.setBomType(0);
             }
             customerBom.setBomProp(list.get(0));
@@ -263,66 +263,67 @@ public class CustomerBomImpl implements CustomerBomService {
         }
 
         //5.保存数据
-        if(customerBomList.size() > 0){
+        if (customerBomList.size() > 0) {
             customerBomDao.saveAll(customerBomList);
             return ApiResponseResult.success("上传文件成功！").data(fsFile);
-        }else{
+        } else {
             return ApiResponseResult.failure("上传文件失败！请检查文件格式或者起始行数是否正确。").data(fsFile);
         }
     }
 
     /**
      * 匹配客户BOM所有K3物料数据
+     *
      * @param customerBomList
      * @param fileId
      * @param currUser
      * @param matchNum
      * @param topNum
-     * @param isMatchAll 是否匹配所有数据（0：否 / 1：是）
+     * @param isMatchAll      是否匹配所有数据（0：否 / 1：是）
      * @return
      */
-    private List<CustomerBom> matchK3Bom(List<CustomerBom> customerBomList, String fileId, SysUser currUser, float matchNum, Integer topNum, Float settingValue, Integer isMatchAll){
-        if(customerBomList == null){
+    private List<CustomerBom> matchK3Bom(List<CustomerBom> customerBomList, String fileId, SysUser currUser, float matchNum, Integer topNum, Float settingValue, Integer isMatchAll) {
+        if (customerBomList == null) {
             return customerBomList;
         }
 
         //1.获取表头
         List<CustomerBom> listHeader = customerBomList.stream().filter(s -> s.getBomType() == 1).collect(Collectors.toList());
-        if(listHeader.size() <= 0){
+        if (listHeader.size() <= 0) {
             return customerBomList;
         }
 
         //2.获取表数据
         List<CustomerBom> listBody = customerBomList.stream().filter(s -> s.getBomType() == 0).collect(Collectors.toList());
-        if(isMatchAll != null && isMatchAll == 1){
-        }else{
+        if (isMatchAll != null && isMatchAll == 1) {
+        } else {
             //获取为选中的listBody
             listBody = listBody.stream().filter(s -> s.getCheckStatus() == 0).collect(Collectors.toList());
         }
 
         //3.获取客户BOM参数数据
         List<BomParams> bomParamsList = bomParamsDao.findByIsDelAndFileIdOrderByIdDesc(BasicStateEnum.FALSE.intValue(), Long.valueOf(fileId));
-        if(bomParamsList.size() <= 0){
+        if (bomParamsList.size() <= 0) {
             return customerBomList;
         }
         BomParams bomParams = bomParamsList.get(0);
-        if(bomParams == null){
+        if (bomParams == null) {
             return customerBomList;
         }
         //获取排序方案，供后面排序使用
-        int sortPlan = bomParams.getBsSortPlan()!= null ? bomParams.getBsSortPlan() : 0;
+        int sortPlan = bomParams.getBsSortPlan() != null ? bomParams.getBsSortPlan() : 0;
         float sortPlanNum = (float) 0.8;
         List<Setting> settingList = settingDao.findByIsDelAndCode(BasicStateEnum.FALSE.intValue(), SettingsStateEnum.CUSTOMER_SORT_PLAN.stringValue());
-        if(settingList.size() > 0 && settingList.get(0) != null){
+        if (settingList.size() > 0 && settingList.get(0) != null) {
             sortPlanNum = StringUtils.isNotEmpty(settingList.get(0).getValue()) ? Float.valueOf(settingList.get(0).getValue()) : (float) 0.8;
         }
 
         //4.获取K3物料数据
         List<MaterielInfo> materielInfoK3List = new ArrayList<MaterielInfo>();
         //20190311-Shen 判断IsCustomer是否需要查询客供料，IsCustomer为1是全部匹配，否则不匹配客供料
-        if(bomParams.getIsCustomer() != null && bomParams.getIsCustomer() == 1){
+        if (bomParams.getIsCustomer() != null && bomParams.getIsCustomer() == 1) {
             materielInfoK3List = materielInfoDao.findAllByIsDelAndIsBanOrderByIdAsc(BasicStateEnum.FALSE.intValue(), 0);
-        }else{
+        } else {
             materielInfoK3List = getMateWithCategory();
         }
         //CompareString lt = new CompareString();
@@ -334,30 +335,30 @@ public class CustomerBomImpl implements CustomerBomService {
         cal.setTime(dateStart);
         //获取上一个月的年份和月份
         cal.add(Calendar.MONTH, -1);
-        int year =  cal.get(Calendar.YEAR);
-        int month =  cal.get(Calendar.MONTH) + 1;
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
         List<StockPriceSrm> stockList = stockPriceSrmDao.findByIsDelAndBsYearAndBsPeriod(BasicStateEnum.FALSE.intValue(), year, month);
-        if(stockList.size() <= 0){
+        if (stockList.size() <= 0) {
             cal.add(Calendar.MONTH, -1);
-            year =  cal.get(Calendar.YEAR);
-            month =  cal.get(Calendar.MONTH) + 1;
+            year = cal.get(Calendar.YEAR);
+            month = cal.get(Calendar.MONTH) + 1;
             stockList = stockPriceSrmDao.findByIsDelAndBsYearAndBsPeriod(BasicStateEnum.FALSE.intValue(), year, month);
         }
 
         //5.循环匹配数据
-        for(int i = 0; i < listBody.size(); i++){
+        for (int i = 0; i < listBody.size(); i++) {
             CustomerBom customerBom = listBody.get(i);
             customerBom.setCheckStatus(0);
             customerBom.setCheckCode(null);
 
             //5.1通过CusBomId删除关联的CustomerBomMatch数据信息
             List<CustomerBomMatch> customerBomMatchList = customerBomMatchDao.findByIsDelAndAndCusBomId(BasicStateEnum.FALSE.intValue(), customerBom.getId());
-            if(customerBomMatchList.size() > 0){
-                for(CustomerBomMatch item : customerBomMatchList){
+            if (customerBomMatchList.size() > 0) {
+                for (CustomerBomMatch item : customerBomMatchList) {
                     item.setIsDel(BasicStateEnum.TRUE.intValue());
                     item.setModifiedTime(new Date());
-                    item.setPkModifiedBy((currUser!=null) ? (currUser.getId()) : null);
-                    item.setModifiedName((currUser!=null) ? (currUser.getUserName()) : null);
+                    item.setPkModifiedBy((currUser != null) ? (currUser.getId()) : null);
+                    item.setModifiedName((currUser != null) ? (currUser.getUserName()) : null);
                 }
                 customerBomMatchDao.saveAll(customerBomMatchList);
             }
@@ -376,7 +377,7 @@ public class CustomerBomImpl implements CustomerBomService {
             //5.3获取匹配值高于某值的物料
             //5.3.1通过“大类”筛选K3物料
             String mateCategory = customerBom.getMateCategory();
-            if(StringUtils.isNotEmpty(mateCategory)){
+            if (StringUtils.isNotEmpty(mateCategory)) {
                 mateList = mateList.stream().filter(s -> mateCategory.equals(s.getCateNumberFirst())).collect(Collectors.toList());
                 //mateList = mateList.stream().filter(s -> mateCategory.equals(s.getCategoryNumber())).collect(Collectors.toList());
             }
@@ -388,25 +389,25 @@ public class CustomerBomImpl implements CustomerBomService {
             //20191012-sxw-是否存在匹配率大于0.8的物料，供后面排序使用
             boolean ratioFlag = false;
             //计算匹配率
-            for(MaterielInfo mk:mateList){
+            for (MaterielInfo mk : mateList) {
                 //float ratio = lt.getSimilarityRatio(modelValue, mk.getMateModel());
                 float ratio = getSimilarityRatioWithModel(modelValue, mk.getMateModel(), bomParams, cateValue);
-                if(Float.compare(ratio, sortPlanNum) >= 0){
+                if (Float.compare(ratio, sortPlanNum) >= 0) {
                     ratioFlag = true;
                 }
-                if(Float.compare(ratio, matchNum) >= 0){
+                if (Float.compare(ratio, matchNum) >= 0) {
                     //20190416-Shen 获取库存价格和库存数量 start
                     List<StockPriceSrm> stockItemList = stockList.stream().filter(s -> s.getBsNumber() != null).filter(s -> s.getBsNumber().trim().equals(mk.getMateK3Code())).collect(Collectors.toList());
-                    StockPriceSrm stockItem = (stockItemList!=null&&stockItemList.size()>0) ? stockItemList.get(0) : new StockPriceSrm();
+                    StockPriceSrm stockItem = (stockItemList != null && stockItemList.size() > 0) ? stockItemList.get(0) : new StockPriceSrm();
                     BigDecimal fStockPrice = stockItem.getBsPrice();  //库存价格
                     BigDecimal fStockQty = mk.getfStockQty();  //库存数量
-                    if(fStockQty==null || fStockQty.compareTo(BigDecimal.ZERO)<=0){
+                    if (fStockQty == null || fStockQty.compareTo(BigDecimal.ZERO) <= 0) {
                         fStockQty = new BigDecimal(0);
                     }
                     //end
                     CustomerBomMatch customerBomMatch = new CustomerBomMatch();
                     customerBomMatch.setCreatedTime(new Date());
-                    customerBomMatch.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+                    customerBomMatch.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
                     customerBomMatch.setCusBomId(customerBom.getId());
                     customerBomMatch.setBomParamsId(bomParams.getId());
                     customerBomMatch.setFileId(customerBom.getFileId());
@@ -447,9 +448,9 @@ public class CustomerBomImpl implements CustomerBomService {
                     customerBomMatch.setSmtPointsTotal((float) 0);
                     //end
                     //20190711-Shen 判断并筛选出当前品牌料号的CustomerBomMatch，添加至listWithBrand，其他的添加至mapList
-                    if(StringUtils.isNotEmpty(brandValue) && StringUtils.equals(brandValue, customerBomMatch.getMateCusCode())){
+                    if (StringUtils.isNotEmpty(brandValue) && StringUtils.equals(brandValue, customerBomMatch.getMateCusCode())) {
                         listWithBrand.add(customerBomMatch);
-                    }else{
+                    } else {
                         mapList.add(customerBomMatch);
                     }
                 }
@@ -457,21 +458,21 @@ public class CustomerBomImpl implements CustomerBomService {
 
             //20191012
             //5.4排序，根据sortPlan和ratioFlag选择方案
-            if(sortPlan == 1 && !ratioFlag){
+            if (sortPlan == 1 && !ratioFlag) {
                 //5.4.1 方案2--在方案1的基础上，当匹配率都小于0.8时，按库存数量、匹配率倒序排序（库存优先排序）
                 //对listWithBrand排序
-                if(listWithBrand.size() > 1){
-                    Collections.sort(listWithBrand, new Comparator<CustomerBomMatch>(){
+                if (listWithBrand.size() > 1) {
+                    Collections.sort(listWithBrand, new Comparator<CustomerBomMatch>() {
                         @Override
                         public int compare(CustomerBomMatch o1, CustomerBomMatch o2) {
-                            if(o1.getfStockQty().compareTo(o2.getfStockQty()) < 0){
+                            if (o1.getfStockQty().compareTo(o2.getfStockQty()) < 0) {
                                 return 1;
                             }
-                            if(o1.getfStockQty().compareTo(o2.getfStockQty()) == 0){
-                                if(Float.compare(o1.getRatio(), o2.getRatio()) < 0){
+                            if (o1.getfStockQty().compareTo(o2.getfStockQty()) == 0) {
+                                if (Float.compare(o1.getRatio(), o2.getRatio()) < 0) {
                                     return 1;
                                 }
-                                if(Float.compare(o1.getRatio(), o2.getRatio()) == 0){
+                                if (Float.compare(o1.getRatio(), o2.getRatio()) == 0) {
                                     return 0;
                                 }
                             }
@@ -480,17 +481,17 @@ public class CustomerBomImpl implements CustomerBomService {
                     });
                 }
                 //对mapList排序并获取匹配值前面的物料
-                Collections.sort(mapList, new Comparator<CustomerBomMatch>(){
+                Collections.sort(mapList, new Comparator<CustomerBomMatch>() {
                     @Override
                     public int compare(CustomerBomMatch o1, CustomerBomMatch o2) {
-                        if(o1.getfStockQty().compareTo(o2.getfStockQty()) < 0){
+                        if (o1.getfStockQty().compareTo(o2.getfStockQty()) < 0) {
                             return 1;
                         }
-                        if(o1.getfStockQty().compareTo(o2.getfStockQty()) == 0){
-                            if(Float.compare(o1.getRatio(), o2.getRatio()) < 0){
+                        if (o1.getfStockQty().compareTo(o2.getfStockQty()) == 0) {
+                            if (Float.compare(o1.getRatio(), o2.getRatio()) < 0) {
                                 return 1;
                             }
-                            if(Float.compare(o1.getRatio(), o2.getRatio()) == 0){
+                            if (Float.compare(o1.getRatio(), o2.getRatio()) == 0) {
                                 return 0;
                             }
                         }
@@ -498,21 +499,21 @@ public class CustomerBomImpl implements CustomerBomService {
                         //return Float.compare(o1.getRatio(), o2.getRatio()) >= 0 ? -1 : 1;  //这种写法JDK7及以后的版本有问题
                     }
                 });
-            }else{
+            } else {
                 //5.4.2 方案1--按匹配率、库存数量倒序排序（匹配率优先排序）
                 //对listWithBrand排序
-                if(listWithBrand.size() > 1){
-                    Collections.sort(listWithBrand, new Comparator<CustomerBomMatch>(){
+                if (listWithBrand.size() > 1) {
+                    Collections.sort(listWithBrand, new Comparator<CustomerBomMatch>() {
                         @Override
                         public int compare(CustomerBomMatch o1, CustomerBomMatch o2) {
-                            if(Float.compare(o1.getRatio(), o2.getRatio()) < 0){
+                            if (Float.compare(o1.getRatio(), o2.getRatio()) < 0) {
                                 return 1;
                             }
-                            if(Float.compare(o1.getRatio(), o2.getRatio()) == 0){
-                                if(o1.getfStockQty().compareTo(o2.getfStockQty()) < 0){
+                            if (Float.compare(o1.getRatio(), o2.getRatio()) == 0) {
+                                if (o1.getfStockQty().compareTo(o2.getfStockQty()) < 0) {
                                     return 1;
                                 }
-                                if(o1.getfStockQty().compareTo(o2.getfStockQty()) == 0){
+                                if (o1.getfStockQty().compareTo(o2.getfStockQty()) == 0) {
                                     return 0;
                                 }
                             }
@@ -522,17 +523,17 @@ public class CustomerBomImpl implements CustomerBomService {
                 }
 
                 //对mapList排序并获取匹配值前面的物料
-                Collections.sort(mapList, new Comparator<CustomerBomMatch>(){
+                Collections.sort(mapList, new Comparator<CustomerBomMatch>() {
                     @Override
                     public int compare(CustomerBomMatch o1, CustomerBomMatch o2) {
-                        if(Float.compare(o1.getRatio(), o2.getRatio()) < 0){
+                        if (Float.compare(o1.getRatio(), o2.getRatio()) < 0) {
                             return 1;
                         }
-                        if(Float.compare(o1.getRatio(), o2.getRatio()) == 0){
-                            if(o1.getfStockQty().compareTo(o2.getfStockQty()) < 0){
+                        if (Float.compare(o1.getRatio(), o2.getRatio()) == 0) {
+                            if (o1.getfStockQty().compareTo(o2.getfStockQty()) < 0) {
                                 return 1;
                             }
-                            if(o1.getfStockQty().compareTo(o2.getfStockQty()) == 0){
+                            if (o1.getfStockQty().compareTo(o2.getfStockQty()) == 0) {
                                 return 0;
                             }
                         }
@@ -541,10 +542,10 @@ public class CustomerBomImpl implements CustomerBomService {
                     }
                 });
             }
-            mapList = mapList.subList(0, topNum<=mapList.size()?topNum:mapList.size());
+            mapList = mapList.subList(0, topNum <= mapList.size() ? topNum : mapList.size());
 
             //20190711-Shen 将前面筛选出的当前品牌料号的CustomerBomMatch添加到mapList的头部，然后再进行后面的价格计算和选中操作
-            if(listWithBrand.size() > 0){
+            if (listWithBrand.size() > 0) {
                 mapList.addAll(0, listWithBrand);
             }
 
@@ -573,10 +574,10 @@ public class CustomerBomImpl implements CustomerBomService {
 //                    }
 //                }
 //            }
-            if(mapList.size() > 0){
+            if (mapList.size() > 0) {
                 CustomerBomMatch o = mapList.get(0);
                 //比较匹配到的物料中匹配率最高的一位，如果它的匹配率大于设置里的匹配率，则自动选中；否则不选中
-                if(settingValue.compareTo(o.getRatio()) <= 0 || listWithBrand.size() > 0){
+                if (settingValue.compareTo(o.getRatio()) <= 0 || listWithBrand.size() > 0) {
                     o.setCheckStatus(1);
                     //计算价格、SMT点数
                     //BigDecimal qtyValue = new BigDecimal(0);  //物料数量
@@ -589,7 +590,7 @@ public class CustomerBomImpl implements CustomerBomService {
             }
 
             //6.保存
-            if(mapList.size() > 0){
+            if (mapList.size() > 0) {
                 customerBomMatchDao.saveAll(mapList);
             }
         }
@@ -599,6 +600,7 @@ public class CustomerBomImpl implements CustomerBomService {
 
     /**
      * 获取客户BOM（匹配K3物料数据）
+     *
      * @param standardCol
      * @param categoryCol
      * @param quantityCol
@@ -608,22 +610,22 @@ public class CustomerBomImpl implements CustomerBomService {
      * @param isCustomer
      * @param splitList
      * @param fileId
-     * @param isMatchAll 是否匹配所有数据（0：否 / 1：是）
+     * @param isMatchAll     是否匹配所有数据（0：否 / 1：是）
      * @return
      * @throws Exception
      */
     @Override
     @Transactional
     public ApiResponseResult getK3Bom(String standardCol, String categoryCol, String nameCol, String quantityCol, String packageCol,
-                                      String makerCol,String brandNumberCol,String placeNumberCol,Integer isCustomer,Integer bomNumber,Float bomCheck,Float bomLimit,Integer bomLimitNum,Integer bsSortPlan,
-                                      String splitList,String fileId,Integer isMatchAll) throws Exception {
-        if(fileId == null){
+                                      String makerCol, String brandNumberCol, String placeNumberCol, Integer isCustomer, Integer bomNumber, Float bomCheck, Float bomLimit, Integer bomLimitNum, Integer bsSortPlan,
+                                      String splitList, String fileId, Integer isMatchAll) throws Exception {
+        if (fileId == null) {
             return ApiResponseResult.failure("文件ID不能为空！");
         }
         SysUser currUser = UserUtil.getCurrUser();  //获取当前用户
 
         //保存上传参数
-  	    this.saveBomParams(standardCol, categoryCol, nameCol, quantityCol, packageCol, makerCol, brandNumberCol, placeNumberCol, isCustomer, bomNumber, bomCheck, bomLimit, bomLimitNum, bsSortPlan, splitList, fileId, currUser);
+        this.saveBomParams(standardCol, categoryCol, nameCol, quantityCol, packageCol, makerCol, brandNumberCol, placeNumberCol, isCustomer, bomNumber, bomCheck, bomLimit, bomLimitNum, bsSortPlan, splitList, fileId, currUser);
 
         List<CustomerBom> customerBomList = customerBomDao.findByIsDelAndFileIdOrderByIdAsc(BasicStateEnum.FALSE.intValue(), Long.parseLong(fileId));
         int endColumn = 0;  //结束列
@@ -650,7 +652,7 @@ public class CustomerBomImpl implements CustomerBomService {
 
         //1.获取表头
         List<CustomerBom> listHeader = customerBomList.stream().filter(s -> s.getBomType() == 1).collect(Collectors.toList());
-        if(listHeader.size() <= 0){
+        if (listHeader.size() <= 0) {
             return ApiResponseResult.failure("获取信息有误！");
         }
         CustomerBom oHeader = listHeader.get(0);
@@ -658,10 +660,10 @@ public class CustomerBomImpl implements CustomerBomService {
         headerList = bomPropToList(headerList, oHeader);   //将CustomerBom的BomProp属性按顺序存入List集合中
 
         //循环判断在那一列结束，获取结束列前的数据
-        for(int i = 0; i < headerList.size(); i++){
-            if(StringUtils.isNotEmpty(headerList.get(i))){
+        for (int i = 0; i < headerList.size(); i++) {
+            if (StringUtils.isNotEmpty(headerList.get(i))) {
                 endColumn++;
-            }else{
+            } else {
                 break;
             }
         }
@@ -680,7 +682,7 @@ public class CustomerBomImpl implements CustomerBomService {
         //2.获取表数据
         List<Map<String, String>> mapList = new ArrayList<Map<String, String>>();
         List<CustomerBom> listBody = customerBomList.stream().filter(s -> s.getBomType() == 0).collect(Collectors.toList());
-        for(int j = 0; j < listBody.size(); j++){
+        for (int j = 0; j < listBody.size(); j++) {
             List<String> resultList = new ArrayList<String>();
             CustomerBom oBody = listBody.get(j);
             resultList = bomPropToList(resultList, oBody);  //将CustomerBom的BomProp属性按顺序存入List集合中
@@ -697,20 +699,20 @@ public class CustomerBomImpl implements CustomerBomService {
 //            resultList.add(oBody.getfAuxPriceDiscountTotal()!=null ? oBody.getfAuxPriceDiscountTotal().toString() : "0.000000");
 
             Map<String, String> mapBody = new HashMap<String, String>();
-            mapBody.put("CusBomId", (oBody.getId()!=null?oBody.getId().toString():""));
-            for(int k = 0; k < resultList.size(); k++){
+            mapBody.put("CusBomId", (oBody.getId() != null ? oBody.getId().toString() : ""));
+            for (int k = 0; k < resultList.size(); k++) {
                 mapBody.put(headerList.get(k), resultList.get(k));
             }
             //20190114-fyx
-            mapBody.put("checkStatus", (oBody.getCheckStatus()!=null ? oBody.getCheckStatus().toString() : "0"));
+            mapBody.put("checkStatus", (oBody.getCheckStatus() != null ? oBody.getCheckStatus().toString() : "0"));
             //20191017-sxw
             mapBody.put("checkCode", oBody.getCheckCode());//选中的物料号
             mapBody.put("mateCategory", oBody.getMateCategory());//需要筛选的物料大类
-            mapBody.put("fStockQty", oBody.getfStockQty()!=null ? this.decimalToInt(oBody.getfStockQty().toString()) : "0");//库存数量
-            mapBody.put("fStockPrice", oBody.getfStockPrice()!=null ? oBody.getfStockPrice().toString() : "0.000000");//库存单价
-            mapBody.put("fStockPriceTotal", oBody.getfStockPriceTotal()!=null ? oBody.getfStockPriceTotal().toString() : "0.000000");//库存金额
-            mapBody.put("fAuxPriceDiscount", oBody.getfAuxPriceDiscount()!=null ? oBody.getfAuxPriceDiscount().toString() : "0.000000");//最新采购价
-            mapBody.put("fAuxPriceDiscountTotal", oBody.getfAuxPriceDiscountTotal()!=null ? oBody.getfAuxPriceDiscountTotal().toString() : "0.000000");//最新采购金额
+            mapBody.put("fStockQty", oBody.getfStockQty() != null ? this.decimalToInt(oBody.getfStockQty().toString()) : "0");//库存数量
+            mapBody.put("fStockPrice", oBody.getfStockPrice() != null ? oBody.getfStockPrice().toString() : "0.000000");//库存单价
+            mapBody.put("fStockPriceTotal", oBody.getfStockPriceTotal() != null ? oBody.getfStockPriceTotal().toString() : "0.000000");//库存金额
+            mapBody.put("fAuxPriceDiscount", oBody.getfAuxPriceDiscount() != null ? oBody.getfAuxPriceDiscount().toString() : "0.000000");//最新采购价
+            mapBody.put("fAuxPriceDiscountTotal", oBody.getfAuxPriceDiscountTotal() != null ? oBody.getfAuxPriceDiscountTotal().toString() : "0.000000");//最新采购金额
             mapList.add(mapBody);
         }
 
@@ -723,8 +725,8 @@ public class CustomerBomImpl implements CustomerBomService {
     }
 
     //将CustomerBom的BomProp属性按顺序存入List集合中
-    private List<String> bomPropToList(List<String> list, CustomerBom customerBom){
-        if(customerBom != null){
+    private List<String> bomPropToList(List<String> list, CustomerBom customerBom) {
+        if (customerBom != null) {
             list.add(customerBom.getBomProp());
             list.add(customerBom.getBomProp2());
             list.add(customerBom.getBomProp3());
@@ -751,24 +753,24 @@ public class CustomerBomImpl implements CustomerBomService {
 
     //保存上传参数
     private void saveBomParams(String standardCol, String categoryCol, String nameCol, String quantityCol, String packageCol,
-                               String makerCol,String brandNumberCol,String placeNumberCol,Integer isCustomer,Integer bomNumber,Float bomCheck,Float bomLimit,Integer bomLimitNum,Integer bsSortPlan,
-                               String splitList,String fileId, SysUser currUser) throws Exception {
+                               String makerCol, String brandNumberCol, String placeNumberCol, Integer isCustomer, Integer bomNumber, Float bomCheck, Float bomLimit, Integer bomLimitNum, Integer bsSortPlan,
+                               String splitList, String fileId, SysUser currUser) throws Exception {
         //保存上传的参数
 
-        List<BomParams> bomParamsList = bomParamsDao.findByFileId( Long.parseLong(fileId));
+        List<BomParams> bomParamsList = bomParamsDao.findByFileId(Long.parseLong(fileId));
 
         BomParams bomParams = new BomParams();
-        if(bomParamsList.size()>0){
+        if (bomParamsList.size() > 0) {
             //如果存在就修改参数
             bomParams = bomParamsList.get(0);
 //            bomParams.setId(bomParamsList.get(0).getId());
 //            bomParams.setCreatedTime(bomParamsList.get(0).getCreatedTime());
             bomParams.setModifiedTime(new Date());
-            bomParams.setPkModifiedBy((currUser!=null) ? (currUser.getId()) : null);
-        }else{
+            bomParams.setPkModifiedBy((currUser != null) ? (currUser.getId()) : null);
+        } else {
             bomParams.setFileId(Long.parseLong(fileId));
             bomParams.setCreatedTime(new Date());
-            bomParams.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+            bomParams.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
         }
 
         bomParams.setStandardCol(standardCol);
@@ -784,18 +786,18 @@ public class CustomerBomImpl implements CustomerBomService {
         bomParams.setBomCheck(bomCheck);
         bomParams.setBomLimit(bomLimit);
         bomParams.setBomLimitNum(bomLimitNum);
-        bomParams.setBsSortPlan(bsSortPlan!=null ? bsSortPlan : 0);
+        bomParams.setBsSortPlan(bsSortPlan != null ? bsSortPlan : 0);
         bomParams.setCheckList(splitList);
 
         bomParamsDao.save(bomParams);
         ///--end-保存上传的参数
-	}
+    }
 
     //根据fileId获取客户BOM参数配置
     private BomParams getBomParams(Long fileId) throws Exception {
-    	BomParams bomParams = new BomParams();
+        BomParams bomParams = new BomParams();
         List<BomParams> bomParamsList = bomParamsDao.findByFileId(fileId);
-        if(bomParamsList.size() == 0){
+        if (bomParamsList.size() == 0) {
             return bomParams;
         }
         bomParams = bomParamsList.get(0);
@@ -804,6 +806,7 @@ public class CustomerBomImpl implements CustomerBomService {
 
     /**
      * 获取物料匹配数据
+     *
      * @param cusBomId
      * @param matchNum
      * @param topNum
@@ -812,8 +815,8 @@ public class CustomerBomImpl implements CustomerBomService {
      */
     @Override
     @Transactional
-    public ApiResponseResult getBomMatch(Long cusBomId,String mateCategory, Float matchNum, Integer topNum, Float settingValue) throws Exception{
-        if(cusBomId == null){
+    public ApiResponseResult getBomMatch(Long cusBomId, String mateCategory, Float matchNum, Integer topNum, Float settingValue) throws Exception {
+        if (cusBomId == null) {
             return ApiResponseResult.failure("客户BOM表ID不能为空！");
         }
         SysUser currUser = UserUtil.getCurrUser();  //获取当前用户
@@ -836,31 +839,31 @@ public class CustomerBomImpl implements CustomerBomService {
         boolean isNew = false;  //是否重新匹配
         CustomerBom customerBom = customerBomDao.findById((long) cusBomId);
         String cateOld = customerBom.getMateCategory();  //原来的筛选大类
-        if(cateOld == null){
+        if (cateOld == null) {
             isNew = mateCategory == null ? false : true;
-        }else{
+        } else {
             isNew = cateOld.equals(mateCategory) ? false : true;
         }
 
         //20190301-mateCategory匹配的大类如果不为空则保存到cusBom里面去
-        if(mateCategory != null && mateCategory.length() != 0) {
-        	customerBomDao.updateCategoryById(cusBomId, mateCategory);
+        if (mateCategory != null && mateCategory.length() != 0) {
+            customerBomDao.updateCategoryById(cusBomId, mateCategory);
         }
 
         //判断该物料是否已经匹配过数据
         //1.如果已经匹配过了，直接获取匹配过的数据返回
         List<CustomerBomMatch> customerBomMatchList = customerBomMatchDao.findByIsDelAndAndCusBomIdOrderByIdAsc(BasicStateEnum.FALSE.intValue(), cusBomId);
-        if(customerBomMatchList.size() > 0){
+        if (customerBomMatchList.size() > 0) {
             //1.1匹配大类发生有变化，删除原来匹配的数据
-            if(isNew){
-                for(CustomerBomMatch item : customerBomMatchList){
+            if (isNew) {
+                for (CustomerBomMatch item : customerBomMatchList) {
                     item.setIsDel(BasicStateEnum.TRUE.intValue());
                     item.setModifiedTime(new Date());
-                    item.setPkModifiedBy((currUser!=null) ? (currUser.getId()) : null);
-                    item.setModifiedName((currUser!=null) ? (currUser.getUserName()) : null);
+                    item.setPkModifiedBy((currUser != null) ? (currUser.getId()) : null);
+                    item.setModifiedName((currUser != null) ? (currUser.getUserName()) : null);
                 }
                 customerBomMatchDao.saveAll(customerBomMatchList);
-            }else{
+            } else {
                 //1.2匹配大类没有发生变化
                 //1.2.1统计当前导入的客户BOM的成本总价格
                 List<CustomerBom> listBody = customerBomDao.findByIsDelAndFileIdAndBomType(BasicStateEnum.FALSE.intValue(), customerBom.getFileId(), 0);
@@ -890,12 +893,12 @@ public class CustomerBomImpl implements CustomerBomService {
 
     //匹配数据，获取从K3物料表匹配到的前几条数据
     //匹配规则：先通过大类筛选出相应的物料，再按类别、品牌料号、规格这样的顺序进行匹配
-    @Transactional(propagation= Propagation.REQUIRED)
-    public ApiResponseResult getK3MatchResult(Long cusBomId, Float matchNum, Integer topNum, Float settingValue, SysUser currUser, String mateCategory){
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ApiResponseResult getK3MatchResult(Long cusBomId, Float matchNum, Integer topNum, Float settingValue, SysUser currUser, String mateCategory) {
         String modelValue = ""; //物料规格
         //1.获取客户BOM单个物料表数据
         CustomerBom customerBom = customerBomDao.findById((long) cusBomId);
-        if(customerBom == null){
+        if (customerBom == null) {
             return ApiResponseResult.failure("客户BOM不存在！");
         }
         customerBom.setCheckStatus(0);   //匹配前将CheckStatus改为0
@@ -903,23 +906,23 @@ public class CustomerBomImpl implements CustomerBomService {
         //2.获取客户BOM表头
         List<CustomerBom> customerBomList = customerBomDao.findByIsDelAndFileIdAndBomType(BasicStateEnum.FALSE.intValue(), customerBom.getFileId(), 1);
         CustomerBom customerBom2 = customerBomList.get(0);
-        if(customerBom2 == null){
+        if (customerBom2 == null) {
             return ApiResponseResult.failure("客户BOM不存在！");
         }
         //3.获取客户BOM参数数据
         List<BomParams> bomParamsList = bomParamsDao.findByIsDelAndFileIdOrderByIdDesc(BasicStateEnum.FALSE.intValue(), customerBom.getFileId());
-        if(bomParamsList.size() <= 0){
+        if (bomParamsList.size() <= 0) {
             return ApiResponseResult.failure("如果筛选大类选择完，则点击开始匹配K3数据；否则，继续选择筛选大类！");
         }
         BomParams bomParams = bomParamsList.get(0);
-        if(bomParams == null){
+        if (bomParams == null) {
             return ApiResponseResult.failure("如果筛选大类选择完，则点击开始匹配K3数据；否则，继续选择筛选大类！");
         }
         //获取排序方案，供后面排序使用
-        int sortPlan = bomParams.getBsSortPlan()!= null ? bomParams.getBsSortPlan() : 0;
+        int sortPlan = bomParams.getBsSortPlan() != null ? bomParams.getBsSortPlan() : 0;
         float sortPlanNum = (float) 0.8;
         List<Setting> settingList = settingDao.findByIsDelAndCode(BasicStateEnum.FALSE.intValue(), SettingsStateEnum.CUSTOMER_SORT_PLAN.stringValue());
-        if(settingList.size() > 0 && settingList.get(0) != null){
+        if (settingList.size() > 0 && settingList.get(0) != null) {
             sortPlanNum = StringUtils.isNotEmpty(settingList.get(0).getValue()) ? Float.valueOf(settingList.get(0).getValue()) : (float) 0.8;
         }
 
@@ -936,13 +939,13 @@ public class CustomerBomImpl implements CustomerBomService {
         List<CustomerBomMatch> mapList = new ArrayList<CustomerBomMatch>();
         List<MaterielInfo> materielInfoK3List = new ArrayList<MaterielInfo>();
         //20190311-Shen 判断IsCustomer是否需要查询客供料，IsCustomer为1是全部匹配，否则不匹配客供料
-        if(bomParams.getIsCustomer() != null && bomParams.getIsCustomer() == 1){
+        if (bomParams.getIsCustomer() != null && bomParams.getIsCustomer() == 1) {
             materielInfoK3List = materielInfoDao.findAllByIsDelAndIsBanOrderByIdAsc(BasicStateEnum.FALSE.intValue(), 0);
-        }else{
+        } else {
             materielInfoK3List = getMateWithCategory();
         }
         //20190306-Shen 通过“大类”筛选K3物料
-        if(StringUtils.isNotEmpty(mateCategory)){
+        if (StringUtils.isNotEmpty(mateCategory)) {
             materielInfoK3List = materielInfoK3List.stream().filter(s -> mateCategory.equals(s.getCateNumberFirst())).collect(Collectors.toList());
             //materielInfoK3List = materielInfoK3List.stream().filter(s -> mateCategory.equals(s.getCategoryNumber())).collect(Collectors.toList());
         }
@@ -957,13 +960,13 @@ public class CustomerBomImpl implements CustomerBomService {
         cal.setTime(dateStart);
         //获取上一个月的年份和月份
         cal.add(Calendar.MONTH, -1);
-        int year =  cal.get(Calendar.YEAR);
-        int month =  cal.get(Calendar.MONTH) + 1;
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
         List<StockPriceSrm> stockList = stockPriceSrmDao.findByIsDelAndBsYearAndBsPeriod(BasicStateEnum.FALSE.intValue(), year, month);
-        if(stockList.size() <= 0){
+        if (stockList.size() <= 0) {
             cal.add(Calendar.MONTH, -1);
-            year =  cal.get(Calendar.YEAR);
-            month =  cal.get(Calendar.MONTH) + 1;
+            year = cal.get(Calendar.YEAR);
+            month = cal.get(Calendar.MONTH) + 1;
             stockList = stockPriceSrmDao.findByIsDelAndBsYearAndBsPeriod(BasicStateEnum.FALSE.intValue(), year, month);
         }
 
@@ -972,30 +975,31 @@ public class CustomerBomImpl implements CustomerBomService {
         //20190711-Shen 初始化当前品牌料号的匹配数据
         List<CustomerBomMatch> listWithBrand = new ArrayList<CustomerBomMatch>();
         //获取匹配值高于某值的物料
-        for(MaterielInfo mk:materielInfoK3List){
+        for (MaterielInfo mk : materielInfoK3List) {
             //float ratio = lt.getSimilarityRatio(modelValue, mk.getMateModel());
             float ratio = getSimilarityRatioWithModel(modelValue, mk.getMateModel(), bomParams, cateValue);
-            if(Float.compare(ratio, sortPlanNum) >= 0){
+            if (Float.compare(ratio, sortPlanNum) >= 0) {
                 ratioFlag = true;
             }
-            if(Float.compare(ratio, matchNum) >= 0){
+            if (Float.compare(ratio, matchNum) >= 0) {
                 //20190416-Shen 获取库存价格和库存数量 start
                 List<StockPriceSrm> stockItemList = stockList.stream().filter(s -> s.getBsNumber() != null).filter(s -> s.getBsNumber().trim().equals(mk.getMateK3Code())).collect(Collectors.toList());
-                StockPriceSrm stockItem = (stockItemList!=null&&stockItemList.size()>0) ? stockItemList.get(0) : new StockPriceSrm();
+                StockPriceSrm stockItem = (stockItemList != null && stockItemList.size() > 0) ? stockItemList.get(0) : new StockPriceSrm();
                 BigDecimal fStockPrice = stockItem.getBsPrice();  //库存价格
                 BigDecimal fStockQty = mk.getfStockQty();  //库存数量
-                if(fStockQty==null || fStockQty.compareTo(BigDecimal.ZERO)<=0){
+                if (fStockQty == null || fStockQty.compareTo(BigDecimal.ZERO) <= 0) {
                     fStockQty = new BigDecimal(0);
                 }
                 //end
                 CustomerBomMatch customerBomMatch = new CustomerBomMatch();
                 customerBomMatch.setCreatedTime(new Date());
-                customerBomMatch.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+                customerBomMatch.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
                 customerBomMatch.setCusBomId(cusBomId);
                 customerBomMatch.setBomParamsId(bomParams.getId());
                 customerBomMatch.setFileId(customerBom.getFileId());
                 customerBomMatch.setRatio(ratio);
-                customerBomMatch.setfItemId(mk.getMateK3Id());;
+                customerBomMatch.setfItemId(mk.getMateK3Id());
+                ;
                 customerBomMatch.setfNumber(mk.getMateK3Code());
                 customerBomMatch.setfName(mk.getMateName());
                 customerBomMatch.setfModel(mk.getMateModel());
@@ -1031,9 +1035,9 @@ public class CustomerBomImpl implements CustomerBomService {
                 customerBomMatch.setSmtPointsTotal((float) 0);
                 //end
                 //20190711-Shen 判断并筛选出当前品牌料号的CustomerBomMatch，添加至listWithBrand，其他的添加至mapList
-                if(StringUtils.isNotEmpty(brandValue) && StringUtils.equals(brandValue, customerBomMatch.getMateCusCode())){
+                if (StringUtils.isNotEmpty(brandValue) && StringUtils.equals(brandValue, customerBomMatch.getMateCusCode())) {
                     listWithBrand.add(customerBomMatch);
-                }else{
+                } else {
                     mapList.add(customerBomMatch);
                 }
             }
@@ -1041,21 +1045,21 @@ public class CustomerBomImpl implements CustomerBomService {
 
         //20191012
         //5.4排序，根据sortPlan和ratioFlag选择方案
-        if(sortPlan == 1 && !ratioFlag){
+        if (sortPlan == 1 && !ratioFlag) {
             //5.4.1 方案2--在方案1的基础上，当匹配率都小于0.8时，按库存数量、匹配率倒序排序（库存优先排序）
             //对listWithBrand排序
-            if(listWithBrand.size() > 1){
-                Collections.sort(listWithBrand, new Comparator<CustomerBomMatch>(){
+            if (listWithBrand.size() > 1) {
+                Collections.sort(listWithBrand, new Comparator<CustomerBomMatch>() {
                     @Override
                     public int compare(CustomerBomMatch o1, CustomerBomMatch o2) {
-                        if(o1.getfStockQty().compareTo(o2.getfStockQty()) < 0){
+                        if (o1.getfStockQty().compareTo(o2.getfStockQty()) < 0) {
                             return 1;
                         }
-                        if(o1.getfStockQty().compareTo(o2.getfStockQty()) == 0){
-                            if(Float.compare(o1.getRatio(), o2.getRatio()) < 0){
+                        if (o1.getfStockQty().compareTo(o2.getfStockQty()) == 0) {
+                            if (Float.compare(o1.getRatio(), o2.getRatio()) < 0) {
                                 return 1;
                             }
-                            if(Float.compare(o1.getRatio(), o2.getRatio()) == 0){
+                            if (Float.compare(o1.getRatio(), o2.getRatio()) == 0) {
                                 return 0;
                             }
                         }
@@ -1064,17 +1068,17 @@ public class CustomerBomImpl implements CustomerBomService {
                 });
             }
             //对mapList排序并获取匹配值前面的物料
-            Collections.sort(mapList, new Comparator<CustomerBomMatch>(){
+            Collections.sort(mapList, new Comparator<CustomerBomMatch>() {
                 @Override
                 public int compare(CustomerBomMatch o1, CustomerBomMatch o2) {
-                    if(o1.getfStockQty().compareTo(o2.getfStockQty()) < 0){
+                    if (o1.getfStockQty().compareTo(o2.getfStockQty()) < 0) {
                         return 1;
                     }
-                    if(o1.getfStockQty().compareTo(o2.getfStockQty()) == 0){
-                        if(Float.compare(o1.getRatio(), o2.getRatio()) < 0){
+                    if (o1.getfStockQty().compareTo(o2.getfStockQty()) == 0) {
+                        if (Float.compare(o1.getRatio(), o2.getRatio()) < 0) {
                             return 1;
                         }
-                        if(Float.compare(o1.getRatio(), o2.getRatio()) == 0){
+                        if (Float.compare(o1.getRatio(), o2.getRatio()) == 0) {
                             return 0;
                         }
                     }
@@ -1082,21 +1086,21 @@ public class CustomerBomImpl implements CustomerBomService {
                     //return Float.compare(o1.getRatio(), o2.getRatio()) >= 0 ? -1 : 1;  //这种写法JDK7及以后的版本有问题
                 }
             });
-        }else{
+        } else {
             //5.4.2 方案1--按匹配率、库存数量倒序排序（匹配率优先排序）
             //对listWithBrand排序
-            if(listWithBrand.size() > 1){
-                Collections.sort(listWithBrand, new Comparator<CustomerBomMatch>(){
+            if (listWithBrand.size() > 1) {
+                Collections.sort(listWithBrand, new Comparator<CustomerBomMatch>() {
                     @Override
                     public int compare(CustomerBomMatch o1, CustomerBomMatch o2) {
-                        if(Float.compare(o1.getRatio(), o2.getRatio()) < 0){
+                        if (Float.compare(o1.getRatio(), o2.getRatio()) < 0) {
                             return 1;
                         }
-                        if(Float.compare(o1.getRatio(), o2.getRatio()) == 0){
-                            if(o1.getfStockQty().compareTo(o2.getfStockQty()) < 0){
+                        if (Float.compare(o1.getRatio(), o2.getRatio()) == 0) {
+                            if (o1.getfStockQty().compareTo(o2.getfStockQty()) < 0) {
                                 return 1;
                             }
-                            if(o1.getfStockQty().compareTo(o2.getfStockQty()) == 0){
+                            if (o1.getfStockQty().compareTo(o2.getfStockQty()) == 0) {
                                 return 0;
                             }
                         }
@@ -1106,17 +1110,17 @@ public class CustomerBomImpl implements CustomerBomService {
             }
 
             //对mapList排序并获取匹配值前面的物料
-            Collections.sort(mapList, new Comparator<CustomerBomMatch>(){
+            Collections.sort(mapList, new Comparator<CustomerBomMatch>() {
                 @Override
                 public int compare(CustomerBomMatch o1, CustomerBomMatch o2) {
-                    if(Float.compare(o1.getRatio(), o2.getRatio()) < 0){
+                    if (Float.compare(o1.getRatio(), o2.getRatio()) < 0) {
                         return 1;
                     }
-                    if(Float.compare(o1.getRatio(), o2.getRatio()) == 0){
-                        if(o1.getfStockQty().compareTo(o2.getfStockQty()) < 0){
+                    if (Float.compare(o1.getRatio(), o2.getRatio()) == 0) {
+                        if (o1.getfStockQty().compareTo(o2.getfStockQty()) < 0) {
                             return 1;
                         }
-                        if(o1.getfStockQty().compareTo(o2.getfStockQty()) == 0){
+                        if (o1.getfStockQty().compareTo(o2.getfStockQty()) == 0) {
                             return 0;
                         }
                     }
@@ -1125,10 +1129,10 @@ public class CustomerBomImpl implements CustomerBomService {
                 }
             });
         }
-        mapList = mapList.subList(0, topNum<=mapList.size()?topNum:mapList.size());
+        mapList = mapList.subList(0, topNum <= mapList.size() ? topNum : mapList.size());
 
         //20190711-Shen 将前面筛选出的当前品牌料号的CustomerBomMatch添加到mapList的头部，然后再进行后面的价格计算和选中操作
-        if(listWithBrand.size() > 0){
+        if (listWithBrand.size() > 0) {
             mapList.addAll(0, listWithBrand);
         }
 
@@ -1156,10 +1160,10 @@ public class CustomerBomImpl implements CustomerBomService {
 //                }
 //            }
 //        }
-        if(mapList.size() > 0){
+        if (mapList.size() > 0) {
             CustomerBomMatch o = mapList.get(0);
             //比较匹配到的物料中匹配率最高的一位，如果它的匹配率大于设置里的匹配率，则自动选中；否则不选中
-            if(settingValue.compareTo(o.getRatio()) <= 0){
+            if (settingValue.compareTo(o.getRatio()) <= 0) {
                 o.setCheckStatus(1);
                 //计算价格、SMT点数
                 //BigDecimal qtyValue = new BigDecimal(0);  //物料数量
@@ -1172,7 +1176,7 @@ public class CustomerBomImpl implements CustomerBomService {
         customerBomDao.save(customerBom);
 
         //7.保存
-        if(mapList.size() > 0){
+        if (mapList.size() > 0) {
             customerBomMatchDao.saveAll(mapList);
         }
 
@@ -1180,7 +1184,7 @@ public class CustomerBomImpl implements CustomerBomService {
     }
 
     //获取BOM单个物料规格
-    private String getModelValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams){
+    private String getModelValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams) {
         //物料规格
         String modelValue = "";
         //物料规格的属性名称
@@ -1189,17 +1193,17 @@ public class CustomerBomImpl implements CustomerBomService {
         //1.获取CustomerBom的所有属性名称
         Field[] fields = customerBom2.getClass().getDeclaredFields();
         String[] fieldNames = new String[fields.length];
-        for(int i=0;i<fields.length;i++){
-            fieldNames[i]=fields[i].getName();
+        for (int i = 0; i < fields.length; i++) {
+            fieldNames[i] = fields[i].getName();
         }
 
         //2.获取BomParams规格列的名称
         String standardCol = bomParams.getStandardCol();
 
         //3.获取物料规格的属性名称
-        for(int i = 0; i < fieldNames.length; i++){
+        for (int i = 0; i < fieldNames.length; i++) {
             Object object = getFieldValueByName(fieldNames[i], customerBom2);
-            if(object != null && standardCol.equals(object.toString())){
+            if (object != null && standardCol.equals(object.toString())) {
                 modelName = fieldNames[i];
                 break;
             }
@@ -1213,7 +1217,7 @@ public class CustomerBomImpl implements CustomerBomService {
     }
 
     //获取BOM单个物料类别
-    private String getCateValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams){
+    private String getCateValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams) {
         //类别
         String cateValue = "";
         //类别的属性名称
@@ -1222,17 +1226,17 @@ public class CustomerBomImpl implements CustomerBomService {
         //1.获取CustomerBom的所有属性名称
         Field[] fields = customerBom2.getClass().getDeclaredFields();
         String[] fieldNames = new String[fields.length];
-        for(int i=0;i<fields.length;i++){
-            fieldNames[i]=fields[i].getName();
+        for (int i = 0; i < fields.length; i++) {
+            fieldNames[i] = fields[i].getName();
         }
 
         //2.获取BomParams类别列的名称
         String categoryCol = bomParams.getCategoryCol();
 
         //3.获取物料类别的属性名称
-        for(int i = 0; i < fieldNames.length; i++){
+        for (int i = 0; i < fieldNames.length; i++) {
             Object object = getFieldValueByName(fieldNames[i], customerBom2);
-            if(object != null && categoryCol.equals(object.toString())){
+            if (object != null && categoryCol.equals(object.toString())) {
                 cateName = fieldNames[i];
                 break;
             }
@@ -1246,7 +1250,7 @@ public class CustomerBomImpl implements CustomerBomService {
     }
 
     //获取BOM单个物料品牌料号
-    private String getBrandValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams){
+    private String getBrandValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams) {
         //品牌料号
         String brandValue = "";
         //品牌料号的属性名称
@@ -1255,17 +1259,17 @@ public class CustomerBomImpl implements CustomerBomService {
         //1.获取CustomerBom的所有属性名称
         Field[] fields = customerBom2.getClass().getDeclaredFields();
         String[] fieldNames = new String[fields.length];
-        for(int i=0;i<fields.length;i++){
-            fieldNames[i]=fields[i].getName();
+        for (int i = 0; i < fields.length; i++) {
+            fieldNames[i] = fields[i].getName();
         }
 
         //2.获取BomParams品牌料号列的名称
         String brandNumberCol = bomParams.getBrandNumberCol();
 
         //3.获取物料品牌料号的属性名称
-        for(int i = 0; i < fieldNames.length; i++){
+        for (int i = 0; i < fieldNames.length; i++) {
             Object object = getFieldValueByName(fieldNames[i], customerBom2);
-            if(object != null && brandNumberCol.equals(object.toString())){
+            if (object != null && brandNumberCol.equals(object.toString())) {
                 brandName = fieldNames[i];
                 break;
             }
@@ -1279,7 +1283,7 @@ public class CustomerBomImpl implements CustomerBomService {
     }
 
     //获取BOM单个物料封装
-    private String getPackageValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams){
+    private String getPackageValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams) {
         //封装
         String packageValue = "";
         //封装的属性名称
@@ -1288,17 +1292,17 @@ public class CustomerBomImpl implements CustomerBomService {
         //1.获取CustomerBom的所有属性名称
         Field[] fields = customerBom2.getClass().getDeclaredFields();
         String[] fieldNames = new String[fields.length];
-        for(int i=0;i<fields.length;i++){
-            fieldNames[i]=fields[i].getName();
+        for (int i = 0; i < fields.length; i++) {
+            fieldNames[i] = fields[i].getName();
         }
 
         //2.获取BomParams封装列的名称
         String packageCol = bomParams.getPackageCol();
 
         //3.获取物料封装的属性名称
-        for(int i = 0; i < fieldNames.length; i++){
+        for (int i = 0; i < fieldNames.length; i++) {
             Object object = getFieldValueByName(fieldNames[i], customerBom2);
-            if(object != null && packageCol.equals(object.toString())){
+            if (object != null && packageCol.equals(object.toString())) {
                 packageName = fieldNames[i];
                 break;
             }
@@ -1316,8 +1320,8 @@ public class CustomerBomImpl implements CustomerBomService {
         try {
             String firstLetter = fieldName.substring(0, 1).toUpperCase();
             String getter = "get" + firstLetter + fieldName.substring(1);
-            Method method = o.getClass().getMethod(getter, new Class[] {});
-            Object value = method.invoke(o, new Object[] {});
+            Method method = o.getClass().getMethod(getter, new Class[]{});
+            Object value = method.invoke(o, new Object[]{});
             return value;
         } catch (Exception e) {
             return null;
@@ -1327,19 +1331,20 @@ public class CustomerBomImpl implements CustomerBomService {
 
     /**
      * 获取客户BOM历史记录
+     *
      * @param pageRequest
      * @return
      * @throws Exception
      */
     @Override
     @Transactional
-    public ApiResponseResult getBomList(String keyWord, PageRequest pageRequest) throws Exception{
+    public ApiResponseResult getBomList(String keyWord, PageRequest pageRequest) throws Exception {
         //查询客户BOM的表头
         List<SearchFilter> filters = new ArrayList<SearchFilter>();
         filters.add(new SearchFilter("isDel", SearchFilter.Operator.EQ, BasicStateEnum.FALSE.intValue()));
         filters.add(new SearchFilter("bomType", SearchFilter.Operator.EQ, 1));
         List<SearchFilter> filters1 = new ArrayList<SearchFilter>();
-        if(StringUtils.isNotEmpty(keyWord)){
+        if (StringUtils.isNotEmpty(keyWord)) {
             //可以根据文件名称、BOM编号、备注进行模糊匹配
             filters1.add(new SearchFilter("fileName", SearchFilter.Operator.LIKE, keyWord));
             filters1.add(new SearchFilter("bomCode", SearchFilter.Operator.LIKE, keyWord));
@@ -1354,10 +1359,10 @@ public class CustomerBomImpl implements CustomerBomService {
 
         List<CustomerBom> list = page.getContent();
         List<Map<String, Object>> mapList = new ArrayList<Map<String, Object>>();
-        for(int i = 0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             CustomerBom customerBom = list.get(i);
             Map<String, Object> map = new HashMap<>();
-            map.put("id",  customerBom.getId());
+            map.put("id", customerBom.getId());
 
             //时间格式化
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
@@ -1373,11 +1378,11 @@ public class CustomerBomImpl implements CustomerBomService {
             //如果创建人和修改人的名称为空，则根据ID获取创建人和修改人名称
             String createdName = customerBom.getCreatedName();
             String modifiedName = customerBom.getModifiedName();
-            if(StringUtils.isEmpty(createdName) && customerBom.getPkCreatedBy() != null){
+            if (StringUtils.isEmpty(createdName) && customerBom.getPkCreatedBy() != null) {
                 List<SysUser> userCreated = sysUserDao.findById((long) customerBom.getPkCreatedBy());
                 createdName = userCreated.get(0).getUserName();
             }
-            if(StringUtils.isEmpty(modifiedName) && customerBom.getPkModifiedBy() != null){
+            if (StringUtils.isEmpty(modifiedName) && customerBom.getPkModifiedBy() != null) {
                 List<SysUser> userModified = sysUserDao.findById((long) customerBom.getPkModifiedBy());
                 modifiedName = userModified.get(0).getUserName();
             }
@@ -1391,6 +1396,7 @@ public class CustomerBomImpl implements CustomerBomService {
 
     /**
      * 客户BOM添加备注
+     *
      * @param id
      * @param remark
      * @return
@@ -1398,12 +1404,12 @@ public class CustomerBomImpl implements CustomerBomService {
      */
     @Override
     @Transactional
-    public ApiResponseResult addRemark(Long id, String remark) throws Exception{
-        if(id == null){
+    public ApiResponseResult addRemark(Long id, String remark) throws Exception {
+        if (id == null) {
             return ApiResponseResult.failure("记录ID不能为空！");
         }
         CustomerBom o = customerBomDao.findById((long) id);
-        if(o == null){
+        if (o == null) {
             return ApiResponseResult.failure("客户BOM不存在！");
         }
         SysUser currUser = UserUtil.getCurrUser();
@@ -1418,62 +1424,63 @@ public class CustomerBomImpl implements CustomerBomService {
 
     /**
      * 删除BOM
+     *
      * @param fileId
      * @return
      * @throws Exception
      */
     @Override
     @Transactional
-    public ApiResponseResult delete(Long fileId) throws Exception{
-        if(fileId == null){
+    public ApiResponseResult delete(Long fileId) throws Exception {
+        if (fileId == null) {
             return ApiResponseResult.failure("文件ID不能为空！");
         }
         SysUser currUser = UserUtil.getCurrUser();  //获取当前用户
 
         //1.判断是否发起了询价，如果有则不允许删除
         List<CustomerBom> headerList = customerBomDao.findByIsDelAndFileIdAndBomType(0, fileId, 1);
-        if(headerList.size() < 0 && headerList.get(0) == null){
+        if (headerList.size() < 0 && headerList.get(0) == null) {
             return ApiResponseResult.failure("该客户BOM不存在或已删除！");
         }
         String bomCode = headerList.get(0).getBomCode();
         //1.1判断EnquiryBom表是否有询价信息
         int num = enquiryBomDao.countByIsDelAndBsFileCode(0, bomCode);
-        if(num > 0){
+        if (num > 0) {
             return ApiResponseResult.failure("该客户BOM已经询价，无法删除！");
         }
         //1.2判断Enquiry表是否有询价信息
         int num1 = enquiryDao.countByIsDelAndBsFileCode(0, bomCode);
-        if(num1 > 0){
+        if (num1 > 0) {
             return ApiResponseResult.failure("该客户BOM已经询价，无法删除！");
         }
 
         //删除关联文件
         FsFile fsFile = fsFileDao.findById((long) fileId);
-        if(fsFile != null){
+        if (fsFile != null) {
             fsFile.setIsDel(BasicStateEnum.TRUE.intValue());
             fsFile.setModifiedTime(new Date());
-            fsFile.setPkModifiedBy((currUser!=null) ? (currUser.getId()) : null);
+            fsFile.setPkModifiedBy((currUser != null) ? (currUser.getId()) : null);
             fsFileDao.save(fsFile);
         }
 
         //删除客户BOM表
         List<CustomerBom> customerBomList = customerBomDao.findByFileId(fileId);
-        for(int i = 0; i < customerBomList.size(); i++){
+        for (int i = 0; i < customerBomList.size(); i++) {
             CustomerBom customerBom = customerBomList.get(i);
             customerBom.setIsDel(BasicStateEnum.TRUE.intValue());
             customerBom.setModifiedTime(new Date());
-            customerBom.setPkModifiedBy((currUser!=null) ? (currUser.getId()) : null);
-            customerBom.setModifiedName((currUser!=null) ? (currUser.getUserName()) : null);
+            customerBom.setPkModifiedBy((currUser != null) ? (currUser.getId()) : null);
+            customerBom.setModifiedName((currUser != null) ? (currUser.getUserName()) : null);
             customerBomDao.save(customerBom);
         }
 
         //删除客户BOM的参数表
         List<BomParams> bomParamsList = bomParamsDao.findByFileId(fileId);
-        for(int j = 0; j < bomParamsList.size(); j++){
+        for (int j = 0; j < bomParamsList.size(); j++) {
             BomParams bomParams = bomParamsList.get(j);
             bomParams.setIsDel(BasicStateEnum.TRUE.intValue());
             bomParams.setModifiedTime(new Date());
-            bomParams.setPkModifiedBy((currUser!=null) ? (currUser.getId()) : null);
+            bomParams.setPkModifiedBy((currUser != null) ? (currUser.getId()) : null);
             bomParamsDao.save(bomParams);
         }
 
@@ -1482,14 +1489,15 @@ public class CustomerBomImpl implements CustomerBomService {
 
     /**
      * 获取客户BOM参数和列表
+     *
      * @param fileId
      * @return
      * @throws Exception
      */
     @Override
     @Transactional
-    public ApiResponseResult getBomData(Long fileId) throws Exception{
-        if(fileId == null){
+    public ApiResponseResult getBomData(Long fileId) throws Exception {
+        if (fileId == null) {
             return ApiResponseResult.failure("文件ID不能为空！");
         }
 
@@ -1505,7 +1513,7 @@ public class CustomerBomImpl implements CustomerBomService {
 
         //2.获取表头
         List<CustomerBom> listHeader = customerBomList.stream().filter(s -> s.getBomType() == 1).collect(Collectors.toList());
-        if(listHeader.size() <= 0){
+        if (listHeader.size() <= 0) {
             return ApiResponseResult.failure("获取信息有误！");
         }
         CustomerBom oHeader = listHeader.get(0);
@@ -1513,10 +1521,10 @@ public class CustomerBomImpl implements CustomerBomService {
         headerList = bomPropToList(headerList, oHeader);   //将CustomerBom的BomProp属性按顺序存入List集合中
 
         //循环判断在那一列结束，获取结束列前的数据
-        for(int i = 0; i < headerList.size(); i++){
-            if(StringUtils.isNotEmpty(headerList.get(i))){
+        for (int i = 0; i < headerList.size(); i++) {
+            if (StringUtils.isNotEmpty(headerList.get(i))) {
                 endColumn++;
-            }else{
+            } else {
                 break;
             }
         }
@@ -1535,7 +1543,7 @@ public class CustomerBomImpl implements CustomerBomService {
         //3.获取表数据
         List<Map<String, String>> mapList = new ArrayList<Map<String, String>>();
         List<CustomerBom> listBody = customerBomList.stream().filter(s -> s.getBomType() == 0).collect(Collectors.toList());
-        for(int j = 0; j < listBody.size(); j++){
+        for (int j = 0; j < listBody.size(); j++) {
             List<String> resultList = new ArrayList<String>();
             CustomerBom oBody = listBody.get(j);
             resultList = bomPropToList(resultList, oBody);  //将CustomerBom的BomProp属性按顺序存入List集合中
@@ -1552,20 +1560,20 @@ public class CustomerBomImpl implements CustomerBomService {
 //            resultList.add(oBody.getfAuxPriceDiscountTotal()!=null ? oBody.getfAuxPriceDiscountTotal().toString() : "0.000000");
 
             Map<String, String> mapBody = new HashMap<String, String>();
-            mapBody.put("CusBomId", (oBody.getId()!=null?oBody.getId().toString():""));
-            for(int k = 0; k < resultList.size(); k++){
+            mapBody.put("CusBomId", (oBody.getId() != null ? oBody.getId().toString() : ""));
+            for (int k = 0; k < resultList.size(); k++) {
                 mapBody.put(headerList.get(k), resultList.get(k));
             }
             //20190114-fyx
-            mapBody.put("checkStatus", (oBody.getCheckStatus()!=null ? oBody.getCheckStatus().toString() : "0"));
+            mapBody.put("checkStatus", (oBody.getCheckStatus() != null ? oBody.getCheckStatus().toString() : "0"));
             //20191017-sxw
             mapBody.put("checkCode", oBody.getCheckCode());//选中的物料号
             mapBody.put("mateCategory", oBody.getMateCategory());//需要筛选的物料大类
-            mapBody.put("fStockQty", oBody.getfStockQty()!=null ? this.decimalToInt(oBody.getfStockQty().toString()) : "0");//库存数量
-            mapBody.put("fStockPrice", oBody.getfStockPrice()!=null ? oBody.getfStockPrice().toString() : "0.000000");//库存单价
-            mapBody.put("fStockPriceTotal", oBody.getfStockPriceTotal()!=null ? oBody.getfStockPriceTotal().toString() : "0.000000");//库存金额
-            mapBody.put("fAuxPriceDiscount", oBody.getfAuxPriceDiscount()!=null ? oBody.getfAuxPriceDiscount().toString() : "0.000000");//最新采购价
-            mapBody.put("fAuxPriceDiscountTotal", oBody.getfAuxPriceDiscountTotal()!=null ? oBody.getfAuxPriceDiscountTotal().toString() : "0.000000");//最新采购金额
+            mapBody.put("fStockQty", oBody.getfStockQty() != null ? this.decimalToInt(oBody.getfStockQty().toString()) : "0");//库存数量
+            mapBody.put("fStockPrice", oBody.getfStockPrice() != null ? oBody.getfStockPrice().toString() : "0.000000");//库存单价
+            mapBody.put("fStockPriceTotal", oBody.getfStockPriceTotal() != null ? oBody.getfStockPriceTotal().toString() : "0.000000");//库存金额
+            mapBody.put("fAuxPriceDiscount", oBody.getfAuxPriceDiscount() != null ? oBody.getfAuxPriceDiscount().toString() : "0.000000");//最新采购价
+            mapBody.put("fAuxPriceDiscountTotal", oBody.getfAuxPriceDiscountTotal() != null ? oBody.getfAuxPriceDiscountTotal().toString() : "0.000000");//最新采购金额
             mapList.add(mapBody);
         }
 
@@ -1578,7 +1586,7 @@ public class CustomerBomImpl implements CustomerBomService {
         //20191012-sxw-获取排序方案限制比例
         float sortPlanNum = (float) 0.8;
         List<Setting> settingList = settingDao.findByIsDelAndCode(BasicStateEnum.FALSE.intValue(), SettingsStateEnum.CUSTOMER_SORT_PLAN.stringValue());
-        if(settingList.size() > 0 && settingList.get(0) != null){
+        if (settingList.size() > 0 && settingList.get(0) != null) {
             sortPlanNum = StringUtils.isNotEmpty(settingList.get(0).getValue()) ? Float.valueOf(settingList.get(0).getValue()) : (float) 0.8;
         }
 
@@ -1598,19 +1606,20 @@ public class CustomerBomImpl implements CustomerBomService {
      * 选中/取消匹配的物料
      * （1）修改CustomerBomMatch的checkStatus
      * （2）修改CustomerBom的checkStatus和计算各个价格的总和
+     *
      * @param id
      * @param checkStatus
      * @return
      * @throws Exception
      */
-	@Override
+    @Override
     @Transactional
-	public ApiResponseResult doCheckMateriel(Long id, int checkStatus) throws Exception {
-		if(id == null){
+    public ApiResponseResult doCheckMateriel(Long id, int checkStatus) throws Exception {
+        if (id == null) {
             return ApiResponseResult.failure("记录ID不能为空！");
         }
         CustomerBomMatch o = customerBomMatchDao.findById((long) id);
-        if(o == null){
+        if (o == null) {
             return ApiResponseResult.failure("匹配的物料不存在！");
         }
         SysUser currUser = UserUtil.getCurrUser();
@@ -1620,18 +1629,18 @@ public class CustomerBomImpl implements CustomerBomService {
         o.setModifiedTime(new Date());
         o.setPkModifiedBy((currUser != null) ? currUser.getId() : null);
         o.setModifiedName((currUser != null) ? currUser.getUserName() : null);
-        
+
         List<CustomerBomMatch> listAdd = new ArrayList<CustomerBomMatch>();
         //选中的话则取消别的选项
-        if(checkStatus == 1){
+        if (checkStatus == 1) {
             //获取所有列表
-            List<CustomerBomMatch> list = customerBomMatchDao.findByIsDelAndCheckStatusAndCusBomId(BasicStateEnum.FALSE.intValue(),1, o.getCusBomId());
+            List<CustomerBomMatch> list = customerBomMatchDao.findByIsDelAndCheckStatusAndCusBomId(BasicStateEnum.FALSE.intValue(), 1, o.getCusBomId());
 
-            for(CustomerBomMatch cus:list){
-            	if(cus.getId() != o.getId()){
-            		cus.setCheckStatus(0);
+            for (CustomerBomMatch cus : list) {
+                if (cus.getId() != o.getId()) {
+                    cus.setCheckStatus(0);
                     listAdd.add(cus);
-            	}
+                }
             }
         }
         listAdd.add(o);
@@ -1641,44 +1650,44 @@ public class CustomerBomImpl implements CustomerBomService {
         //（1）如果选中，则checkStatus为1；
         //（2）如果取消，则循环看是否还存在选中的，有则checkStatus为1，没有则checkStatus为0
         CustomerBom customerBom = new CustomerBom();
-        if(o.getCusBomId() != null){
+        if (o.getCusBomId() != null) {
             //2.1获取关联的CustomerBom
             customerBom = customerBomDao.findById((long) o.getCusBomId());
-            if(customerBom != null){
+            if (customerBom != null) {
                 //2.2获取表头CustomerBom信息
                 CustomerBom customerBomTitle = new CustomerBom();
                 List<CustomerBom> customerBomTitleList = customerBomDao.findByIsDelAndFileIdAndBomType(BasicStateEnum.FALSE.intValue(), o.getFileId(), 1);
-                if(customerBomTitleList.size() > 0){
+                if (customerBomTitleList.size() > 0) {
                     customerBomTitle = customerBomTitleList.get(0);
                 }
                 //物料数量
                 BigDecimal qtyValue = new BigDecimal(0);
                 //2.3获取参数表BomParams信息
                 List<BomParams> bomParamsList = bomParamsDao.findByIsDelAndFileIdOrderByIdDesc(BasicStateEnum.FALSE.intValue(), o.getFileId());
-                if(bomParamsList.size() > 0 && bomParamsList.get(0) != null){
+                if (bomParamsList.size() > 0 && bomParamsList.get(0) != null) {
                     BomParams bomParams = bomParamsList.get(0);
                     //qtyValue = getQtyValue(customerBom, customerBomTitle, bomParams);
                 }
 
                 //2.4修改CustomerBomMatch的checkStatus、修改checkCode和计算价格
-                if(checkStatus == 1){
+                if (checkStatus == 1) {
                     customerBom.setCheckStatus(1);
                     customerBom.setCheckCode(o.getfNumber());
                     //计算价格、SMT点数
                     customerBom = getPriceWithQty(o, customerBom);
                 }
-                if(checkStatus == 0){
+                if (checkStatus == 0) {
                     //获取CustomerBomMatch信息
-                    List<CustomerBomMatch> list2 = customerBomMatchDao.findByIsDelAndCheckStatusAndCusBomId(BasicStateEnum.FALSE.intValue(),1, o.getCusBomId());
-                    if(list2.size() > 0){
+                    List<CustomerBomMatch> list2 = customerBomMatchDao.findByIsDelAndCheckStatusAndCusBomId(BasicStateEnum.FALSE.intValue(), 1, o.getCusBomId());
+                    if (list2.size() > 0) {
                         customerBom.setCheckStatus(1);
                         customerBom.setCheckCode(list2.get(0).getfNumber());
                         //计算价格、SMT点数
                         CustomerBomMatch match2 = list2.get(0);
-                        if(match2 != null){
+                        if (match2 != null) {
                             customerBom = getPriceWithQty(match2, customerBom);
                         }
-                    }else{
+                    } else {
                         customerBom.setCheckStatus(0);
                         customerBom.setCheckCode(null);
                         //计算价格，此时所有价格为0
@@ -1728,29 +1737,29 @@ public class CustomerBomImpl implements CustomerBomService {
         map.put("bomList", customerBom);
         map.put("totalCost", mapCost);  //统计的成本总价格
         return ApiResponseResult.success().data(map);
-	}
+    }
 
-	//获取BOM单个物料数量
-	public BigDecimal getQtyValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams){
+    //获取BOM单个物料数量
+    public BigDecimal getQtyValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams) {
         String qtyName = "";
         String qtyValue = "";
         BigDecimal qtyNum = new BigDecimal(0);
 
-        try{
+        try {
             //1.获取CustomerBom的所有属性名称
             Field[] fields = customerBom2.getClass().getDeclaredFields();
             String[] fieldNames = new String[fields.length];
-            for(int i=0;i<fields.length;i++){
-                fieldNames[i]=fields[i].getName();
+            for (int i = 0; i < fields.length; i++) {
+                fieldNames[i] = fields[i].getName();
             }
 
             //2.获取BomParams数量列的名称
             String quantityCol = bomParams.getQuantityCol();
 
             //3.获取物料数量的属性名称
-            for(int j = 0; j < fieldNames.length; j++){
+            for (int j = 0; j < fieldNames.length; j++) {
                 Object object = getFieldValueByName(fieldNames[j], customerBom2);
-                if(object != null && quantityCol.equals(object.toString())){
+                if (object != null && quantityCol.equals(object.toString())) {
                     qtyName = fieldNames[j];
                     break;
                 }
@@ -1761,10 +1770,10 @@ public class CustomerBomImpl implements CustomerBomService {
             qtyValue = object2 != null ? object2.toString() : "";
 
             //5.转换成数字的格式
-            if(StringUtils.isNotEmpty(qtyValue)){
+            if (StringUtils.isNotEmpty(qtyValue)) {
                 qtyNum = new BigDecimal(qtyValue);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return qtyNum;
         }
 
@@ -1772,25 +1781,25 @@ public class CustomerBomImpl implements CustomerBomService {
     }
 
     //获取BOM单个物料位号
-    public String getPlaceNumberValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams){
+    public String getPlaceNumberValue(CustomerBom customerBom, CustomerBom customerBom2, BomParams bomParams) {
         String placeName = "";
         String placeValue = "";
 
-        try{
+        try {
             //1.获取CustomerBom的所有属性名称
             Field[] fields = customerBom2.getClass().getDeclaredFields();
             String[] fieldNames = new String[fields.length];
-            for(int i=0;i<fields.length;i++){
-                fieldNames[i]=fields[i].getName();
+            for (int i = 0; i < fields.length; i++) {
+                fieldNames[i] = fields[i].getName();
             }
 
             //2.获取BomParams位号列的名称
             String placeNumberColCol = bomParams.getPlaceNumberCol();
 
             //3.获取物料数量的属性名称
-            for(int j = 0; j < fieldNames.length; j++){
+            for (int j = 0; j < fieldNames.length; j++) {
                 Object object = getFieldValueByName(fieldNames[j], customerBom2);
-                if(object != null && placeNumberColCol.equals(object.toString())){
+                if (object != null && placeNumberColCol.equals(object.toString())) {
                     placeName = fieldNames[j];
                     break;
                 }
@@ -1800,7 +1809,7 @@ public class CustomerBomImpl implements CustomerBomService {
             Object object2 = getFieldValueByName(placeName, customerBom);
             placeValue = object2 != null ? object2.toString() : "";
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return placeValue;
         }
 
@@ -1808,9 +1817,9 @@ public class CustomerBomImpl implements CustomerBomService {
     }
 
     //计算customerBomMatchList所有单个物料总价格、SMT点数
-    public List<CustomerBomMatch> getPriceWithQtyAndBomNumber(List<CustomerBomMatch> customerBomMatchList, BigDecimal qtyValue, BomParams bomParams){
-	    try{
-	        for(CustomerBomMatch customerBomMatch : customerBomMatchList){
+    public List<CustomerBomMatch> getPriceWithQtyAndBomNumber(List<CustomerBomMatch> customerBomMatchList, BigDecimal qtyValue, BomParams bomParams) {
+        try {
+            for (CustomerBomMatch customerBomMatch : customerBomMatchList) {
                 //从CustomerBomMatch获取各个价格
                 BigDecimal fPrice = customerBomMatch.getfPrice();
                 BigDecimal fAuxPriceDiscount = customerBomMatch.getfAuxPriceDiscount();
@@ -1825,51 +1834,51 @@ public class CustomerBomImpl implements CustomerBomService {
                 BigDecimal fStockPrice = customerBomMatch.getfStockPrice();
                 Float smtPoints = customerBomMatch.getSmtPoints();
                 //获取套数（最少1套）,初始化两种格式，供后面计算使用
-                Integer bomNumber1 = bomParams.getBomNumber()!=null ? bomParams.getBomNumber() : 1;
+                Integer bomNumber1 = bomParams.getBomNumber() != null ? bomParams.getBomNumber() : 1;
                 BigDecimal bomNumber2 = new BigDecimal(bomNumber1);
 
                 //各个价格乘以数量qtyValue和套数得到单个物料总价格
-                if(fPrice != null){
+                if (fPrice != null) {
                     customerBomMatch.setfPrice(fPrice.multiply(qtyValue).multiply(bomNumber2));
                 }
-                if(fAuxPriceDiscount != null){//含税金额
+                if (fAuxPriceDiscount != null) {//含税金额
                     customerBomMatch.setfAuxPriceDiscountTotal(fAuxPriceDiscount.multiply(qtyValue).multiply(bomNumber2));
                 }
-                if(fPrice3MonthMax != null){
+                if (fPrice3MonthMax != null) {
                     customerBomMatch.setfPrice3MonthMax(fPrice3MonthMax.multiply(qtyValue).multiply(bomNumber2));
                 }
-                if(fAuxPrice3MonthMax != null){//含税金额
+                if (fAuxPrice3MonthMax != null) {//含税金额
                     customerBomMatch.setfAuxPrice3MonthMaxTotal(fAuxPrice3MonthMax.multiply(qtyValue).multiply(bomNumber2));
                 }
-                if(fPrice3MonthMin != null){
+                if (fPrice3MonthMin != null) {
                     customerBomMatch.setfPrice3MonthMin(fPrice3MonthMin.multiply(qtyValue).multiply(bomNumber2));
                 }
-                if(fAuxPrice3MonthMin != null){//含税金额
+                if (fAuxPrice3MonthMin != null) {//含税金额
                     customerBomMatch.setfAuxPrice3MonthMinTotal(fAuxPrice3MonthMin.multiply(qtyValue).multiply(bomNumber2));
                 }
-                if(price1 != null){
+                if (price1 != null) {
                     customerBomMatch.setPrice1Total(price1.multiply(qtyValue).multiply(bomNumber2));
                 }
-                if(price2 != null){
+                if (price2 != null) {
                     customerBomMatch.setPrice2Total(price2.multiply(qtyValue).multiply(bomNumber2));
                 }
-                if(price3 != null){
+                if (price3 != null) {
                     customerBomMatch.setPrice3Total(price3.multiply(qtyValue).multiply(bomNumber2));
                 }
-                if(price4 != null){
+                if (price4 != null) {
                     customerBomMatch.setPrice4Total(price4.multiply(qtyValue).multiply(bomNumber2));
                 }
-                if(fStockPrice != null){
+                if (fStockPrice != null) {
                     customerBomMatch.setfStockPriceTotal(fStockPrice.multiply(qtyValue).multiply(bomNumber2));
                 }
 
                 //各个物料的点数乘以数量qtyValue得到该物料总点数
-                if(smtPoints != null){
+                if (smtPoints != null) {
                     customerBomMatch.setSmtPointsTotal(smtPoints * qtyValue.floatValue() * bomNumber1);
                 }
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return customerBomMatchList;
         }
 
@@ -1877,8 +1886,8 @@ public class CustomerBomImpl implements CustomerBomService {
     }
 
     //根据CustomerBoomMatch价格信息计算CustomerBom的单个物料总价格、SMT点数
-    public CustomerBom getPriceWithQty(CustomerBomMatch customerBomMatch, CustomerBom customerBom){
-	    try{
+    public CustomerBom getPriceWithQty(CustomerBomMatch customerBomMatch, CustomerBom customerBom) {
+        try {
             //从CustomerBomMatch获取各个价格
             BigDecimal fPrice = customerBomMatch.getfPrice();//最新采购价
             BigDecimal fAuxPriceDiscount = customerBomMatch.getfAuxPriceDiscount();
@@ -1906,7 +1915,7 @@ public class CustomerBomImpl implements CustomerBomService {
 
             //20190306-Shen 客供料（03开头）不计入总的成本价格
             String fNumber = customerBomMatch.getfNumber();
-            if(fNumber != null && fNumber.startsWith("03.")){
+            if (fNumber != null && fNumber.startsWith("03.")) {
                 //此时价格全部为零
                 customerBom.setfPrice(new BigDecimal(0));
                 customerBom.setfAuxPriceDiscount(new BigDecimal(0));
@@ -1930,72 +1939,72 @@ public class CustomerBomImpl implements CustomerBomService {
                 customerBom.setfStockQty(new BigDecimal(0));
                 customerBom.setSmtPoints((float) 0);
                 customerBom.setSmtPointsTotal((float) 0);
-            }else{
-                if(fPrice != null){
+            } else {
+                if (fPrice != null) {
                     customerBom.setfPrice(fPrice);
                 }
-                if(fAuxPriceDiscount != null){
+                if (fAuxPriceDiscount != null) {
                     customerBom.setfAuxPriceDiscount(fAuxPriceDiscount);
                     customerBom.setfAuxPriceDiscountTotal(fAuxPriceDiscountTotal);
                 }
-                if(fPrice3MonthMax != null){
+                if (fPrice3MonthMax != null) {
                     customerBom.setfPrice3MonthMax(fPrice3MonthMax);
                 }
-                if(fAuxPrice3MonthMax != null){
+                if (fAuxPrice3MonthMax != null) {
                     customerBom.setfAuxPrice3MonthMax(fAuxPrice3MonthMax);
                     customerBom.setfAuxPrice3MonthMaxTotal(fAuxPrice3MonthMaxTotal);
                 }
-                if(fPrice3MonthMin != null){
+                if (fPrice3MonthMin != null) {
                     customerBom.setfPrice3MonthMin(fPrice3MonthMin);
                 }
-                if(fAuxPrice3MonthMin != null){
+                if (fAuxPrice3MonthMin != null) {
                     customerBom.setfAuxPrice3MonthMin(fAuxPrice3MonthMin);
                     customerBom.setfAuxPrice3MonthMinTotal(fAuxPrice3MonthMinTotal);
                 }
-                if(price1 != null){
+                if (price1 != null) {
                     customerBom.setPrice1(price1);
                     customerBom.setPrice1Total(price1Total);
                 }
-                if(price2 != null){
+                if (price2 != null) {
                     customerBom.setPrice2(price2);
                     customerBom.setPrice2Total(price2Total);
                 }
-                if(price3 != null){
+                if (price3 != null) {
                     customerBom.setPrice3(price3);
                     customerBom.setPrice3Total(price3Total);
                 }
-                if(price4 != null){
+                if (price4 != null) {
                     customerBom.setPrice4(price4);
                     customerBom.setPrice4Total(price4Total);
                 }
-                if(fStockPrice != null){
+                if (fStockPrice != null) {
                     customerBom.setfStockPrice(fStockPrice);
                     customerBom.setfStockPriceTotal(fStockPriceTotal);
                 }
-                if(fStockQty != null){
+                if (fStockQty != null) {
                     customerBom.setfStockQty(fStockQty);
                 }
             }
 
             //各个物料的点数乘以数量qtyValue得到该物料总点数
-            if(smtPoints != null){
+            if (smtPoints != null) {
                 customerBom.setSmtPoints(smtPoints);
                 customerBom.setSmtPointsTotal(smtPointsTotal);
             }
             //引脚数
-            if(smtFeetQty != null){
+            if (smtFeetQty != null) {
                 customerBom.setSmtFeetQty(smtFeetQty);
             }
-        }catch (Exception e){
-	        return customerBom;
+        } catch (Exception e) {
+            return customerBom;
         }
 
         return customerBom;
     }
 
     //根据fileId统计当前导入的客户BOM的成本总价格、总SMT点数
-    public Map<String, Object> getTotalCostPrice(List<CustomerBom> customerBomList){
-	    //需要返回的数据：物料总数，已选中的物料数，物料价格总和（6个价格）
+    public Map<String, Object> getTotalCostPrice(List<CustomerBom> customerBomList) {
+        //需要返回的数据：物料总数，已选中的物料数，物料价格总和（6个价格）
         Integer totalNum = 0;  //物料总数
         Integer chosenNum = 0;  //已选中的物料数
         BigDecimal fPrice = new BigDecimal(0);
@@ -2011,88 +2020,88 @@ public class CustomerBomImpl implements CustomerBomService {
         BigDecimal fStockPrice = new BigDecimal(0);
         Float smtPoints = new Float(0);
 
-        if(customerBomList != null){
+        if (customerBomList != null) {
             //1.获取物料总数
             totalNum = customerBomList.size();
 
-            for(int i = 0; i < customerBomList.size(); i++){
+            for (int i = 0; i < customerBomList.size(); i++) {
                 CustomerBom customerBom = customerBomList.get(i);
-                if(customerBom != null){
+                if (customerBom != null) {
                     //2.获取已选中的物料数
-                    if(customerBom.getCheckStatus() != null && customerBom.getCheckStatus() == 1){
+                    if (customerBom.getCheckStatus() != null && customerBom.getCheckStatus() == 1) {
                         chosenNum++;
                     }
 
                     //3.获取物料价格总和
                     //3.1 fPrice最新采购价总和（不含税）
                     BigDecimal price1 = customerBom.getfPrice();
-                    if(price1 != null){
+                    if (price1 != null) {
                         fPrice = fPrice.add(price1);
                     }
 
                     //3.2 fAuxPriceDiscount最新采购价总和（不含税）
                     BigDecimal price2 = customerBom.getfAuxPriceDiscountTotal();
-                    if(price2 != null){
+                    if (price2 != null) {
                         fAuxPriceDiscount = fAuxPriceDiscount.add(price2);
                     }
 
                     //3.3 fPrice3MonthMax3个月内的最高采购价总和（不含税）
                     BigDecimal price3 = customerBom.getfPrice3MonthMax();
-                    if(price3 != null){
+                    if (price3 != null) {
                         fPrice3MonthMax = fPrice3MonthMax.add(price3);
                     }
 
                     //3.4 fAuxPrice3MonthMax3个月内的最高采购价总和（含税）
                     BigDecimal price4 = customerBom.getfAuxPrice3MonthMaxTotal();
-                    if(price4 != null){
+                    if (price4 != null) {
                         fAuxPrice3MonthMax = fAuxPrice3MonthMax.add(price4);
                     }
 
                     //3.5 fPrice3MonthMin3个月内的最低采购价总和（不含税）
                     BigDecimal price5 = customerBom.getfPrice3MonthMin();
-                    if(price5 != null){
+                    if (price5 != null) {
                         fPrice3MonthMin = fPrice3MonthMin.add(price5);
                     }
 
                     //3.6 fAuxPrice3MonthMin3个月内的最低采购价总和（含税）
                     BigDecimal price6 = customerBom.getfAuxPrice3MonthMinTotal();
-                    if(price6 != null){
+                    if (price6 != null) {
                         fAuxPrice3MonthMin = fAuxPrice3MonthMin.add(price6);
                     }
 
                     //3.7 priceFirst价格1
                     BigDecimal price7 = customerBom.getPrice1Total();
-                    if(price7 != null){
+                    if (price7 != null) {
                         priceFirst = priceFirst.add(price7);
                     }
 
                     //3.8 priceSecond价格2
                     BigDecimal price8 = customerBom.getPrice2Total();
-                    if(price8 != null){
+                    if (price8 != null) {
                         priceSecond = priceSecond.add(price8);
                     }
 
                     //3.9 priceThird价格3
                     BigDecimal price9 = customerBom.getPrice3Total();
-                    if(price9 != null){
+                    if (price9 != null) {
                         priceThird = priceThird.add(price9);
                     }
 
                     //3.10 priceFour价格4
                     BigDecimal price10 = customerBom.getPrice4Total();
-                    if(price10 != null){
+                    if (price10 != null) {
                         priceFour = priceFour.add(price10);
                     }
 
                     //3.11 fStockPrice库存均价
                     BigDecimal price11 = customerBom.getfStockPriceTotal();
-                    if(price11 != null){
+                    if (price11 != null) {
                         fStockPrice = fStockPrice.add(price11);
                     }
 
                     //4.获取smtPoints物料SMT点数总和
                     Float points = customerBom.getSmtPointsTotal();
-                    if(points != null){
+                    if (points != null) {
                         smtPoints = smtPoints + points;
                     }
                 }
@@ -2122,6 +2131,7 @@ public class CustomerBomImpl implements CustomerBomService {
     /**
      * 生成新料询价和发送待办
      * bomIds为空时，获取BOM表里所有没选中的物料生成询价单；bomIds不为空时，获取bomIds的物料生成询价单
+     *
      * @param fileId
      * @param bomIds
      * @param todoerBy
@@ -2129,32 +2139,32 @@ public class CustomerBomImpl implements CustomerBomService {
      * @return
      * @throws Exception
      */
-	@Override
+    @Override
     @Transactional
-	public ApiResponseResult doSendTodo(Long fileId, String bomIds, Long todoerBy, Date startDate, Date endDate, String bsRemark) throws Exception {
-	    //1.文件ID和用户ID不能为空
-	    if(fileId == null){
-	        return ApiResponseResult.failure("文件ID不能为空！");
+    public ApiResponseResult doSendTodo(Long fileId, String bomIds, Long todoerBy, Date startDate, Date endDate, String bsRemark) throws Exception {
+        //1.文件ID和用户ID不能为空
+        if (fileId == null) {
+            return ApiResponseResult.failure("文件ID不能为空！");
         }
-        if(todoerBy == null){
-	        return ApiResponseResult.failure("用户ID不能为空！");
+        if (todoerBy == null) {
+            return ApiResponseResult.failure("用户ID不能为空！");
         }
         //2.对bomIds进行第一次非空判断
         //如果没有勾选物料，则获取BOM表里所有没选中的物料写入bomIds
-        if(StringUtils.isEmpty(bomIds)){
+        if (StringUtils.isEmpty(bomIds)) {
             List<CustomerBom> customerBomList = customerBomDao.findByIsDelAndFileIdAndBomTypeAndCheckStatus(BasicStateEnum.FALSE.intValue(), fileId, 0, 0);
-            for(int i = 0; i < customerBomList.size(); i++){
-                if(i == customerBomList.size() - 1){
+            for (int i = 0; i < customerBomList.size(); i++) {
+                if (i == customerBomList.size() - 1) {
                     bomIds += customerBomList.get(i).getId().toString();
-                }else{
+                } else {
                     bomIds += customerBomList.get(i).getId().toString() + ",";
                 }
             }
         }
         //3.对bomIds进行第二次非空判断
         //如果在获取BOM表数据之后，bomIds依然为空，则返回信息“不存在需要询价的物料！”
-        if(StringUtils.isEmpty(bomIds)){
-	        return ApiResponseResult.failure("不存在需要询价的物料！");
+        if (StringUtils.isEmpty(bomIds)) {
+            return ApiResponseResult.failure("不存在需要询价的物料！");
         }
         SysUser currUser = UserUtil.getCurrUser();  //获取当前用户
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -2162,16 +2172,16 @@ public class CustomerBomImpl implements CustomerBomService {
         List<CustomerBom> lb = customerBomDao.findByFileId(fileId);
         List<SysUser> todoUser = sysUserDao.findById((long) todoerBy);
 
-		//4.生产询价单主表
+        //4.生产询价单主表
         EnquiryCost enquiryCost = new EnquiryCost();
-	    enquiryCost.setCreatedTime(new Date());
-        enquiryCost.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
-	    enquiryCost.setBsCode("EQ-" + dateStr);  //编号格式：EQ-年月日时分秒
+        enquiryCost.setCreatedTime(new Date());
+        enquiryCost.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
+        enquiryCost.setBsCode("EQ-" + dateStr);  //编号格式：EQ-年月日时分秒
         enquiryCost.setBsTitle(lb.get(0).getFileName() + "的询价单");
         enquiryCost.setBsStatus(1);
-        if(startDate == null){
+        if (startDate == null) {
             enquiryCost.setBsStartDate(new Date());
-        }else{
+        } else {
             enquiryCost.setBsStartDate(startDate);
         }
         enquiryCost.setBsEndDate(endDate);
@@ -2187,7 +2197,7 @@ public class CustomerBomImpl implements CustomerBomService {
         //5.1获取客户BOM的ID集合
         String[] bomIdArray = bomIds.split(",");
         List<Long> bomIdList = new ArrayList<Long>();
-        for(int i = 0; i < bomIdArray.length; i++){
+        for (int i = 0; i < bomIdArray.length; i++) {
             bomIdList.add(Long.parseLong(bomIdArray[i]));
         }
         //5.1获取客户BOM有效数据
@@ -2195,7 +2205,7 @@ public class CustomerBomImpl implements CustomerBomService {
         List<List<String>> resultList = new ArrayList<List<String>>();  //初始化表内容（询价的物料数据）
         List<CustomerBom> listHeader = customerBomDao.findByIsDelAndFileIdAndBomType(BasicStateEnum.FALSE.intValue(), enquiryCost.getBsFileId(), 1);
         List<CustomerBom> listBody = customerBomDao.findByIsDelAndFileIdAndIdIn(BasicStateEnum.FALSE.intValue(), enquiryCost.getBsFileId(), bomIdList);
-        if(listHeader.size() <= 0 || listBody.size() < 0){
+        if (listHeader.size() <= 0 || listBody.size() < 0) {
             return ApiResponseResult.failure("获取信息有误！");
         }
         //表头
@@ -2238,11 +2248,11 @@ public class CustomerBomImpl implements CustomerBomService {
         eqTitle.setBsProp19(listHeader.get(0).getBomProp19());
         eqTitle.setBsProp20(listHeader.get(0).getBomProp20());
         eqTitle.setCreatedTime(new Date());
-        eqTitle.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+        eqTitle.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
         enquiryCostTitleDao.save(eqTitle);
         //表内容
         List<EnquiryCostDetail> eqDetailList = new ArrayList<>();
-        for(CustomerBom item : listBody){
+        for (CustomerBom item : listBody) {
             EnquiryCostDetail eqDetail = new EnquiryCostDetail();
             eqDetail.setBsEqId(enquiryCost.getId());
             eqDetail.setBsProp(item.getBomProp());
@@ -2266,25 +2276,25 @@ public class CustomerBomImpl implements CustomerBomService {
             eqDetail.setBsProp19(item.getBomProp19());
             eqDetail.setBsProp20(item.getBomProp20());
             eqDetail.setCreatedTime(new Date());
-            eqDetail.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+            eqDetail.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
             eqDetailList.add(eqDetail);
         }
         enquiryCostDetailDao.saveAll(eqDetailList);
 
-		//6.发送待办
-		TodoInfo todoInfo = new TodoInfo();
-		todoInfo.setBsType(BasicStateEnum.TODO_COST.intValue());
-		todoInfo.setBsRemark(bsRemark);
-		todoInfo.setBsUserId(todoerBy);
-		todoInfo.setBsTitle("新料询价");
-		todoInfo.setBsContent(lb.get(0).getFileName() + "的询价单");
-		todoInfo.setBsRouter("/enquiryCost/importEnquiry");
-		todoInfo.setBsReferId(enquiryCost.getId()); //关联ID
+        //6.发送待办
+        TodoInfo todoInfo = new TodoInfo();
+        todoInfo.setBsType(BasicStateEnum.TODO_COST.intValue());
+        todoInfo.setBsRemark(bsRemark);
+        todoInfo.setBsUserId(todoerBy);
+        todoInfo.setBsTitle("新料询价");
+        todoInfo.setBsContent(lb.get(0).getFileName() + "的询价单");
+        todoInfo.setBsRouter("/enquiryCost/importEnquiry");
+        todoInfo.setBsReferId(enquiryCost.getId()); //关联ID
 
-		return todoInfoService.add(todoInfo);
-	}
+        return todoInfoService.add(todoInfo);
+    }
 
-	//筛选物料（物料数据已从数据库中获取出来）
+    //筛选物料（物料数据已从数据库中获取出来）
     //根据品牌料号、类别、封装和规格关键字筛选物料数据
     //1.品牌料号——
     // （1）获取品牌料号，如果存在，则对品牌料号进行精准匹配，
@@ -2306,7 +2316,7 @@ public class CustomerBomImpl implements CustomerBomService {
     // （2）得到截取后的封装数据，筛选出相关物料；（对物料规格进行模糊匹配）
     // （3）截取封装字符串，如果有数据，再获取封装的数字部分，然后再去筛选物料，比较两次筛选结果，取多的一次
     // （4）截取封装字符串，如果匹配不到数据，则获取封装的数字部分，然后再去筛选物料
-    public List<MaterielInfo> sortMateFromList(List<MaterielInfo> mateList, String cateValue, String brandValue, String modelValue, String packageValue, BomParams bomParams){
+    public List<MaterielInfo> sortMateFromList(List<MaterielInfo> mateList, String cateValue, String brandValue, String modelValue, String packageValue, BomParams bomParams) {
 //        //1.品牌料号
 //        List<MaterielInfo> list_1 = new ArrayList<MaterielInfo>();
 //        if(StringUtils.isNotEmpty(brandValue)){
@@ -2315,13 +2325,13 @@ public class CustomerBomImpl implements CustomerBomService {
 //            list_1 = mateList.stream().filter(s -> s.getMateCusCode() != null).filter(s -> StringUtils.replace(s.getMateCusCode(),"O", "0").equals(brandValue_1)).collect(Collectors.toList());
 //        }
 
-	    //2.类别
-        if(StringUtils.isNotEmpty(cateValue)){
+        //2.类别
+        if (StringUtils.isNotEmpty(cateValue)) {
             //2.1根据cateValue去类别关键字表Keywords2查找（不区分大小写），有则获取中文类别名称，没有则不变化
             List<Keywords2> cateList = keywords2Dao.findByIsDelAndBsNameIgnoreCase(BasicStateEnum.FALSE.intValue(), cateValue);
-            if(cateList != null && cateList.size() > 0){
-                if(cateList.get(0) != null){
-                    cateValue = cateList.get(0).getBsCateName() != null ?  cateList.get(0).getBsCateName() : cateValue;
+            if (cateList != null && cateList.size() > 0) {
+                if (cateList.get(0) != null) {
+                    cateValue = cateList.get(0).getBsCateName() != null ? cateList.get(0).getBsCateName() : cateValue;
                 }
                 //2.2得到最后的类别名称，再去筛选物料
                 String cateValueFinal = cateValue;
@@ -2339,10 +2349,10 @@ public class CustomerBomImpl implements CustomerBomService {
         //注意的是：关键字有两种，一是100%匹配的，一是非100%匹配的，要分开来匹配
         List<Keywords> keywordsList = new ArrayList<Keywords>();
         List<Keywords> keywordsListLike = new ArrayList<Keywords>();
-        if(StringUtils.isNotEmpty(cateValue)){
+        if (StringUtils.isNotEmpty(cateValue)) {
             //如果存在相同类别时
             keywordsList = keywordsDao.findByIsDelAndBsCateName(BasicStateEnum.FALSE.intValue(), cateValue);
-            if(keywordsList == null || keywordsList.size() == 0){
+            if (keywordsList == null || keywordsList.size() == 0) {
                 //如果不存在相同的类别，则查找类似的类别的关键字
                 keywordsList = keywordsDao.findByIsDelAndBsCateNameLike(BasicStateEnum.FALSE.intValue(), cateValue);
             }
@@ -2355,13 +2365,13 @@ public class CustomerBomImpl implements CustomerBomService {
         keywordsList = keywordsList.stream().filter(s -> s.getBsValue() != null).filter(s -> s.getBsValue() == 1).collect(Collectors.toList());
         //3.3筛选出存在100%匹配关键字的规格项
         List<String> modelList = new ArrayList<String>();
-        if(modelArray != null){
-            for(String model : modelArray){
+        if (modelArray != null) {
+            for (String model : modelArray) {
                 model = model.trim().toUpperCase();
-                for(Keywords keywords : keywordsList){
-                    if(model.contains(keywords.getBsName().toUpperCase()) && !model.contains("±")
+                for (Keywords keywords : keywordsList) {
+                    if (model.contains(keywords.getBsName().toUpperCase()) && !model.contains("±")
                             && !model.contains("CAP") && !model.contains("RES") && !model.contains("IND")
-                            && !model.contains("~")){
+                            && !model.contains("~")) {
                         //如果该规格项包含了关键字
                         modelList.add(model);
                         //20191105-规格已包含的关键字去除，下次不循环这个关键字
@@ -2375,11 +2385,11 @@ public class CustomerBomImpl implements CustomerBomService {
         }
         //3.3.1筛选出规格中存在的非100%匹配关键字
         List<String> modelListLike = new ArrayList<String>();
-        if(modelArray != null){
-            for(String model : modelArray){
+        if (modelArray != null) {
+            for (String model : modelArray) {
                 model = model.trim().toUpperCase();
-                for(Keywords keywords : keywordsListLike){
-                    if(model.contains(keywords.getBsName().toUpperCase())){
+                for (Keywords keywords : keywordsListLike) {
+                    if (model.contains(keywords.getBsName().toUpperCase())) {
                         //如果该规格项包含了关键字，则添加关键字，之后作模糊匹配
                         modelListLike.add(keywords.getBsName());
                         break;
@@ -2389,19 +2399,19 @@ public class CustomerBomImpl implements CustomerBomService {
         }
         //3.3.2筛选出误差项“±”或者“%”，截取出数值
         String modelError = "";
-        if(modelArray != null){
-            for(String model : modelArray){
+        if (modelArray != null) {
+            for (String model : modelArray) {
                 //包含±、%
-                if(model.contains("±") && model.contains("%")){
+                if (model.contains("±") && model.contains("%")) {
                     modelError = splitData(model, "±", "%").trim();
                     break;
                 }
                 //不包含±、包含%
-                if(!model.contains("±") && model.contains("%")){
+                if (!model.contains("±") && model.contains("%")) {
                     modelError = model.substring(0, model.indexOf("%")).trim();
                 }
                 //包含±、不包含%
-                if(model.contains("±") && !model.contains("%")){
+                if (model.contains("±") && !model.contains("%")) {
                     modelError = splitDataNum(model);
                 }
             }
@@ -2410,12 +2420,12 @@ public class CustomerBomImpl implements CustomerBomService {
         //3.4规格关键字筛选（转换成大写字母进行匹配）
         //3.4.1对于100%匹配关键字，对规格进行精准匹配
         List<MaterielInfo> resultList = new ArrayList<>();
-        if(modelList.size() == 0){
+        if (modelList.size() == 0) {
             //没有关键字时，直接返回无关键字筛选的结果
             resultList = mateList;
-        }else{
+        } else {
             //对存在100%匹配关键字的规格项进行精准查询
-            for(MaterielInfo mate : mateList){
+            for (MaterielInfo mate : mateList) {
                 Integer num = 0;  //统计匹配上的规格项数量
                 //20190614-Shen 如果出现µ，替换成u
                 String rapleceModel = this.repalceValue(mate.getMateModel(), mate.getMateName());
@@ -2429,14 +2439,14 @@ public class CustomerBomImpl implements CustomerBomService {
                 String[] mateModelArray = getSepArray_2(rapleceModel.toUpperCase());
                 //20200406-sxw-特殊情况，电容单位转换
                 mateModelArray = ConversionUtil.doConvertArray(mateModelArray);
-                for(String model : modelList){
+                for (String model : modelList) {
                     //特殊情况，存在()的规格项，去掉()，再进行匹配
-                    if(model.contains("(") && model.contains(")")){
+                    if (model.contains("(") && model.contains(")")) {
                         model = model.substring(0, model.indexOf("("));
                     }
-                    if(StringUtils.isNotEmpty(model)){
-                        for(String item : mateModelArray){
-                            if(item.trim().equals(model.toUpperCase())){
+                    if (StringUtils.isNotEmpty(model)) {
+                        for (String item : mateModelArray) {
+                            if (item.trim().equals(model.toUpperCase())) {
                                 //如果此规格项匹配上了
                                 num++;
                                 break;
@@ -2444,26 +2454,26 @@ public class CustomerBomImpl implements CustomerBomService {
                         }
                     }
                 }
-                if(num == modelList.size()){
+                if (num == modelList.size()) {
                     //如果所有存在关键字的规格项都匹配上了，筛选出该物料
-                    if(!resultList.contains(mate)){
+                    if (!resultList.contains(mate)) {
                         resultList.add(mate);
                     }
                 }
             }
         }
         //3.4.2对于非100%匹配关键字，对规格进行模糊匹配
-        for(String modelStr : modelListLike){
-            if(!modelStr.equals("±")){
+        for (String modelStr : modelListLike) {
+            if (!modelStr.equals("±")) {
                 List<MaterielInfo> tempList = resultList.stream().filter(s -> s.getMateModel() != null).filter(s -> s.getMateModel().toUpperCase().contains(modelStr.toUpperCase())).collect(Collectors.toList());
-                if(tempList.size() > 0){
+                if (tempList.size() > 0) {
                     //筛选后，如果有数据，则将筛选结果复制给resultList；如果没有数据，则进入下一个关键字的筛选
                     resultList = tempList;
                 }
-            }else{
+            } else {
                 //20190410-Shen 特别地，对于误差关键字，如±20%、±5%这样的±，进行非100%匹配，误差值小于即可筛选出来。Start
                 List<MaterielInfo> removeData = new ArrayList<MaterielInfo>();
-                for(MaterielInfo mate : resultList){
+                for (MaterielInfo mate : resultList) {
                     //物料表中存在已","和空格分隔符的情况，需要对这两种情况都进行分隔
 //                    String[] mateModelArray = mate.getMateModel().toUpperCase().split(",");
 //                    String[] mateModelArray_2 = mate.getMateModel().toUpperCase().split("\\s+");
@@ -2472,76 +2482,76 @@ public class CustomerBomImpl implements CustomerBomService {
 //                    }
                     //20191122-sxw-分隔SRM系统物料规格
                     String[] mateModelArray = getSepArray_2(mate.getMateModel().toUpperCase());
-                    try{
-                        for(String item : mateModelArray){
+                    try {
+                        for (String item : mateModelArray) {
                             //包含±、%
-                            if(item.contains("±") && item.contains("%") && StringUtils.isNotEmpty(modelError)){
+                            if (item.contains("±") && item.contains("%") && StringUtils.isNotEmpty(modelError)) {
                                 //截取字符串，比较两个物料的误差值
                                 Float num1 = Float.valueOf(modelError);  //客户物料的误差值
                                 Float num2 = Float.valueOf(splitData(item, "±", "%"));  //系统匹配物料的误差值
-                                if(num1 < num2){
+                                if (num1 < num2) {
                                     //num2 大于 num1时，添加需要移除的物料removeData
                                     removeData.add(mate);
                                     break;
                                 }
                             }
                             //不包含±、包含%
-                            if(!item.contains("±") && item.contains("%") && StringUtils.isNotEmpty(modelError)){
+                            if (!item.contains("±") && item.contains("%") && StringUtils.isNotEmpty(modelError)) {
                                 //截取字符串，比较两个物料的误差值
                                 Float num1 = Float.valueOf(modelError);  //客户物料的误差值
                                 Float num2 = Float.valueOf(item.substring(0, item.indexOf("%")).trim());  //系统匹配物料的误差值
-                                if(num1 < num2){
+                                if (num1 < num2) {
                                     //num2 大于 num1时，添加需要移除的物料removeData
                                     removeData.add(mate);
                                     break;
                                 }
                             }
                             //包含±、不包含%
-                            if(item.contains("±") && !item.contains("%") && StringUtils.isNotEmpty(modelError)){
+                            if (item.contains("±") && !item.contains("%") && StringUtils.isNotEmpty(modelError)) {
                                 //截取字符串，比较两个物料的误差值
                                 Float num1 = Float.valueOf(modelError);
                                 Float num2 = Float.valueOf(splitDataNum(item));  //系统匹配物料的误差值
-                                if(num1 < num2){
+                                if (num1 < num2) {
                                     //num2 大于 num1时，添加需要移除的物料removeData
                                     removeData.add(mate);
                                     break;
                                 }
                             }
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                     }
                 }
                 //如果removeData和resultList有数据，则在resultList移除removeData数据
-                if(removeData.size() > 0 && resultList.size() > 0 && removeData.size()<resultList.size()){
+                if (removeData.size() > 0 && resultList.size() > 0 && removeData.size() < resultList.size()) {
                     resultList.removeAll(removeData);
                 }
                 //20190410-Shen End
             }
         }
-        if(resultList.size() > 0){
+        if (resultList.size() > 0) {
             //关键字匹配之后将结果赋给mateList
             mateList = resultList;
         }
 
         //4.封装
-        if(StringUtils.isNotEmpty(packageValue)){
+        if (StringUtils.isNotEmpty(packageValue)) {
             String packageValueFirst = packageValue.trim();
             //4.1获取常用贴片封装数据
-           List<String> packageList = PackageUtil.getPackage();
-           for(String item : packageList){
-               if(packageValue.contains(item)){
-                   packageValueFirst = item;
-                   break;
-               }
-           }
+            List<String> packageList = PackageUtil.getPackage();
+            for (String item : packageList) {
+                if (packageValue.contains(item)) {
+                    packageValueFirst = item;
+                    break;
+                }
+            }
 
-           //4.2得到封装数据后，再去筛选物料
+            //4.2得到封装数据后，再去筛选物料
             String packageValueMid = packageValueFirst;
             List<MaterielInfo> list_4 = mateList.stream().filter(s -> s.getMateModel() != null && s.getMateModel().contains(packageValueMid)).collect(Collectors.toList());
-            if(list_4.size() > 0){
+            if (list_4.size() > 0) {
                 //4.2.1如果有数据，则取筛选后的数据
                 mateList = list_4;
-            }else{
+            } else {
                 //4.2.2如果没有数据，则获取封装的数字部分，然后再去筛选物料
                 String packageValueFinal = this.getNumber(packageValue.trim());
                 List<MaterielInfo> list_5 = mateList.stream().filter(s -> s.getMateModel() != null && s.getMateModel().contains(packageValueFinal)).collect(Collectors.toList());
@@ -2591,65 +2601,65 @@ public class CustomerBomImpl implements CustomerBomService {
 //            }
 //        }
 
-	    return mateList;
+        return mateList;
     }
 
     //获取根据分隔符分隔规格后的规格项数组
-    public String[] getSepArray(BomParams bomParams, String modelValue){
-        try{
+    public String[] getSepArray(BomParams bomParams, String modelValue) {
+        try {
             //1.获取分隔符数组
             String checkStr = bomParams.getCheckList();
             String checkArray[] = null;
-            if(checkStr != null){
+            if (checkStr != null) {
                 checkArray = checkStr.split(",");
-            }else{
+            } else {
                 checkArray = new String[0];
             }
             //2.分隔符数组（规格分隔时需要使用到此数组进行分隔）
             String sepArray[] = new String[checkArray.length];
-            for(int i = 0; i < checkArray.length; i++){
+            for (int i = 0; i < checkArray.length; i++) {
                 String value = checkArray[i];
-                if(Integer.parseInt(value) == 1){
+                if (Integer.parseInt(value) == 1) {
                     sepArray[i] = "/";
                 }
-                if(Integer.parseInt(value) == 2){
+                if (Integer.parseInt(value) == 2) {
                     sepArray[i] = ",";
                 }
-                if(Integer.parseInt(value) == 3){
+                if (Integer.parseInt(value) == 3) {
                     sepArray[i] = ";";
                 }
-                if(Integer.parseInt(value) == 4){
+                if (Integer.parseInt(value) == 4) {
                     sepArray[i] = "-";
                 }
-                if(Integer.parseInt(value) == 5){
+                if (Integer.parseInt(value) == 5) {
                     sepArray[i] = "、";
                 }
-                if(Integer.parseInt(value) == 6){
+                if (Integer.parseInt(value) == 6) {
                     sepArray[i] = "*";
                 }
-                if(Integer.parseInt(value) == 7){
+                if (Integer.parseInt(value) == 7) {
                     sepArray[i] = "space";  //空格分隔符，此处用“space”表示，用于后面分隔时作为判断标志
                 }
-                if(Integer.parseInt(value) == 8){
+                if (Integer.parseInt(value) == 8) {
                     sepArray[i] = "，";//中文逗号
                 }
             }
             //3.根据分隔符将规格分隔成多项规格（存在多个分隔符，只取其中分隔准确的一个）
             int length = 0;
             String[] modelArray = null;
-            for(String sep : sepArray){
+            for (String sep : sepArray) {
                 //此处分隔时分成两种情况，空格和其他分隔符
-                if("space".equals(sep)){
+                if ("space".equals(sep)) {
                     //3.1 空格分隔符
                     String[] array = modelValue.split("\\s+");
-                    if(array.length > length){
+                    if (array.length > length) {
                         modelArray = array;
                         length = array.length;
                     }
-                }else{
+                } else {
                     //3.2 其他分隔符
                     String[] array = modelValue.split(sep);
-                    if(array.length > length){
+                    if (array.length > length) {
                         modelArray = array;
                         length = array.length;
                     }
@@ -2658,83 +2668,83 @@ public class CustomerBomImpl implements CustomerBomService {
 
             //4.特别的,对于值单位和±分隔在一起的时候，再次进行字符串分隔，按"±"分隔，例如6.8pF±0.25pF、1uF±20%
             List<String> list = new ArrayList<String>();
-            if(modelValue.contains("±")){
-                for(int j = 0; j < modelArray.length; j++){
+            if (modelValue.contains("±")) {
+                for (int j = 0; j < modelArray.length; j++) {
                     String item = modelArray[j];
-                    if(StringUtils.isNotEmpty(item) && item.contains("±") && item.indexOf("±")>0){
+                    if (StringUtils.isNotEmpty(item) && item.contains("±") && item.indexOf("±") > 0) {
                         String[] array = item.split("±");
                         list.add(array[0]);
-                        list.add(array.length>1 ? "±"+array[1] : "");
-                    }else{
+                        list.add(array.length > 1 ? "±" + array[1] : "");
+                    } else {
                         list.add(item);
                     }
                 }
             }
 
             //返回数据
-            if(list.size() > 0){
+            if (list.size() > 0) {
                 String[] modelArrayLast = new String[list.size()];
                 modelArrayLast = list.toArray(modelArrayLast);
                 return modelArrayLast;
-            }else{
+            } else {
                 return modelArray;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             String[] modelArray = null;
             return modelArray;
         }
     }
 
     //获取根据分隔符分隔规格后的规格项数组（供分隔SRM系统物料使用）
-    public String[] getSepArray_2(String modelValue){
-        try{
+    public String[] getSepArray_2(String modelValue) {
+        try {
             //1.获取分隔符数组
-            String checkArray[] = {"1","2","4","7"};//SRM系统物料分隔符固定
+            String checkArray[] = {"1", "2", "4", "7"};//SRM系统物料分隔符固定
             //2.分隔符数组（规格分隔时需要使用到此数组进行分隔）
             String sepArray[] = new String[checkArray.length];
-            for(int i = 0; i < checkArray.length; i++){
+            for (int i = 0; i < checkArray.length; i++) {
                 String value = checkArray[i];
-                if(Integer.parseInt(value) == 1){
+                if (Integer.parseInt(value) == 1) {
                     sepArray[i] = "/";
                 }
-                if(Integer.parseInt(value) == 2){
+                if (Integer.parseInt(value) == 2) {
                     sepArray[i] = ",";
                 }
-                if(Integer.parseInt(value) == 3){
+                if (Integer.parseInt(value) == 3) {
                     sepArray[i] = ";";
                 }
-                if(Integer.parseInt(value) == 4){
+                if (Integer.parseInt(value) == 4) {
                     sepArray[i] = "-";
                 }
-                if(Integer.parseInt(value) == 5){
+                if (Integer.parseInt(value) == 5) {
                     sepArray[i] = "、";
                 }
-                if(Integer.parseInt(value) == 6){
+                if (Integer.parseInt(value) == 6) {
                     sepArray[i] = "*";
                 }
-                if(Integer.parseInt(value) == 7){
+                if (Integer.parseInt(value) == 7) {
                     sepArray[i] = "space";  //空格分隔符，此处用“space”表示，用于后面分隔时作为判断标志
                 }
-                if(Integer.parseInt(value) == 8){
+                if (Integer.parseInt(value) == 8) {
                     sepArray[i] = "，";//中文逗号
                 }
             }
             //3.根据分隔符将规格分隔成多项规格（存在多个分隔符，只取其中分隔准确的一个）
             int length = 0;
             String[] modelArray = null;
-            for(String sep : sepArray){
+            for (String sep : sepArray) {
                 //此处分隔时分成两种情况，空格和其他分隔符
-                if("space".equals(sep)){
+                if ("space".equals(sep)) {
                     //3.1 空格分隔符
                     String[] array = modelValue.split("\\s+");
-                    if(array.length > length){
+                    if (array.length > length) {
                         modelArray = array;
                         length = array.length;
                     }
-                }else{
+                } else {
                     //3.2 其他分隔符
                     String[] array = modelValue.split(sep);
-                    if(array.length > length){
+                    if (array.length > length) {
                         modelArray = array;
                         length = array.length;
                     }
@@ -2743,7 +2753,7 @@ public class CustomerBomImpl implements CustomerBomService {
 
             //返回数据
             return modelArray;
-        }catch (Exception e){
+        } catch (Exception e) {
             String[] modelArray = null;
             return modelArray;
         }
@@ -2753,11 +2763,11 @@ public class CustomerBomImpl implements CustomerBomService {
     //匹配率  = 匹配上的规格项数量 / 总的规格项数量
     //特殊情况1，比如1uF/10V(20%)，这种特殊情况里的()也算一个规格项，就是说这里有三个规格项
     //特殊情况2, 比如±20% 和 20% 一样
-    public float getSimilarityRatioWithModel(String modelValue, String mateModel, BomParams bomParams, String cateValue){
+    public float getSimilarityRatioWithModel(String modelValue, String mateModel, BomParams bomParams, String cateValue) {
         float numTotal = 0;  //总的规格项数量
         float numMatch = 0;  //匹配上的规格项数量
         float ratio = 0;  //匹配率
-        if(modelValue == null || mateModel == null){
+        if (modelValue == null || mateModel == null) {
             return ratio;
         }
         //特殊单位转换
@@ -2769,28 +2779,28 @@ public class CustomerBomImpl implements CustomerBomService {
 
         //1.获取根据分隔符分隔规格后的规格项数组
         String[] modelArray = getSepArray(bomParams, modelValue);
-        if(modelArray == null){
+        if (modelArray == null) {
             return ratio;
         }
         numTotal = modelArray.length;  //总的规格项数量
 
         //2.循环匹配，匹配上的规格项，numMatch+1
-        for(String model : modelArray){
+        for (String model : modelArray) {
             //2.1特殊情况1，判断是否存在()的规格项
-            if(model.contains("(") && model.contains(")")){
+            if (model.contains("(") && model.contains(")")) {
                 numTotal++;
                 String str = splitData(model, "(", ")");
-                if(mateModel.contains(str.trim())){
+                if (mateModel.contains(str.trim())) {
                     numMatch++;
                 }
                 model = model.substring(0, model.indexOf("("));
             }
             //2.2 特殊情况2，误差有±和无±的情况一样
-            if(model.contains("±")){
+            if (model.contains("±")) {
                 model = model.substring(model.indexOf("±"), model.length());
             }
             //2.3 通用情况
-            if(mateModel.contains(model.trim())){
+            if (mateModel.contains(model.trim())) {
                 numMatch++;
             }
         }
@@ -2803,17 +2813,17 @@ public class CustomerBomImpl implements CustomerBomService {
         float ratio2 = lt.getSimilarityRatio(modelValue, mateModel);
 
         //5.比较两个匹配率，取较大者
-        if (ratio < ratio2){
+        if (ratio < ratio2) {
             return ratio2;
-        }else{
+        } else {
             return ratio;
         }
     }
 
     //获取物料大类不为“03”和为null的物料
-    public List<MaterielInfo> getMateWithCategory(){
-	    List<MaterielInfo> mateList = new ArrayList<MaterielInfo>();
-	    try{
+    public List<MaterielInfo> getMateWithCategory() {
+        List<MaterielInfo> mateList = new ArrayList<MaterielInfo>();
+        try {
             List<com.utils.SearchFilter> filters = new ArrayList<>();
             List<com.utils.SearchFilter> filters1 = new ArrayList<>();
             filters.add(new com.utils.SearchFilter("isDel", com.utils.SearchFilter.Operator.EQ, BasicStateEnum.FALSE.intValue()));
@@ -2823,77 +2833,77 @@ public class CustomerBomImpl implements CustomerBomService {
             Specification spec = Specification.where(BaseService.and(filters, MaterielInfo.class)).and(BaseService.or(filters1, MaterielInfo.class));
             mateList = materielInfoDao.findAll(spec);
             return mateList;
-        }catch (Exception e){
+        } catch (Exception e) {
         }
-	    return mateList;
+        return mateList;
     }
 
     //截取2个指定字符之间的字符串
     public String splitData(String str, String strStart, String strEnd) {
-	    String tempStr;
-	    tempStr = str.substring(str.indexOf(strStart) + 1, str.lastIndexOf(strEnd));
-	    return tempStr;
+        String tempStr;
+        tempStr = str.substring(str.indexOf(strStart) + 1, str.lastIndexOf(strEnd));
+        return tempStr;
     }
 
     //截取±与单位间的数字部分
-    public String splitDataNum(String str){
-	    String tempStr = "";
-	    int place1 = str.indexOf("±");
-	    int place2 = str.length();
-	    char c[] = str.toCharArray();
-	    for(int i = c.length; i > 0; i--){
-            if(Character.isDigit(c[i-1])){
+    public String splitDataNum(String str) {
+        String tempStr = "";
+        int place1 = str.indexOf("±");
+        int place2 = str.length();
+        char c[] = str.toCharArray();
+        for (int i = c.length; i > 0; i--) {
+            if (Character.isDigit(c[i - 1])) {
                 place2 = i;
                 break;
             }
         }
-        if(place1 <= place2){
-	        tempStr = str.substring(place1 + 1, place2);
+        if (place1 <= place2) {
+            tempStr = str.substring(place1 + 1, place2);
         }
         return tempStr;
     }
 
     //获取指定字符串中数字部分
-    public String getNumber(String str){
-	    try{
-	        if(StringUtils.isNotEmpty(str)){
-                String regEx="[^0-9]";
+    public String getNumber(String str) {
+        try {
+            if (StringUtils.isNotEmpty(str)) {
+                String regEx = "[^0-9]";
                 Pattern p = Pattern.compile(regEx);
                 Matcher m = p.matcher(str);
                 return m.replaceAll("").trim();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
         }
         return str;
     }
 
     //转换
-    private String repalceValue(String model, String cateValue){
-	    if(StringUtils.isNotEmpty(model)){
-	        //1.
-	        if(model.contains("μ")){
+    private String repalceValue(String model, String cateValue) {
+        if (StringUtils.isNotEmpty(model)) {
+            //1.
+            if (model.contains("μ")) {
                 model = model.replace("μ", "u");
             }
-            if(model.contains("µ")){
+            if (model.contains("µ")) {
                 model = model.replace("µ", "u");
             }
 
             //2.对于电阻
             //(?i)不区分大小写替换
-            if(StringUtils.isNotEmpty(cateValue) && cateValue.contains("电阻")){
-                if(model.toUpperCase().contains(" OHM")){
+            if (StringUtils.isNotEmpty(cateValue) && cateValue.contains("电阻")) {
+                if (model.toUpperCase().contains(" OHM")) {
                     model = model.replaceAll("(?i) OHM", "R");
                 }
-	            if(model.toUpperCase().contains("OHM")){
-	                model = model.replaceAll("(?i)OHM", "R");
+                if (model.toUpperCase().contains("OHM")) {
+                    model = model.replaceAll("(?i)OHM", "R");
                 }
-                if(model.toUpperCase().contains("K") && !model.contains("KR") && !model.contains("KΩ")){
+                if (model.toUpperCase().contains("K") && !model.contains("KR") && !model.contains("KΩ")) {
                     model = model.replaceAll("(?i)K", "KR");
                 }
-                if(model.toUpperCase().contains("Ω") && !model.contains("KΩ")){
+                if (model.toUpperCase().contains("Ω") && !model.contains("KΩ")) {
                     model = model.replaceAll("(?i)Ω", "R");
                 }
-                if(model.toUpperCase().contains("KΩ")){
+                if (model.toUpperCase().contains("KΩ")) {
                     model = model.replaceAll("(?i)KΩ", "KR");
                 }
             }
@@ -2905,12 +2915,13 @@ public class CustomerBomImpl implements CustomerBomService {
     /**
      * 复制客户BOM
      * 相关表格：FsFile、BomParams、CustomerBom、CustomerBomMatch
+     *
      * @param fileId
      * @return
      * @throws Exception
      */
-    public ApiResponseResult copyBom(Long fileId) throws Exception{
-        if(fileId == null){
+    public ApiResponseResult copyBom(Long fileId) throws Exception {
+        if (fileId == null) {
             return ApiResponseResult.failure("文件ID不能为空！");
         }
         SysUser currUser = UserUtil.getCurrUser();  //获取当前用户
@@ -2920,21 +2931,21 @@ public class CustomerBomImpl implements CustomerBomService {
         //获取CustomerBomFile表数据
         //1.1判断FsFile表
         FsFile oFile = fsFileDao.findById((long) fileId);
-        if(oFile == null){
+        if (oFile == null) {
             return ApiResponseResult.failure("客户BOM不存在，无法复制！");
         }
         //1.2判断BomParams表
         List<BomParams> oParamsList = bomParamsDao.findByIsDelAndFileIdOrderByIdDesc(BasicStateEnum.FALSE.intValue(), fileId);
-        if(oParamsList == null || oParamsList.size() <= 0){
+        if (oParamsList == null || oParamsList.size() <= 0) {
             return ApiResponseResult.failure("客户BOM没有匹配K3数据，无法复制！");
         }
         BomParams oParams = oParamsList.get(0);
-        if(oParams == null){
+        if (oParams == null) {
             return ApiResponseResult.failure("客户BOM没有匹配K3数据，无法复制！");
         }
         //1.3判断CustomerBom表
         List<CustomerBom> oCusList = customerBomDao.findByIsDelAndFileIdOrderByIdAsc(BasicStateEnum.FALSE.intValue(), fileId);
-        if(oCusList == null || oCusList.size() <= 0){
+        if (oCusList == null || oCusList.size() <= 0) {
             return ApiResponseResult.failure("客户BOM没有匹配K3数据，无法复制！");
         }
         //1.4获取CustomerBomFile表数据
@@ -2943,7 +2954,7 @@ public class CustomerBomImpl implements CustomerBomService {
         //2.添加FsFile表，文件名称保持不变
         FsFile fsFile = new FsFile();
         fsFile.setCreatedTime(new Date());
-        fsFile.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+        fsFile.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
         fsFile.setBsContentType(oFile.getBsContentType());
         fsFile.setBsFileName(oFile.getBsFileName());
         fsFile.setBsFilePath(oFile.getBsFilePath());
@@ -2956,7 +2967,7 @@ public class CustomerBomImpl implements CustomerBomService {
         //3.添加BomParams表，内容保持不变
         BomParams bomParams = new BomParams();
         bomParams.setCreatedTime(new Date());
-        bomParams.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+        bomParams.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
         bomParams.setFileId(fsFile.getId());  //新的文件ID
         bomParams.setStandardCol(oParams.getStandardCol());
         bomParams.setCategoryCol(oParams.getCategoryCol());
@@ -2976,7 +2987,7 @@ public class CustomerBomImpl implements CustomerBomService {
 
         //4.添加CustomerBom表，内容保持不变
         List<CustomerBom> customerBomList = new ArrayList<CustomerBom>();
-        for(CustomerBom oCus : oCusList){
+        for (CustomerBom oCus : oCusList) {
             CustomerBom customerBom = new CustomerBom();
             customerBom = copyCusBom(customerBom, oCus, currUser, fsFile, sdf);  //复制CustomerBom表
             customerBomList.add(customerBom);
@@ -2985,11 +2996,11 @@ public class CustomerBomImpl implements CustomerBomService {
 
         //5.添加CustomerBomMatch表，内容保持不变
         List<CustomerBomMatch> customerBomMatchList = new ArrayList<CustomerBomMatch>();
-        for(int i = 0; i < oCusList.size(); i++){
+        for (int i = 0; i < oCusList.size(); i++) {
             CustomerBom oCus = oCusList.get(i);
             List<CustomerBomMatch> oMatchList = customerBomMatchDao.findByIsDelAndAndCusBomIdOrderByIdAsc(BasicStateEnum.FALSE.intValue(), oCus.getId());
-            if(oMatchList != null &&oMatchList.size() > 0){
-                for(CustomerBomMatch oMatch : oMatchList){
+            if (oMatchList != null && oMatchList.size() > 0) {
+                for (CustomerBomMatch oMatch : oMatchList) {
                     CustomerBomMatch bomMatch = new CustomerBomMatch();
                     bomMatch = copyCusMatch(bomMatch, oMatch, currUser, customerBomList.get(i).getId(), bomParams.getId(), fsFile.getId());
                     customerBomMatchList.add(bomMatch);
@@ -2999,18 +3010,18 @@ public class CustomerBomImpl implements CustomerBomService {
         customerBomMatchDao.saveAll(customerBomMatchList);
 
         //6.添加CustomerBomFile表和FsFile表
-        if(oDocList.size() > 0){
+        if (oDocList.size() > 0) {
             List<CustomerBomFile> customerBomFileList = new ArrayList<>();
             //List<FsFile> fsFileList = new ArrayList<>();
-            for(int i = oDocList.size() - 1; i >= 0; i--){
+            for (int i = oDocList.size() - 1; i >= 0; i--) {
                 CustomerBomFile docOld = oDocList.get(i);
-                if(docOld != null && docOld.getBsDocId() != null){
+                if (docOld != null && docOld.getBsDocId() != null) {
                     FsFile fileOld = fsFileDao.findById((long) docOld.getBsDocId());
-                    if(fileOld != null){
+                    if (fileOld != null) {
                         //6.1添加FsFile表
                         FsFile fileNew = new FsFile();
                         fileNew.setCreatedTime(new Date());
-                        fileNew.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+                        fileNew.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
                         fileNew.setBsContentType(fileOld.getBsContentType());
                         fileNew.setBsFileName(fileOld.getBsFileName());
                         fileNew.setBsFilePath(fileOld.getBsFilePath());
@@ -3022,7 +3033,7 @@ public class CustomerBomImpl implements CustomerBomService {
                         //6.2添加CustomerBomFile表
                         CustomerBomFile docNew = new CustomerBomFile();
                         docNew.setCreatedTime(new Date());
-                        docNew.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+                        docNew.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
                         docNew.setBsCusBomId(null);
                         docNew.setBsDocId(fileNew.getId());
                         docNew.setBsDocName(fileNew.getBsName());
@@ -3031,16 +3042,16 @@ public class CustomerBomImpl implements CustomerBomService {
                     }
                 }
             }
-            if(customerBomFileList.size() > 0){
+            if (customerBomFileList.size() > 0) {
                 customerBomFileDao.saveAll(customerBomFileList);
             }
         }
 
-	    return ApiResponseResult.success("客户BOM复制成功！").data(fsFile);
+        return ApiResponseResult.success("客户BOM复制成功！").data(fsFile);
     }
 
     //复制CustomerBom表
-    private CustomerBom copyCusBom(CustomerBom customerBom, CustomerBom oCus, SysUser currUser, FsFile fsFile, SimpleDateFormat sdf){
+    private CustomerBom copyCusBom(CustomerBom customerBom, CustomerBom oCus, SysUser currUser, FsFile fsFile, SimpleDateFormat sdf) {
         //复制数据
         //生成BOM编号
         SimpleDateFormat sdf_2 = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -3048,9 +3059,9 @@ public class CustomerBomImpl implements CustomerBomService {
         String bomCode = "BOM-" + dateStr;
 
         customerBom.setCreatedTime(new Date());
-        customerBom.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
-        customerBom.setCreatedName((currUser!=null) ? (currUser.getUserName()) : null);
-        customerBom.setModifiedName((currUser!=null) ? (currUser.getUserName()) : null);
+        customerBom.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
+        customerBom.setCreatedName((currUser != null) ? (currUser.getUserName()) : null);
+        customerBom.setModifiedName((currUser != null) ? (currUser.getUserName()) : null);
         customerBom.setFileId(fsFile.getId());  //新的文件ID
         customerBom.setFileName(fsFile.getBsName());
         customerBom.setBomCode(bomCode); //BOM编号
@@ -3109,10 +3120,10 @@ public class CustomerBomImpl implements CustomerBomService {
     }
 
     //复制CustomerBomMatch表
-    private CustomerBomMatch copyCusMatch(CustomerBomMatch bomMatch, CustomerBomMatch oMatch, SysUser currUser, Long cusBomId, Long bomParamsId, Long fileId){
+    private CustomerBomMatch copyCusMatch(CustomerBomMatch bomMatch, CustomerBomMatch oMatch, SysUser currUser, Long cusBomId, Long bomParamsId, Long fileId) {
         //复制数据
         bomMatch.setCreatedTime(new Date());
-        bomMatch.setPkCreatedBy((currUser!=null) ? (currUser.getId()) : null);
+        bomMatch.setPkCreatedBy((currUser != null) ? (currUser.getId()) : null);
         bomMatch.setCusBomId(cusBomId);  //新的CustomerBom的ID
         bomMatch.setBomParamsId(bomParamsId);  //新的BomParams的ID
         bomMatch.setFileId(fileId);  //新的文件ID
@@ -3157,12 +3168,12 @@ public class CustomerBomImpl implements CustomerBomService {
     }
 
     //字符串：去除小数部分
-    private String decimalToInt(String numStr){
-        if(StringUtils.isEmpty(numStr)){
+    private String decimalToInt(String numStr) {
+        if (StringUtils.isEmpty(numStr)) {
             return "0";
         }
         String num[] = numStr.split("\\.");
-        if(num.length <= 0){
+        if (num.length <= 0) {
             return "0";
         }
         return num[0];
@@ -3170,15 +3181,16 @@ public class CustomerBomImpl implements CustomerBomService {
 
     @Override
     @Transactional
-    public float getRatio(CustomerBom bom, CustomerBom bomHeader, String mateModel, BomParams bomParams) throws Exception{
+    public float getRatio(CustomerBom bom, CustomerBom bomHeader, String mateModel, BomParams bomParams) throws Exception {
         String modelValue = this.getModelValue(bom, bomHeader, bomParams);
         String cateValue = this.getCateValue(bom, bomHeader, bomParams);
         float ratio = this.getSimilarityRatioWithModel(modelValue, mateModel, bomParams, cateValue);
         return ratio;
     }
+
     @Override
     @Transactional
-    public CustomerBomMatch getCostMate(CustomerBomMatch bomMatch, CustomerBom bom, CustomerBom bomHeader, BomParams bomParams) throws Exception{
+    public CustomerBomMatch getCostMate(CustomerBomMatch bomMatch, CustomerBom bom, CustomerBom bomHeader, BomParams bomParams) throws Exception {
         List<CustomerBomMatch> list = new ArrayList<>();
         list.add(bomMatch);
         BigDecimal qtyValue = this.getQtyValue(bom, bomHeader, bomParams);
@@ -3188,27 +3200,55 @@ public class CustomerBomImpl implements CustomerBomService {
     }
 
     //测试
-    public ApiResponseResult test(String cateValue, String brandValue, String modelValue, String packageValue, Long fileId){
-	    //获取数据—start
+    public ApiResponseResult test(String cateValue, String brandValue, String modelValue, String packageValue, Long fileId) {
+        //获取数据—start
         List<MaterielInfo> mateList = getMateWithCategory();
         //获取数据—end
         List<BomParams> bomParamsList = bomParamsDao.findByIsDelAndFileIdOrderByIdDesc(BasicStateEnum.FALSE.intValue(), Long.valueOf(fileId));
-        if(bomParamsList.size() <= 0){
+        if (bomParamsList.size() <= 0) {
             return ApiResponseResult.failure();
         }
         BomParams bomParams = bomParamsList.get(0);
-        if(bomParams == null){
+        if (bomParams == null) {
             return ApiResponseResult.failure();
         }
 
         mateList = sortMateFromList(mateList, cateValue, brandValue, modelValue, packageValue, bomParams);
-        if(mateList.size() > 20){
-            mateList = mateList.subList(0,20);
+        if (mateList.size() > 20) {
+            mateList = mateList.subList(0, 20);
         }
-        for(MaterielInfo item : mateList){
+        for (MaterielInfo item : mateList) {
             float value = getSimilarityRatioWithModel(modelValue, item.getMateModel(), bomParams, cateValue);
         }
         return ApiResponseResult.success().data(mateList);
+    }
+
+    //审核
+    @Override
+    @Transactional
+    public ApiResponseResult review(Long id) throws Exception {
+        int i = customerBomDao.updateCheckStatu(id);
+        if (i>0){
+            return ApiResponseResult.success("审核成功");
+        }
+        return ApiResponseResult.failure("审核失败");
+    }
+
+    //反审核
+    @Override
+    @Transactional
+    public ApiResponseResult reserveReview(Long id) throws Exception {
+        int i = customerBomDao.reverseCheck(id);
+        if (i>0){
+            return ApiResponseResult.success("反审核成功");
+        }
+        return ApiResponseResult.failure("反审核失败");
+    }
+
+    @Override
+    public Boolean getCheckStatus(Long id) throws Exception {
+        Boolean checkStatus = customerBomDao.getCheckStatus(id);
+        return checkStatus;
     }
 
 }

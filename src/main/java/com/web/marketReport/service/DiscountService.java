@@ -18,4 +18,10 @@ public interface DiscountService {
     public ApiResponseResult getlist(String keyword, Long cateId, Integer bsIsBan, PageRequest pageRequest) throws Exception;
 
     public ApiResponseResult doBan(Long id, Integer bsIsBan) throws Exception;
+
+    //审核
+    public ApiResponseResult updateCheckByid(Long id) throws Exception;
+
+    //反审核
+    public ApiResponseResult reverseCheckByid(Long id) throws Exception;
 }

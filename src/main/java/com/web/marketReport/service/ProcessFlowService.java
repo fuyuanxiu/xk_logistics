@@ -22,4 +22,10 @@ public interface ProcessFlowService {
     public ApiResponseResult setFlows(Long flowId, String processIds) throws Exception;
 
     public ApiResponseResult getFlows(Long flowId) throws Exception;
+
+    //审核
+    public ApiResponseResult reviewByid(Long id) throws Exception;
+
+    //反审核
+    public ApiResponseResult reverseReview(Long id) throws Exception;
 }

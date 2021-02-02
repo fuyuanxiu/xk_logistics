@@ -181,7 +181,7 @@ public class CustomerBomController extends WebController {
             return ApiResponseResult.failure("获取客户BOM参数和列表失败！");
         }
     }
-    
+
     @ApiOperation(value = "选中/取消匹配的物料", notes = "选中/取消匹配的物料")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "匹配的物料的BomMatch的ID", required = false, dataType = "Long", paramType = "query", defaultValue = ""),
@@ -198,7 +198,7 @@ public class CustomerBomController extends WebController {
             return ApiResponseResult.failure("操作失败！");
         }
     }
-    
+
     @ApiOperation(value = "发送待办", notes = "发送待办")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "fileId", value = "文件的ID", required = false, dataType = "Long", paramType = "query", defaultValue = ""),
@@ -276,6 +276,43 @@ public class CustomerBomController extends WebController {
         }catch (Exception e){
             e.printStackTrace();
             return ApiResponseResult.failure("异常发生！");
+        }
+    }
+
+    //审核
+    @RequestMapping(value = "/check",method = RequestMethod.POST)
+    public ApiResponseResult updateCheck(Long id){
+        try {
+            ApiResponseResult apiResponseResult = customerBomService.review(id);
+            return ApiResponseResult.success("审核成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseResult.failure("审核失败");
+        }
+
+    }
+
+    //获取审核状态
+    @RequestMapping(value = "/getStatus",method = RequestMethod.GET)
+    public ApiResponseResult getCkStatus(Long id){
+        try {
+            Boolean checkStatusById = customerBomService.getCheckStatus(id);
+            return ApiResponseResult.success("查询成功").data(checkStatusById);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseResult.failure("获取审核状态失败！");
+        }
+
+
+    }
+    //反审核
+    @RequestMapping(value = "/reverse",method = RequestMethod.POST)
+    public ApiResponseResult reverseCheck(Long id){
+        try {
+            return customerBomService.reserveReview(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseResult.failure("反审核失败");
         }
     }
 }
