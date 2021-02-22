@@ -25,37 +25,37 @@ public class SysRouter extends BaseEntity {
 	 */
 	@Column(length=255)
 	protected String routerComment;
-	
+
 	/**
 	 * 菜单名
 	 */
 	@Column(length=255)
 	protected String routerName;
-	
+
 	/**
 	 * 菜单代码
 	 */
 	@Column(length=255)
 	protected String routerCode;
-	
+
 	/**
 	 * 是否启用
 	 */
 	@Column(length=255)
     protected int routerStatus;
-	
+
 	/**
 	 * 序号
 	 */
 	@Column(length=255)
     protected int routerIndex;
-	
+
 	/**
 	 * 父节点Id
 	 */
 	@Column(length=255)
 	protected Long parentId;
-	
+
 
 	public String getRouterComment() {
 		return routerComment;
@@ -104,7 +104,16 @@ public class SysRouter extends BaseEntity {
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
 	}
-	
-	
 
+	@Override
+	public String toString() {
+		return "SysRouter{" +
+				"routerComment='" + routerComment + '\'' +
+				", routerName='" + routerName + '\'' +
+				", routerCode='" + routerCode + '\'' +
+				", routerStatus=" + routerStatus +
+				", routerIndex=" + routerIndex +
+				", parentId=" + parentId +
+				'}';
+	}
 }

@@ -19,20 +19,26 @@ import io.swagger.annotations.ApiOperation;
 @ControllerAdvice
 @RequestMapping(value = "/goodsReceipt")
 public class GoodsReceiptController extends ReturnType {
-	
-	@Autowired
-	private IGoodsReceiptService goodsReceiptService;
-	
-	@ApiOperation(value = "新增一条司机回执信息", notes = "新增一条司机回执信息")
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String add(GoodsReceiptInfo goodsReceiptInfo) {
+
+    @Autowired
+    private IGoodsReceiptService goodsReceiptService;
+
+    private String module = "货物回执信息管理";
+
+    @ApiOperation(value = "新增一条司机回执信息", notes = "新增一条司机回执信息")
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public String add(GoodsReceiptInfo goodsReceiptInfo) {
+		String method="/goodsReceipt/add";String methodName="新增货物回执";
+
 		boolean flag = false;
-		
-		flag = goodsReceiptService.add(goodsReceiptInfo);
-		if (!flag) {
-			return ERROR;
-		}
+
+        flag = goodsReceiptService.add(goodsReceiptInfo);
+        if (!flag) {
+        	getSysLogService().error(module,method,methodName,"回执信息:"+goodsReceiptInfo.toString());
+            return ERROR;
+        }
+		getSysLogService().success(module,method,methodName,"回执信息:"+goodsReceiptInfo.toString());
 		return SUCCESS;
-	}
+    }
 
 }

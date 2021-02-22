@@ -88,4 +88,15 @@ public abstract class BaseEntity extends IdEntity {
     public void setPkModifiedBy(Long pkModifiedBy) {
         this.pkModifiedBy = pkModifiedBy;
     }
+
+    @Override
+    public String toString() {
+        return "BaseEntity{" +
+                "isDel=" + isDel +
+                ", createdTime=" + createdTime +
+                ", modifiedTime=" + modifiedTime +
+                ", pkCreatedBy=" + pkCreatedBy +
+                ", pkModifiedBy=" + pkModifiedBy +
+                '}';
+    }
 }

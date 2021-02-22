@@ -58,4 +58,13 @@ public class SysPermission extends BaseEntity {
     public void setBsRemark(String bsRemark) {
         this.bsRemark = bsRemark;
     }
+
+    @Override
+    public String toString() {
+        return "SysPermission{" +
+                "bsCode='" + bsCode + '\'' +
+                ", bsName='" + bsName + '\'' +
+                ", bsRemark='" + bsRemark + '\'' +
+                '}';
+    }
 }

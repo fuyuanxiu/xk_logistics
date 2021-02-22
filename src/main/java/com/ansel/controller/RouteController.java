@@ -30,63 +30,74 @@ import io.swagger.annotations.ApiOperation;
 @CrossOrigin
 @ControllerAdvice
 public class RouteController extends ReturnType {
-	
+
 	@Autowired
 	private ICityExpandService cityExpandService;
-	
+
 	@Autowired
 	private IRouteService routeService;
-	
+
+	private String module = "城市信息管理";
+
 	@ApiOperation(value = "新增城市扩充信息", notes = "新增城市扩充信息")
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public String addExpand(CityExpand cityExpand) {
+		String method="/route/add";String methodName="新增城市扩充信息";
 		boolean flag = false;
 		flag = cityExpandService.addExpand(cityExpand);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"扩充信息:"+cityExpand.toString());
 			return ERROR;
 		}
 		routeService.generateRoute();
+		getSysLogService().success(module,method,methodName,"扩充信息:"+cityExpand.toString());
 		return SUCCESS;
 	}
-	
+
 	@ApiOperation(value = "删除一条城市扩充信息", notes = "通过 id 删除一条城市扩充信息")
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
 	public String deleteExpand(@PathVariable("id") int id) {
+		String method="/route/delete";String methodName="删除城市扩充信息";
 		boolean flag = false;
 		flag = cityExpandService.deleteExpand(id);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"id:"+id);
 			return ERROR;
 		}
 		routeService.generateRoute();
+		getSysLogService().success(module,method,methodName,"id:"+id);
 		return SUCCESS;
 	}
-	
+
 	@ApiOperation(value = "更新一条城市信息", notes = "通过 id 更新一条城市扩充信息")
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
 	public String updateExpand(@PathVariable("id") int id, CityExpand cityExpand) {
+		String method="/route/update";String methodName="更新城市扩充信息";
 		boolean flag = false;
 		flag = cityExpandService.updateExpand(cityExpand);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"扩充信息:"+cityExpand.toString());
 			return ERROR;
 		}
 		routeService.generateRoute();
+		getSysLogService().success(module,method,methodName,"扩充信息:"+cityExpand.toString());
 		return SUCCESS;
 	}
-	
+
 	@ApiOperation(value = "得到所有城市", notes = "返回所有的城市信息")
 	@RequestMapping(value = "/findAllRegions", method = RequestMethod.GET)
 	public List<Region> findAllRegion() {
 		List<Region> regions = cityExpandService.findAllRegions();
 		return regions;
 	}
-	
+
 	@ApiOperation(value = "得到无范围的城市", notes = "返回无范围的城市信息")
 	@RequestMapping(value = "/findLeftRegions", method = RequestMethod.GET)
 	public List<Region> findLeftRegions() {
 		List<Region> regions = cityExpandService.findLeftRegions();
 		return regions;
 	}
-	
+
 	@ApiOperation(value = "得到所有的城市范围信息", notes = "得到所有的城市范围信息")
 	@RequestMapping(value = "/findAllExpands", method = RequestMethod.GET)
 	public Result findAllExpands(@RequestParam("pageNum") int pageNum, @RequestParam("limit") int limit) {
@@ -95,14 +106,14 @@ public class RouteController extends ReturnType {
 		Result result = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
 		return result;
 	}
-	
+
 	@ApiOperation(value = "得到一条的城市范围信息", notes = "通过 id 得到一条城市范围信息")
 	@RequestMapping(value = "/findExpand/{id}", method = RequestMethod.GET)
 	public CityExpand findExpandById(@PathVariable("id") int id) {
 		CityExpand cityExpand = cityExpandService.findById(id);
 		return cityExpand;
 	}
-	
+
 	@ApiOperation(value = "得到所有线路信息", notes = "得到所有的线路信息")
 	@RequestMapping(value = "/findAllRoutes", method = RequestMethod.GET)
 	public List<RouteInfo> findAllRouteInfos() {

@@ -27,54 +27,60 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @Api(value = "单据 controller")
 public class BillController extends ReturnType {
-	
+
 	@Autowired
 	private IBillService billService;
-	
+
+	private String module="单据信息";
+
 	@ApiOperation(value = "分发", notes = "分发 - 添加一条单据分发信息")
 	@RequestMapping(value = "/addRelease/{billCode}", method = RequestMethod.POST)
 	public String addRelease(@PathVariable("billCode") String billCode, BillRelease billRelease) {
-		
+		String method="/bill/addRelease";String methodName="添加分发信息";
 		boolean flag = false;
 		flag = billService.addRelease(billRelease);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"单据编号:"+billCode+";单据信息:"+billRelease.toString());
 			return ERROR;
 		}
+        getSysLogService().success(module,method,methodName,"单据编号:"+billCode+";单据信息:"+billRelease.toString());
 		return SUCCESS;
 	}
-	
+
 	@ApiOperation(value = "到货", notes = "到货 - 添加一条货物到货回执信息")
 	@RequestMapping(value = "/addArrived/{goodsRevertCode}", method = RequestMethod.POST)
 	public String addArrived(@PathVariable("goodsRevertCode") String goodsRevertCode, GoodsReceiptInfo goodsReceiptInfo) {
-		
+		String method="/bill/addArrived";String methodName="添加到货回执信息";
 		boolean flag = false;
 		flag = billService.addGoodsReceipt(goodsReceiptInfo);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"货物回执编码:"+goodsRevertCode+";添加货物回执信息:"+goodsReceiptInfo.toString());
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"货物回执编码:"+goodsRevertCode+";添加货物回执信息:"+goodsReceiptInfo.toString());
 		return SUCCESS;
 	}
-	
+
 	@ApiOperation(value = "分页查询单据信息", notes = "分页查询单据信息")
 	@RequestMapping(value = "/findByPage", method = RequestMethod.GET)
 	public Result findAllByPage(@RequestParam("pageNum") int pageNum, @RequestParam("limit") int limit) {
-		
+
 		Pageable pageable = PageRequest.of(pageNum-1, limit);
 		Page<BillInfo> page = billService.findAllByPage(pageable);
 		Result result = new Result(200, "SUCCESS", page.getNumberOfElements(), page.getContent());
 		return result;
-		
+
 	}
-	
+
 	@ApiOperation(value = "查询未分发的运单信息", notes = "查询未分发的运单信息")
 	@RequestMapping(value = "/findNotRelease", method = RequestMethod.GET)
 	public Result findNotRelease(@RequestParam("pageNum") int pageNum, @RequestParam("limit") int limit) {
-		
+
 		Pageable pageable = PageRequest.of(pageNum-1, limit);
 		Page<BillInfo> page = billService.findNotRelease(pageable);
 		Result result = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
 		return result;
-		
+
 	}
 
 }

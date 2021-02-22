@@ -1,5 +1,6 @@
 package com.app.base.control;
 
+import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -7,6 +8,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.system.log.service.SysLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,80 +22,90 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 public abstract class BaseController {
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ApplicationContext applicationContext;
     /*@Autowired
     private ResourceBundleMessageSource messageSource;*/
 
-	public ApplicationContext getApplicationContext() {
-		return this.applicationContext;
-	}
+    public ApplicationContext getApplicationContext() {
+        return this.applicationContext;
+    }
 
-	/**
-	 * 获取servlet属性
-	 * @return
-	 */
-	protected final ServletRequestAttributes getServletRequestAttributes() {
+    @Autowired
+    private SysLogService sysLogService;
+
+    public SysLogService getSysLogService() {
+        return this.sysLogService;
+    }
+
+    /**
+     * 获取servlet属性
+     *
+     * @return
+     */
+    protected final ServletRequestAttributes getServletRequestAttributes() {
         return (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     }
 
-	/**
-	 * 获取request
-	 * @return
-	 */
-	protected HttpServletRequest getRequest() {
+    /**
+     * 获取request
+     *
+     * @return
+     */
+    protected HttpServletRequest getRequest() {
         return getServletRequestAttributes().getRequest();
     }
 
-	/**
-	 * 获取response
-	 * @return
-	 */
-	protected HttpServletResponse getResponse() {
+    /**
+     * 获取response
+     *
+     * @return
+     */
+    protected HttpServletResponse getResponse() {
         return getServletRequestAttributes().getResponse();
     }
 
-	protected String getHeader(String key) {
-		return getRequest().getHeader(key);
-	}
+    protected String getHeader(String key) {
+        return getRequest().getHeader(key);
+    }
 
-	protected PageRequest getPageRequest() {
-		return this.getPageRequest(null);
-	}
+    protected PageRequest getPageRequest() {
+        return this.getPageRequest(null);
+    }
 
-	protected PageRequest getPageRequest(Sort sort) {
-		HttpServletRequest request = getRequest();
-		int page = 1;
-		int rows = 10;
-		if (null != request.getParameter("page")) {
-			page = Integer.parseInt(request.getParameter("page"));
-		}
-		if(null!=request.getParameter("rows")) {
-			rows = Integer.parseInt(request.getParameter("rows"));
-		}
-		//Paginator paginator = new Paginator();
-		PageRequest pageRequest = new PageRequest(page-1, rows, sort);
-		
-		return pageRequest;
-	}
-	
-	protected PageRequest getPageRequestK3(Sort sort) {
-		HttpServletRequest request = getRequest();
-		int page = 1;
-		int rows = 10;
-		if (null != request.getParameter("pageK3")) {
-			page = Integer.parseInt(request.getParameter("pageK3"));
-		}
-		if(null!=request.getParameter("rowsK3")) {
-			rows = Integer.parseInt(request.getParameter("rowsK3"));
-		}
-		//Paginator paginator = new Paginator();
-		PageRequest pageRequest = new PageRequest(page-1, rows, sort);
-		
-		return pageRequest;
-	}
+    protected PageRequest getPageRequest(Sort sort) {
+        HttpServletRequest request = getRequest();
+        int page = 1;
+        int rows = 10;
+        if (null != request.getParameter("page")) {
+            page = Integer.parseInt(request.getParameter("page"));
+        }
+        if (null != request.getParameter("rows")) {
+            rows = Integer.parseInt(request.getParameter("rows"));
+        }
+        //Paginator paginator = new Paginator();
+        PageRequest pageRequest = new PageRequest(page - 1, rows, sort);
+
+        return pageRequest;
+    }
+
+    protected PageRequest getPageRequestK3(Sort sort) {
+        HttpServletRequest request = getRequest();
+        int page = 1;
+        int rows = 10;
+        if (null != request.getParameter("pageK3")) {
+            page = Integer.parseInt(request.getParameter("pageK3"));
+        }
+        if (null != request.getParameter("rowsK3")) {
+            rows = Integer.parseInt(request.getParameter("rowsK3"));
+        }
+        //Paginator paginator = new Paginator();
+        PageRequest pageRequest = new PageRequest(page - 1, rows, sort);
+
+        return pageRequest;
+    }
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
@@ -102,7 +114,6 @@ public abstract class BaseController {
 
     /**
      * 日期类型转换
-     * 
      */
     protected void registerCustomEidtorsForWebDataBinder(WebDataBinder binder) {
         // 日期格式化
@@ -113,43 +124,85 @@ public abstract class BaseController {
 
     /**
      * 国际化
-     * @param code	编码
+     *
+     * @param code 编码
      * @return
      */
     protected String getText(String code) {
-    	return getText(code, new Object[]{}, "UnKnown", Locale.CHINA);
+        return getText(code, new Object[]{}, "UnKnown", Locale.CHINA);
     }
 
     /**
      * 国际化
-     * @param code	编码
-     * @param args	占位符
+     *
+     * @param code 编码
+     * @param args 占位符
      * @return
      */
     protected String getText(String code, Object[] args) {
-    	return getText(code, args, code, Locale.CHINA);
+        return getText(code, args, code, Locale.CHINA);
     }
 
     /**
      * 国际化
-     * @param code	编码
-     * @param args	占位符
-     * @param defaultMessage	默认值
+     *
+     * @param code           编码
+     * @param args           占位符
+     * @param defaultMessage 默认值
      * @return
      */
     protected String getText(String code, Object[] args, String defaultMessage) {
-    	return getText(code, args, defaultMessage, Locale.CHINA);
+        return getText(code, args, defaultMessage, Locale.CHINA);
     }
 
     /**
      * 国际化
-     * @param code	编码
-     * @param args	占位符
-     * @param defaultMessage	默认值
-     * @param locale	语言区域
+     *
+     * @param code           编码
+     * @param args           占位符
+     * @param defaultMessage 默认值
+     * @param locale         语言区域
      * @return
      */
     protected String getText(String code, Object[] args, String defaultMessage, Locale locale) {
-    	return "";//messageSource.getMessage(code, args, defaultMessage, locale);
+        return "";//messageSource.getMessage(code, args, defaultMessage, locale);
+    }
+
+    public String getIpAddr() {
+        String ipAddress = null;
+        HttpServletRequest request = getServletRequestAttributes().getRequest();
+        try {
+            ipAddress = request.getHeader("x-forwarded-for");
+            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+                ipAddress = request.getHeader("Proxy-Client-IP");
+            }
+            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+                ipAddress = request.getHeader("WL-Proxy-Client-IP");
+            }
+            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+                ipAddress = request.getRemoteAddr();
+                if (ipAddress.equals("127.0.0.1")) {
+                    // 根据网卡取本机配置的IP
+                    try {
+                        ipAddress = InetAddress.getLocalHost().getHostAddress();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            // 通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
+            if (ipAddress != null) {
+                if (ipAddress.contains(",")) {
+                    return ipAddress.split(",")[0];
+                } else {
+                    return ipAddress;
+                }
+            } else {
+                return "";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }

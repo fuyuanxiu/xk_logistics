@@ -204,4 +204,23 @@ public class PermRoleRouterMap extends BaseEntity {
     public void setPermIdStr(String permIdStr) {
         this.permIdStr = permIdStr;
     }
+
+    @Override
+    public String toString() {
+        return "PermRoleRouterMap{" +
+                "bsPermId=" + bsPermId +
+                ", bsPermCode='" + bsPermCode + '\'' +
+                ", bsPermName='" + bsPermName + '\'' +
+                ", bsRoleId=" + bsRoleId +
+                ", bsRoleCode='" + bsRoleCode + '\'' +
+                ", bsRoleName='" + bsRoleName + '\'' +
+                ", bsRouterId=" + bsRouterId +
+                ", bsRouterCode='" + bsRouterCode + '\'' +
+                ", bsRouterName='" + bsRouterName + '\'' +
+                ", bsIsPermit=" + bsIsPermit +
+                ", permList=" + permList +
+                ", idStr='" + idStr + '\'' +
+                ", permIdStr='" + permIdStr + '\'' +
+                '}';
+    }
 }

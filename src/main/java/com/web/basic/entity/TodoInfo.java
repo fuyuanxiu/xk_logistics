@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
- * @author 
+ * @author
  */
 @Entity
 @Table(name = TodoInfo.TABLE_NAME)
@@ -267,7 +267,28 @@ public class TodoInfo extends BaseEntity {
     public void setPkModifiedBy(Long pkModifiedBy) {
         this.pkModifiedBy = pkModifiedBy;
     }
-//
+
+    @Override
+    public String toString() {
+        return "TodoInfo{" +
+                "bsUserId=" + bsUserId +
+                ", bsRouter='" + bsRouter + '\'' +
+                ", bsStatus=" + bsStatus +
+                ", bsTitle='" + bsTitle + '\'' +
+                ", bsContent='" + bsContent + '\'' +
+                ", bsRemark='" + bsRemark + '\'' +
+                ", bsType=" + bsType +
+                ", bsPriority=" + bsPriority +
+                ", bsStartTime=" + bsStartTime +
+                ", bsEndTime=" + bsEndTime +
+                ", bsReferId=" + bsReferId +
+                ", bsExtend=" + bsExtend +
+                ", pkCreatedBy=" + pkCreatedBy +
+                ", pkModifiedBy=" + pkModifiedBy +
+                '}';
+    }
+
+    //
 //    public SysUser getCreatedBy() {
 //        return createdBy;
 //    }

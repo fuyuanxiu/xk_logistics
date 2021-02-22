@@ -29,7 +29,6 @@ import io.swagger.annotations.ApiOperation;
 public class FileController extends WebController {
 	@Autowired
 	private FileService fileService;
-
 	@ApiOperation(value="上传文件", notes="上传文件")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "file", value = "附件", dataType = "MultipartFile", paramType="query",defaultValue=""),

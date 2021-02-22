@@ -31,20 +31,24 @@ public class CheckController extends ReturnType {
 
 	@Autowired
 	private ICheckService checkService;
-	
+
+	private String module="营业外收入信息";
 	/**
 	 * 录入营业外收入
 	 */
 	@RequestMapping(value = "/addExtraIncome", method = RequestMethod.POST, produces = "application/json")
 	public String add(ExtraIncome extraIncome) {
+		String method="/check/addExtraIncome";String methodName="录入营业外收入";
 		boolean flag = false;
 		flag = checkService.save(extraIncome);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"营业外收入信息:"+extraIncome.toString());
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"营业外收入信息:"+extraIncome.toString());
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * 查询所有营业外收入
 	 */
@@ -53,22 +57,25 @@ public class CheckController extends ReturnType {
 		Pageable pageable = PageRequest.of(pageNum-1, limit);
 		Page<ExtraIncome> page = checkService.selectAllExtra(pageable);
 		Result result  = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
-		return result;	
+		return result;
 	}
-    
+
 	/**
 	 * 录入财务费用
 	 */
 	@RequestMapping(value = "/addFinanceFee", method = RequestMethod.POST, produces = "application/json")
 	public String add(FinanceFee financeFee) {
+		String method="/check/addFinanceFee";String methodName="录入财务费用";
 		boolean flag = false;
 		flag = checkService.save(financeFee);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"财务费用信息:"+financeFee.toString());
 			return ERROR;
 		}
-		return SUCCESS;	
+		getSysLogService().success(module,method,methodName,"财务费用信息:"+financeFee.toString());
+		return SUCCESS;
 	}
-	
+
 	/**
 	 * 查询所有财务费用
 	 */
@@ -77,22 +84,25 @@ public class CheckController extends ReturnType {
 		Pageable pageable = PageRequest.of(pageNum-1, limit);
 		Page<FinanceFee> page = checkService.selectAllFinance(pageable);
 		Result result  = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
-		return result;	
+		return result;
 	}
-    
+
     /**
 	 * 录入管理费用
 	 */
 	@RequestMapping(value = "/addManageFee", method = RequestMethod.POST, produces = "application/json")
 	public String add(ManageFee manageFee) {
+		String method="/check/addManageFee";String methodName="录入管理费用";
 		boolean flag = false;
 		flag = checkService.save(manageFee);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"管理费用信息："+manageFee.toString());
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"管理费用信息："+manageFee.toString());
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * 查询所有管理费用
 	 */
@@ -101,31 +111,34 @@ public class CheckController extends ReturnType {
 		Pageable pageable = PageRequest.of(pageNum-1, limit);
 		Page<ManageFee> page = checkService.selectAllManage(pageable);
 		Result result  = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
-		return result;	
+		return result;
 	}
-    
+
     /**
    	 * 根据id查询管理费用
    	 */
     @RequestMapping(value = "/findManageFee/{id}", method = RequestMethod.GET)
    	public ManageFee selectByMId(@PathVariable("id")int id) {
     	ManageFee manageFee = checkService.selectByMId(id);
-   		return manageFee;		
+   		return manageFee;
    	}
-    
+
 	/**
 	 * 录入员工工资
 	 */
 	@RequestMapping(value = "/addWage", method = RequestMethod.POST, produces = "application/json")
 	public String add(EmployeeWage wage) {
+		String method="/check/addWage";String methodName="录入员工工资";
 		boolean flag = false;
 		flag = checkService.save(wage);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"员工工资信息:"+wage.toString());
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"员工工资信息:"+wage.toString());
 		return SUCCESS;
 	}
-	
+
     /**
 	 * 查询所有员工工资
 	 */
@@ -134,24 +147,24 @@ public class CheckController extends ReturnType {
 		Pageable pageable = PageRequest.of(pageNum-1, limit);
 		Page<EmployeeWage> page = checkService.selectAllWage(pageable);
 		Result result  = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
-		return result;	
+		return result;
 	}
-    
+
     /**
 	 * 根据员工编号查询员工工资
 	 */
     @RequestMapping(value = "/findWage/{employeeCode}", method = RequestMethod.GET)
 	public EmployeeWage selectByEmployeeCode(@PathVariable("employeeCode") String employeeCode) {
     	EmployeeWage wage= checkService.selectByEmployeeCode(employeeCode);
-		return wage;		
+		return wage;
 	}
-    
+
     /**
 	 * 查询当前月报
 	 */
     @RequestMapping(value = "/selectIncomeMonthly", method = RequestMethod.GET)
 	public IncomeMonthlyTemp selectAll() {
 		IncomeMonthlyTemp incomeMonthlyTemp = checkService.selectAll();
-		return incomeMonthlyTemp;	
+		return incomeMonthlyTemp;
 	}
 }

@@ -33,6 +33,8 @@ public class ClearController extends ReturnType {
 	@Autowired
 	private IClearService clearService;
 
+	private String module="结算信息管理";
+
 	/**
 	 * 司机结算-返回未结的所有实体(实体中能填的属性都填好)
 	 */
@@ -57,11 +59,14 @@ public class ClearController extends ReturnType {
 	 */
 	@RequestMapping(value = "/addDriClear", method = RequestMethod.PUT, produces = "application/json")
 	public String addDriClear(DriverClear driverClear) {
+		String method="/clear/addDriClear";String methodName="司机结算";
 		boolean flag = false;
 		flag = clearService.driClear(driverClear);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"结算信息:"+driverClear.toString());
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"结算信息:"+driverClear.toString());
 		return SUCCESS;
 	}
 
@@ -76,7 +81,7 @@ public class ClearController extends ReturnType {
 		Result result = new Result(200, "SUCCESS", list.size(), list);
 		return result;
 	}
-	
+
 	/**
 	 * 客户结算-通过订单编号查询单个实体的已填所有信息
 	 */
@@ -86,20 +91,23 @@ public class ClearController extends ReturnType {
 		System.out.println(customerBillClear);
 		return customerBillClear;
 	}
-	
+
 	/**
 	 * 客户结算（前台返回一个完整的实体）
 	 */
 	@RequestMapping(value = "/addCusClear", method = RequestMethod.PUT, produces = "application/json")
 	public String addCusClear(CustomerBillClear customerBillClear) {
+		String method="/clear/addCusClear";String methodName="客户结算";
 		boolean flag = false;
 		flag = clearService.cusClear(customerBillClear);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"结算信息:"+customerBillClear.toString());
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"结算信息:"+customerBillClear.toString());
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * 代收结算-返回未结的所有实体(实体中能填的属性都填好)
 	 */
@@ -109,7 +117,7 @@ public class ClearController extends ReturnType {
 		Result result = new Result(200, "SUCCESS", list.size(), list);
 		return result;
 	}
-	
+
 	/**
 	 * 代收结算-通过订单编号查询单个实体的已填所有信息
 	 */
@@ -118,34 +126,39 @@ public class ClearController extends ReturnType {
 		ProxyFeeClear proxyFeeClear = clearService.selectByGoodsBillCode(goodsBillCode);
 		return proxyFeeClear;
 	}
-	
+
 	/**
 	 * 代收结算（前台返回一个完整的实体）
 	 */
 	@RequestMapping(value = "/addCHelpClear", method = RequestMethod.PUT, produces = "application/json")
 	public String addCHelpClear(ProxyFeeClear proxyFeeClear) {
+		String method="/clear/addCHelpClear";String methodName="代收结算";
 		boolean flag = false;
 		flag = clearService.helpClear(proxyFeeClear);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"结算信息:"+proxyFeeClear.toString());
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"结算信息:"+proxyFeeClear.toString());
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * 杂费结算  add
 	 */
 	@RequestMapping(value = "/addExtraClear", method = RequestMethod.POST)
 	public String addExtraClear(ExtraClear extraClear) {
-		
+		String method="/clear/addExtraClear";String methodName="杂费结算";
 		boolean flag = false;
 		flag = clearService.saveExtraClear(extraClear);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"结算信息:"+extraClear.toString());
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"结算信息:"+extraClear.toString());
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * 杂费结算  select
 	 */

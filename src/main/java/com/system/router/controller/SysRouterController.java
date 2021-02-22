@@ -1,5 +1,6 @@
 package com.system.router.controller;
 
+import com.app.base.control.WebController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,18 +25,24 @@ import io.swagger.annotations.ApiOperation;
 @ControllerAdvice
 @RestController
 @RequestMapping(value = "/sysRouter")
-public class SysRouterController {
+public class SysRouterController extends WebController {
 
     @Autowired
     private SysRouterService sysRouterService;
-    
+
+    private String module = "资源信息管理";
+
 
     @ApiOperation(value = "新增资源", notes = "新增资源")
     @PostMapping("/add")
     public ApiResponseResult add(@RequestBody(required=false) SysRouter sysRouter){
+        String method="/sysRouter/add";String methodName="新增资源";
         try{
-            return sysRouterService.add(sysRouter);
+            ApiResponseResult add = sysRouterService.add(sysRouter);
+            getSysLogService().success(module,method,methodName,"资源信息:"+sysRouter.toString());
+            return add;
         }catch(Exception e){
+            getSysLogService().error(module,method,methodName,"资源信息:"+sysRouter.toString()+";"+e.toString());
             return ApiResponseResult.failure("角色新增失败！");
         }
     }
@@ -43,9 +50,13 @@ public class SysRouterController {
     @ApiOperation(value = "删除角色", notes = "删除角色")
     @PostMapping("/delete")
     public ApiResponseResult delete(@RequestParam(value = "id", required = false) Long id){
+        String method="/sysRouter/delete";String methodName="新增资源";
         try{
-            return sysRouterService.delete(id);
+            ApiResponseResult delete = sysRouterService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch(Exception e){
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("删除角色失败！");
         }
     }
@@ -60,5 +71,5 @@ public class SysRouterController {
         }
     }
 
-    
+
 }

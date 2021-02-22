@@ -27,67 +27,79 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "司机信息 controller")
 @ControllerAdvice
 public class DriverInfoController extends ReturnType {
-	
-	@Autowired
-	private IDriverInfoService driverInfoService;
-	
-	@ApiOperation(value = "新增司机信息", notes = "前台信息封装后进行添加司机信息操作")
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addNewDriver(DriverInfo driverInfo) {
-		
-		System.out.println(driverInfo);
-		boolean flag = false;
-		flag = driverInfoService.addNewDriver(driverInfo);
-		if (!flag) {
-			return ERROR;
-		}
-		return SUCCESS;
-	}
-	
-	@ApiOperation(value = "删除一个司机信息", notes = "通过 id 删除司机信息")
-	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-	public String delete(@PathVariable("id") String id) {
-		boolean flag = false;
-		flag = driverInfoService.deleteById(id);
-		if (!flag) {
-			return ERROR;
-		}
-		return SUCCESS;
-	}
-	
-	@ApiOperation(value = "修改一个司机信息", notes = "通过 id 修改司机信息")
-	@RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
-	public String update(@PathVariable("id") String id, DriverInfo driverInfo) {
-		
-		boolean flag = false;
-		flag = driverInfoService.updateById(id, driverInfo);
-		if (!flag) {
-			return ERROR;
-		}
-		return SUCCESS;
-	}
-	
-	@ApiOperation(value = "分页查询司机", notes = "通过页码和limit查询司机信息")
-	@RequestMapping(value = "/selectAllByPage", method = RequestMethod.GET)
-	public Result selectAllByPage(@RequestParam("pageNum") int pageNum, @RequestParam("limit") int limit) {
-		Pageable pageable = PageRequest.of(pageNum-1, limit);
-		Page<DriverInfo> page = driverInfoService.findAllByPage(pageable);
-		Result result = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
-		return result;
-	}
-	
-	@ApiOperation(value = "查询一个司机信息", notes = "通过 id 查询司机信息")
-	@RequestMapping(value = "/selectById/{id}", method = RequestMethod.GET)
-	public DriverInfo selectById(@PathVariable("id") String id) {
-		DriverInfo driverInfo = driverInfoService.findById(id);
-		return driverInfo;
-	}
-	
-	@ApiOperation(value = "查询所有司机 id", notes = "查询所有司机 id")
-	@RequestMapping(value = "/selectAllId", method = RequestMethod.GET)
-	public List<String> selectAllId() {
-		List<String> list = driverInfoService.findAllId();
-		return list;
-	}
+
+    @Autowired
+    private IDriverInfoService driverInfoService;
+
+    private String module = "司机信息管理";
+
+    @ApiOperation(value = "新增司机信息", notes = "前台信息封装后进行添加司机信息操作")
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public String addNewDriver(DriverInfo driverInfo) {
+        String method = "/driverInfo/add";
+        String methodName = "新增司机信息";
+        System.out.println(driverInfo);
+        boolean flag = false;
+        flag = driverInfoService.addNewDriver(driverInfo);
+        if (!flag) {
+            getSysLogService().error(module, method, methodName, "新增信息:" + driverInfo.toString());
+            return ERROR;
+        }
+        getSysLogService().success(module, method, methodName, "新增信息:" + driverInfo.toString());
+        return SUCCESS;
+    }
+
+    @ApiOperation(value = "删除一个司机信息", notes = "通过 id 删除司机信息")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public String delete(@PathVariable("id") String id) {
+        String method = "/driverInfo/delete";
+        String methodName = "删除司机信息";
+        boolean flag = false;
+        flag = driverInfoService.deleteById(id);
+        if (!flag) {
+            getSysLogService().error(module, method, methodName, "id:" + id);
+            return ERROR;
+        }
+        getSysLogService().success(module, method, methodName, "id:" + id);
+        return SUCCESS;
+    }
+
+    @ApiOperation(value = "修改一个司机信息", notes = "通过 id 修改司机信息")
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
+    public String update(@PathVariable("id") String id, DriverInfo driverInfo) {
+		String method = "/driverInfo/update";
+		String methodName = "修改司机信息";
+        boolean flag = false;
+        flag = driverInfoService.updateById(id, driverInfo);
+        if (!flag) {
+        	getSysLogService().error(module,method,methodName,"id:"+id+";修改信息:"+driverInfo.toString());
+            return ERROR;
+        }
+        getSysLogService().success(module,method,methodName,"id:"+id+";修改信息:"+driverInfo.toString());
+        return SUCCESS;
+    }
+
+    @ApiOperation(value = "分页查询司机", notes = "通过页码和limit查询司机信息")
+    @RequestMapping(value = "/selectAllByPage", method = RequestMethod.GET)
+    public Result selectAllByPage(@RequestParam("pageNum") int pageNum, @RequestParam("limit") int limit) {
+        Pageable pageable = PageRequest.of(pageNum - 1, limit);
+        Page<DriverInfo> page = driverInfoService.findAllByPage(pageable);
+        Result result = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
+        return result;
+    }
+
+    @ApiOperation(value = "查询一个司机信息", notes = "通过 id 查询司机信息")
+    @RequestMapping(value = "/selectById/{id}", method = RequestMethod.GET)
+    public DriverInfo selectById(@PathVariable("id") String id) {
+        DriverInfo driverInfo = driverInfoService.findById(id);
+        return driverInfo;
+    }
+
+    @ApiOperation(value = "查询所有司机 id", notes = "查询所有司机 id")
+    @RequestMapping(value = "/selectAllId", method = RequestMethod.GET)
+    public List<String> selectAllId() {
+        List<String> list = driverInfoService.findAllId();
+        return list;
+    }
 
 }

@@ -25,26 +25,38 @@ public class SysUserController extends WebController{
 
     @Autowired
     private SysUserService sysUserService;
-    
+
+    private String module = "用户管理信息";
+
 
     @ApiOperation(value = "注册用户", notes = "注册用户")
     @PostMapping("/add")
     public ApiResponseResult add(@RequestBody(required=false) SysUser sysUser){
+        String method="/sysUser/add";String methodName="注册用户";
+
         try{
-            return sysUserService.add(sysUser);
+            ApiResponseResult add = sysUserService.add(sysUser);
+            getSysLogService().success(module,method,methodName,"用户信息:"+sysUser.toString());
+            return add;
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"用户信息:"+sysUser.toString()+";"+e.toString());
             return ApiResponseResult.failure("用户注册失败！");
         }
     }
-    
+
     @ApiOperation(value = "编辑用户", notes = "编辑用户")
     @PostMapping("/edite")
     public ApiResponseResult edite(@RequestBody(required=false) SysUser sysUser){
+        String method="/sysUser/edite";String methodName="编辑用户";
+
         try{
-            return sysUserService.edite(sysUser);
+            ApiResponseResult edite = sysUserService.edite(sysUser);
+            getSysLogService().success(module,method,methodName,"信息:"+sysUser.toString());
+            return edite;
         }catch(Exception e){
         	logger.error(e.getMessage(), e);
+        	getSysLogService().error(module,method,methodName,"信息:"+sysUser.toString()+";"+e.toString());
             return ApiResponseResult.failure("编辑用户失败！");
         }
     }
@@ -52,10 +64,14 @@ public class SysUserController extends WebController{
     @ApiOperation(value = "删除用户", notes = "删除用户")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(@RequestParam(value = "id", required = false) Long id){
+        String method="/sysUser/delete";String methodName="删除用户";
         try{
-            return sysUserService.delete(id);
+            ApiResponseResult delete = sysUserService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("删除用户失败！");
         }
     }
@@ -66,10 +82,14 @@ public class SysUserController extends WebController{
                                             @RequestParam(required=false) String oldPassword,
                                             @RequestParam(required=false) String password,
                                             @RequestParam(required = false) String rePassword){
+        String method="/sysUser/changePassword";String methodName="修改密码";
         try{
-            return sysUserService.changePassword(loginName, oldPassword, password, rePassword);
+            ApiResponseResult changePassword = sysUserService.changePassword(loginName, oldPassword, password, rePassword);
+            getSysLogService().success(module,method,methodName,null);
+            return changePassword;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,null+";"+e.toString());
             return ApiResponseResult.failure("修改密码失败！");
         }
     }
@@ -79,14 +99,19 @@ public class SysUserController extends WebController{
     public ApiResponseResult resetPassword(@RequestParam(required=false) Long id,
                                             @RequestParam(required=false) String password,
                                             @RequestParam(required = false) String rePassword){
+        String method="/sysUser/resetPassword";String methodName="重置密码";
+
         try{
-            return sysUserService.resetPassword(id, password, rePassword);
+            ApiResponseResult result = sysUserService.resetPassword(id, password, rePassword);
+            getSysLogService().success(module,method,methodName,null);
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,null+";"+e.toString());
             return ApiResponseResult.failure("重置密码失败！");
         }
     }
-    
+
     @ApiOperation(value = "获取用户信息", notes = "获取用户信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "编码", dataType = "Long", paramType = "query", defaultValue = "")

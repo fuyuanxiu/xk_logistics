@@ -21,6 +21,8 @@ public class CostMateController extends WebController {
     @Autowired
     private CostMateService costMateService;
 
+    private String module = "客户BOM关于K3物料信息";
+
     @ApiOperation(value="根据物料编号获取物料信息", notes="根据物料编号获取物料信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mateCode", value = "物料编号", dataType = "String", paramType = "query", defaultValue = "")
@@ -43,10 +45,14 @@ public class CostMateController extends WebController {
     })
     @RequestMapping(value = "/addMate", method = RequestMethod.POST)
     public ApiResponseResult addMate(Long id, Long cusBomId){
+        String method="/costMate/addMate";String methodName="添加新物料到匹配数据";
         try{
-            return costMateService.addMate(id, cusBomId);
+            ApiResponseResult result = costMateService.addMate(id, cusBomId);
+            getSysLogService().success(module,method,methodName,"物料ID:"+id+";cusBomId:"+cusBomId);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"物料ID:"+id+";cusBomId:"+cusBomId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("添加失败！");
         }
@@ -55,10 +61,14 @@ public class CostMateController extends WebController {
     @ApiOperation(value="K3代码导入", notes="K3代码导入")
     @RequestMapping(value = "/getK3Mate", method = RequestMethod.POST)
     public ApiResponseResult getK3Mate(Long bomParamId, String fileId, MultipartFile file, String bomK3CodeCol, Integer startRow){
+        String method="/costMate/getK3Mate";String methodName="K3代码导入";
         try{
-            return costMateService.getK3Mate(bomParamId, fileId, file, bomK3CodeCol, startRow);
+            ApiResponseResult k3Mate = costMateService.getK3Mate(bomParamId, fileId, file, bomK3CodeCol, startRow);
+            getSysLogService().success(module,method,methodName,"bomParamId:"+bomParamId+";fileId:"+fileId);
+            return k3Mate;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"bomParamId:"+bomParamId+";fileId:"+fileId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("K3代码导入失败！");
         }

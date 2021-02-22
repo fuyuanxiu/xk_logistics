@@ -2,6 +2,7 @@ package com.system.role.controller;
 
 import java.util.List;
 
+import com.app.base.control.WebController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,28 +25,42 @@ import io.swagger.annotations.ApiOperation;
 @ControllerAdvice
 @RestController
 @RequestMapping(value = "/sysRole")
-public class SysRoleController {
+public class SysRoleController extends WebController {
 
     @Autowired
     private SysRoleService sysRoleService;
-    
+
+    private String module="角色管理信息";
 
     @ApiOperation(value = "新增角色", notes = "新增角色")
     @PostMapping("/add")
     public ApiResponseResult add(@RequestBody(required=false) SysRole sysRole){
+        String method="/sysRole/add";String methodName="新增角色";
         try{
-            return sysRoleService.add(sysRole);
+            ApiResponseResult add = sysRoleService.add(sysRole);
+            logger.debug("新增角色=add:");
+            getSysLogService().success(module,method,methodName,"新增角色信息:"+sysRole.toString());
+            return add;
+
         }catch(Exception e){
+            logger.error("角色新增失败！", e);
+            getSysLogService().error(module,method,methodName,"新增角色信息:"+sysRole.toString()+";"+e.toString());
             return ApiResponseResult.failure("角色新增失败！");
         }
     }
-    
+
     @ApiOperation(value = "编辑角色", notes = "编辑角色")
     @PostMapping("/edite")
     public ApiResponseResult edite(@RequestBody(required=false) SysRole sysRole){
+        String method="/sysRole/edite";String methodName="编辑角色";
         try{
-            return sysRoleService.edite(sysRole);
+            ApiResponseResult edite = sysRoleService.edite(sysRole);
+            logger.debug("编辑角色=edite:");
+            getSysLogService().success(module,method,methodName,"编辑角色信息:"+sysRole.toString());
+            return edite;
         }catch(Exception e){
+            logger.error("编辑角色失败!",e);
+            getSysLogService().error(module,method,methodName,"编辑角色信息:"+sysRole.toString()+";"+e.toString());
             return ApiResponseResult.failure("编辑角色失败！");
         }
     }
@@ -53,9 +68,15 @@ public class SysRoleController {
     @ApiOperation(value = "删除角色", notes = "删除角色")
     @PostMapping("/delete")
     public ApiResponseResult delete(@RequestParam(value = "id", required = false) Long id){
+        String method="/sysRole/delete";String methodName="删除角色";
         try{
-            return sysRoleService.delete(id);
+            ApiResponseResult delete = sysRoleService.delete(id);
+            logger.debug("删除角色=delete:");
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch(Exception e){
+            logger.error("删除角色失败!",e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("删除角色失败！");
         }
     }
@@ -64,9 +85,13 @@ public class SysRoleController {
     @RequestMapping(value = "/getlist", method = RequestMethod.GET)
     public ApiResponseResult getlist(@RequestParam(value = "roleCode", required = false) String roleCode,
                                      @RequestParam(value = "roleName", required = false) String roleName) {
+        String method="/sysRole/getlist";String methodName="获取角色列表";
         try {
+            logger.debug("获取角色列表=getlist:");
+            //getSysLogService().success(module,method,methodName,"角色编码:"+roleCode+";角色名称:"+roleName);
             return sysRoleService.getlist(roleCode,roleName);
         } catch (Exception e) {
+            getSysLogService().error(module,method,methodName,"角色编码:"+roleCode+";角色名称:"+roleName+";"+e.toString());
             return ApiResponseResult.failure("获取角色列表失败！");
         }
     }
@@ -79,7 +104,7 @@ public class SysRoleController {
             return ApiResponseResult.failure("获取角色列表配置失败！");
         }
     }
-    
+
     @ApiOperation(value = "获取角色配置列表", notes = "获取角色配置列表")
     @RequestMapping(value = "/saveUserRoles", method = RequestMethod.GET)
     public ApiResponseResult saveUserRoles(@RequestParam(value = "userId") String userId,@RequestParam(value = "roles") String roles) {
@@ -89,13 +114,18 @@ public class SysRoleController {
             return ApiResponseResult.failure("获取角色列表配置失败！");
         }
     }
-    
+
     @ApiOperation(value = "新增资源", notes = "新增资源")
     @RequestMapping(value = "/addRouter", method = RequestMethod.GET)
     public ApiResponseResult addRouter(@RequestParam(value = "roleCode") String roleCode,@RequestParam(value = "roles") String roles){
+        String method="/sysRole/addRouter";String methodName="新增资源";
         try{
-        	return sysRoleService.addRouter(roleCode,roles);
+            ApiResponseResult apiResponseResult = sysRoleService.addRouter(roleCode, roles);
+            logger.debug("新增资源=addRouter:");
+            getSysLogService().success(module,method,methodName,"角色编码:"+roleCode+";角色:"+roles);
+        	return apiResponseResult;
         }catch(Exception e){
+            getSysLogService().error(module,method,methodName,"角色编码:"+roleCode+";角色:"+roles+";"+e.toString());
             return ApiResponseResult.failure("角色资源失败！");
         }
     }

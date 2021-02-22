@@ -23,13 +23,20 @@ public class SysPermissionController extends WebController {
     @Autowired
     private SysPermissionService sysPermissionService;
 
+    private String module="用户管理信息";
+
     @ApiOperation(value = "新增操作权限", notes = "新增操作权限")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(SysPermission perm){
+        String method="/sysPermission/add";String methodName="新增操作权限";
         try{
-            return sysPermissionService.add(perm);
+            ApiResponseResult add = sysPermissionService.add(perm);
+            logger.debug("新增操作权限=add:");
+            getSysLogService().success(module,method,methodName,"权限:"+perm.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"权限:"+perm.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增操作权限失败！");
         }
@@ -38,10 +45,15 @@ public class SysPermissionController extends WebController {
     @ApiOperation(value = "编辑操作权限", notes = "编辑操作权限")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(SysPermission perm){
+        String method="/sysPermission/edit";String methodName="编辑操作权限";
         try{
-            return sysPermissionService.edit(perm);
+            ApiResponseResult edit = sysPermissionService.edit(perm);
+            logger.debug("编辑操作权限=edit:");
+            getSysLogService().success(module,method,methodName,"权限:"+perm.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"权限:"+perm.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑操作权限失败！");
         }
@@ -53,10 +65,15 @@ public class SysPermissionController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/sysPermission/delete";String methodName="删除操作权限";
         try{
-            return sysPermissionService.delete(id);
+            ApiResponseResult delete = sysPermissionService.delete(id);
+            logger.debug("删除操作权限=delete:");
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除操作权限失败！");
         }
@@ -97,10 +114,14 @@ public class SysPermissionController extends WebController {
     @ApiOperation(value = "权限设置", notes = "权限设置")
     @RequestMapping(value = "/setPerm", method = RequestMethod.POST)
     public ApiResponseResult setPerm(PermRoleRouterMap permMap){
+        String method="/sysPermission/setPerm";String methodName="权限设置";
         try{
-            return sysPermissionService.setPerm(permMap);
+            ApiResponseResult apiResponseResult = sysPermissionService.setPerm(permMap);
+            getSysLogService().success(module,method,methodName,"设置权限:"+permMap.toString());
+            return apiResponseResult;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"设置权限:"+permMap.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("权限设置失败！");
         }

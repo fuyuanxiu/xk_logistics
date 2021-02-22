@@ -21,6 +21,8 @@ public class CustomerBomFileController extends WebController {
     @Autowired
     private CustomerBomFileService customerBomFileService;
 
+    private String module = "客户BOM附件关联信息";
+
     @ApiOperation(value="添加附件", notes="添加附件")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "附件", dataType = "MultipartFile", paramType = "query", defaultValue = ""),
@@ -29,10 +31,14 @@ public class CustomerBomFileController extends WebController {
     })
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(MultipartFile file, Long bsFileId, Long bsCusBomId){
+        String method="/customerBomFile/add";String methodName="添加附件";
         try{
-            return customerBomFileService.add(file, bsFileId, bsCusBomId);
+            ApiResponseResult add = customerBomFileService.add(file, bsFileId, bsCusBomId);
+            getSysLogService().success(module,method,methodName,"bsFileId:"+bsFileId+";bsCusBomId:"+bsCusBomId);
+            return add;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"bsFileId:"+bsFileId+";bsCusBomId:"+bsCusBomId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("添加附件失败！");
         }
@@ -44,10 +50,14 @@ public class CustomerBomFileController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/customerBomFile/delete";String methodName="删除附件";
         try{
-            return customerBomFileService.delete(id);
+            ApiResponseResult delete = customerBomFileService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除附件失败！");
         }

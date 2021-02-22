@@ -69,11 +69,11 @@ public class SysLogAspect {
         Object[] args = joinPoint.getArgs();
         //将参数所在的数组转换成json
         String params = JSON.toJSONString(args);
-        
+
         //System.out.println("String length: " + params.length());
         //System.out.println("Byte array length: " + params.getBytes().length);
         System.out.println("String: " + params);
-     
+
         try {
 			params = new String(params.getBytes("ISO8859-1"), "GBK");
 		} catch (UnsupportedEncodingException e1) {
@@ -81,7 +81,7 @@ public class SysLogAspect {
 			e1.printStackTrace();
 		}
         //System.out.println(params);
-        
+
         //20181225-fyx-参数过大(一般是文件)
         if(params.length()>=255){
         	params = params.substring(0, 254);
@@ -89,24 +89,24 @@ public class SysLogAspect {
         sysLog.setParams(params);
 
         sysLog.setCreatedTime(new Date());
-        
+
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) ra;
         HttpServletRequest request = sra.getRequest();
-        
+
         String token = request.getHeader("X-Token");// 从 http 请求头中取出 token
         if(token != null){
         	String userCode = JWT.decode(token).getAudience().get(0);
             //获取用户名
             sysLog.setUsername(userCode);
         }
-        
+
         //获取用户ip地址
         sysLog.setIp(IpUtil.getIpAddr(request));
 
         //调用service保存SysLog实体类到数据库
         try {
-			sysLogService.add(sysLog);
+//			sysLogService.add(sysLog);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

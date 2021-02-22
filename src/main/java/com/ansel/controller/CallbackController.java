@@ -20,28 +20,32 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "回告 controller")
 @RequestMapping(value = "/callback")
 public class CallbackController extends ReturnType {
-	
+
 	@Autowired
 	private ICallbackService callbackService;
-	
+
+	private String module="回告信息";
+
 	@RequestMapping(value = "/add/{goodsBillId}", method = RequestMethod.POST)
 	public String addInfo(@PathVariable("goodsBillId") String goodsBillId, CallbackInfo callbackInfo) {
-
+		String method="/callback/add";String methodName="新增回告";
 		boolean flag = false;
 		flag = callbackService.addInfo(callbackInfo);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"goodsBillId:"+goodsBillId+";新增回告信息:"+callbackInfo.toString());
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"goodsBillId:"+goodsBillId+";新增回告信息:"+callbackInfo.toString());
 		return SUCCESS;
 	}
-	
+
 	@ApiOperation(value = "查询一条回告信息")
 	@RequestMapping(value = "/findDetail/{goodsBillId}/{type}", method = RequestMethod.GET)
 	public CallbackInfo findDetail(@PathVariable("goodsBillId") String goodsBillId, @PathVariable("type") String type) {
-		
+
 		CallbackInfo callbackInfo = callbackService.findDetail(goodsBillId, type);
 		return callbackInfo;
-		
+
 	}
 
 }

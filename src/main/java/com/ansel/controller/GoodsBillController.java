@@ -30,34 +30,38 @@ import io.swagger.annotations.ApiOperation;
 @ControllerAdvice
 @RequestMapping(value = "/goodsBill")
 public class GoodsBillController extends ReturnType {
-	
+
 	@Autowired
 	private IGoodsBillService goodsBillService;
-	
+
+	private String module = "货运信息管理";
 	/**
 	 * 填写一份货运单合同
 	 */
 	@ApiOperation(value = "添加货运单", notes = "添加一个新货运单")
 	@RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json")
-	public Map<?, ?> addGoodsBill(GoodsBill goodsBill) {  
-		
+	public Map<?, ?> addGoodsBill(GoodsBill goodsBill) {
+		String method="/goodsBill/add";String methodName="添加货运单";
+		getSysLogService().success(module,method,methodName,"货运单信息:"+goodsBill.toString());
 		return goodsBillService.save(goodsBill);
 	}
-	
+
 	/**
 	 * 添加货物
 	 */
 	@RequestMapping(value = "/addGoods/{goodsBillDetailId}", method = RequestMethod.POST, produces = "application/json")
 	public String addGoods(@PathVariable("goodsBillDetailId") String goodsBillDetailId, CargoReceiptDetail cargoReceiptDetail) {
-		
+		String method="/goodsBill/addGoods";String methodName="添加货物";
 		boolean flag = false;
 		flag = goodsBillService.saveGoods(goodsBillDetailId, cargoReceiptDetail);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"goodsBillDetailId:"+goodsBillDetailId+";回执单信息:"+cargoReceiptDetail.toString());
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"goodsBillDetailId:"+goodsBillDetailId+";回执单信息:"+cargoReceiptDetail.toString());
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * 查询所有运单
 	 */
@@ -68,7 +72,7 @@ public class GoodsBillController extends ReturnType {
 		Result result  = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
 		return result;
 	}
-	
+
 	/**
 	 * 查询运单状态
 	 */
@@ -79,7 +83,7 @@ public class GoodsBillController extends ReturnType {
 		Result result  = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
 		return result;
 	}
-	
+
 	/**
 	 * 通过id查询单个货运单
 	 */
@@ -88,35 +92,40 @@ public class GoodsBillController extends ReturnType {
 		GoodsBill goodsBill = goodsBillService.selectByGoodsBillCode(goodsBillCode);
 		return goodsBill;
 	}
-	
+
 	/**
 	 * 修改货运单
 	 */
 	@RequestMapping(value = "/updateByCode/{goodsBillCode}", method = RequestMethod.PUT)
 	public String updateGoodsBill(GoodsBill goodsBill, @PathVariable("goodsBillCode") String goodsBillCode) {
-		
+		String method="/goodsBill/updateByCode";String methodName="修改货运单";
+
 		boolean flag = false;
 		flag = goodsBillService.update(goodsBill);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"货运单编号:"+goodsBillCode);
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"货运单编号:"+goodsBillCode);
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * 删除货运单
 	 */
 	@RequestMapping(value = "/deleteByCode/{goodsBillCode}", method = RequestMethod.PUT)
 	public String deleteGoodsBill(@PathVariable("goodsBillCode") String goodsBillCode) {
-		
+		String method="/goodsBill/deleteByCode";String methodName="删除货运单";
 		boolean flag = false;
 		flag = goodsBillService.delete(goodsBillCode);
 		if (!flag) {
+			getSysLogService().error(module,method,methodName,"货运单编号:"+goodsBillCode);
 			return ERROR;
 		}
+		getSysLogService().success(module,method,methodName,"货运单编号:"+goodsBillCode);
 		return SUCCESS;
 	}
-	
+
 	@ApiOperation(value = "获取一个用户的待收货物")
 	@RequestMapping(value = "/findWait/{customerCode}", method = RequestMethod.GET)
 	public Result findWaitReceived(@PathVariable("customerCode") String customerCode) {
@@ -124,7 +133,7 @@ public class GoodsBillController extends ReturnType {
 		Result result = new Result(200, "SUCCESS", list.size(), list);
 		return result;
 	}
-	
+
 	@ApiOperation(value = "获取所有未发过 {提货 | 到货 | 中转 | 已提 | 代收} 回告的运单")
 	@RequestMapping(value = "/findInform/{billType}", method = RequestMethod.GET)
 	public Result findInform(@PathVariable("billType") String billType, @RequestParam("pageNum") int pageNum, @RequestParam("limit") int limit) {
@@ -133,7 +142,7 @@ public class GoodsBillController extends ReturnType {
 		Result result = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
 		return result;
 	}
-	
+
 	@ApiOperation(value = "获取所有已发过 {提货 | 到货 | 中转 | 已提 | 代收} 回告的运单")
 	@RequestMapping(value = "/findOldInform/{type}", method = RequestMethod.GET)
 	public Result findOldInform(@PathVariable("type") String type, @RequestParam("pageNum") int pageNum, @RequestParam("limit") int limit) {
@@ -142,7 +151,7 @@ public class GoodsBillController extends ReturnType {
 		Result result = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
 		return result;
 	}
-	
+
 	@ApiOperation(value = "获取已提货的运单")
 	@RequestMapping(value = "/findAllGot", method = RequestMethod.GET)
 	public Result findAllGot(@RequestParam("pageNum") int pageNum, @RequestParam("limit") int limit) {
@@ -151,5 +160,5 @@ public class GoodsBillController extends ReturnType {
 		Result result = new Result(200, "SUCCESS", (int) page.getTotalElements(), page.getContent());
 		return result;
 	}
-	
+
 }

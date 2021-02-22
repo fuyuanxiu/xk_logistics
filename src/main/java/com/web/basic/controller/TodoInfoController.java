@@ -28,14 +28,21 @@ import com.web.cost.dao.CustomerBomDao;
 public class TodoInfoController extends WebController {
 	@Autowired
 	private TodoInfoService todoInfoService;
-	
+
+	private String module = "代办事项信息";
+
+
 	@ApiOperation(value="新增待办事项", notes="新增待办事项")
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ApiResponseResult add(TodoInfo todoInfo) {
+		String method="/todoInfo/add";String methodName="新增待办事项";
 		try {
-			return todoInfoService.add(todoInfo);
+			ApiResponseResult add = todoInfoService.add(todoInfo);
+			getSysLogService().success(module,method,methodName,"事项信息:"+todoInfo.toString());
+			return add;
 		} catch (Exception e) {
 			e.printStackTrace();
+			getSysLogService().error(module,method,methodName,"事项信息:"+todoInfo.toString());
 			return ApiResponseResult.failure(e.getMessage());
 		}
 	}
@@ -43,10 +50,14 @@ public class TodoInfoController extends WebController {
 	@ApiOperation(value="编辑待办事项", notes="编辑待办事项")
 	@RequestMapping(value = "/edit", method = RequestMethod.POST)
 	public ApiResponseResult edit(TodoInfo todoInfo) {
+		String method="/todoInfo/edit";String methodName="编辑待办事项";
 		try {
-			return todoInfoService.edit(todoInfo);
+			ApiResponseResult edit = todoInfoService.edit(todoInfo);
+			getSysLogService().success(module,method,methodName,"编辑事项:"+todoInfo.toString());
+			return edit;
 		} catch (Exception e) {
 			e.printStackTrace();
+			getSysLogService().error(module,method,methodName,"编辑事项:"+todoInfo.toString()+";"+e.toString());
 			return ApiResponseResult.failure(e.getMessage());
 		}
 	}
@@ -60,9 +71,13 @@ public class TodoInfoController extends WebController {
 	})
 	@RequestMapping(value = "/close", method = RequestMethod.POST)
 	public ApiResponseResult close(Long Id, Long bsUserId, Long roleId, Long bsReferId) {
+		String method="/todoInfo/close";String methodName="关闭待办事项";
 		try {
-			return todoInfoService.close(Id, bsUserId, roleId, bsReferId);
+			ApiResponseResult close = todoInfoService.close(Id, bsUserId, roleId, bsReferId);
+			getSysLogService().success(module,method,methodName,"id:"+Id+"用户ID:"+bsUserId+"角色ID:"+roleId+"关联ID:"+bsReferId);
+			return close;
 		} catch (Exception e) {
+			getSysLogService().error(module,method,methodName,"id:"+Id+";用户ID:"+bsUserId+";角色ID:"+roleId+";关联ID:"+bsReferId+";"+e.toString());
 			e.printStackTrace();
 			return ApiResponseResult.failure(e.getMessage());
 		}
@@ -74,12 +89,16 @@ public class TodoInfoController extends WebController {
 	})
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public ApiResponseResult delete(Long id) {
+		String method="/todoInfo/delete";String methodName="删除待办事项";
 		try {
 			if(null!=id && id==-1) {
 				return ApiResponseResult.failure("没有删除权限");
 			}
-			return todoInfoService.delete(id);
+			ApiResponseResult delete = todoInfoService.delete(id);
+			getSysLogService().success(module,method,methodName,"id:"+id);
+			return delete;
 		} catch (Exception e) {
+			getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
 			return ApiResponseResult.failure(e.getMessage());
 		}
 	}

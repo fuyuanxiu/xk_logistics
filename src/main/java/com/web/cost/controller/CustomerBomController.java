@@ -27,6 +27,8 @@ public class CustomerBomController extends WebController {
     @Autowired
     private CostExcelService costExcelService;
 
+    private String module = "客户BOM成本预估信息";
+
     @ApiOperation(value="上传客户BOM", notes="上传客户BOM")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "BOM文件", dataType = "MultipartFile", paramType="query",defaultValue=""),
@@ -34,10 +36,14 @@ public class CustomerBomController extends WebController {
     })
     @RequestMapping(value = "/importBom", method = RequestMethod.POST)
     public ApiResponseResult importBOM(MultipartFile file, Integer startRow) {
+        String method="/customerBom/importBom";String methodName="上传客户BOM";
         try {
-            return customerBomService.importBom(file, startRow);
+            ApiResponseResult result = customerBomService.importBom(file, startRow);
+            getSysLogService().success(module,method,methodName,null);
+            return result;
         } catch (Exception e) {
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,null+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("上传失败！");
         }
@@ -143,10 +149,14 @@ public class CustomerBomController extends WebController {
     @RequestMapping(value = "/addRemark", method = RequestMethod.POST)
     public ApiResponseResult addRemark(@RequestParam(value = "id", required = false) Long id,
                                        @RequestParam(value = "remark", required = false) String remark){
+        String method="/customerBom/addRemark";String methodName="客户BOM添加备注";
         try{
-            return customerBomService.addRemark(id, remark);
+            ApiResponseResult result = customerBomService.addRemark(id, remark);
+            getSysLogService().success(module,method,methodName,"id:"+id+";备注:"+remark);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";备注:"+remark+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("客户BOM添加备注失败！");
         }
@@ -158,10 +168,14 @@ public class CustomerBomController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(@RequestParam(value = "fileId", required = false) Long fileId){
+        String method="/customerBom/delete";String methodName="客户BOM添加备注";
         try{
-            return customerBomService.delete(fileId);
+            ApiResponseResult delete = customerBomService.delete(fileId);
+            getSysLogService().success(module,method,methodName,"fileId"+fileId);
+            return delete;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"fileId"+fileId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除客户BOM失败！");
         }
@@ -190,10 +204,14 @@ public class CustomerBomController extends WebController {
     @RequestMapping(value = "/doCheckMateriel", method = RequestMethod.POST)
     public ApiResponseResult doCheckMateriel(@RequestParam(value = "id", required = false) Long id,
                                        @RequestParam(value = "checkStatus", required = false) int checkStatus){
+        String method="/customerBom/doCheckMateriel";String methodName="选中/取消匹配的物料";
         try{
-            return customerBomService.doCheckMateriel(id, checkStatus);
+            ApiResponseResult result = customerBomService.doCheckMateriel(id, checkStatus);
+            getSysLogService().success(module,method,methodName,"id:"+id+";状态:"+checkStatus);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";状态:"+checkStatus+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("操作失败！");
         }
@@ -215,10 +233,14 @@ public class CustomerBomController extends WebController {
                                         @RequestParam(value = "startDate", required = false) Date startDate,
                                         @RequestParam(value = "endDate", required = false) Date endDate,
                                         @RequestParam(value = "bsRemark", required = false) String bsRemark){
+        String method="/customerBom/doSendTodo";String methodName="发送待办";
         try{
-            return customerBomService.doSendTodo(fileId, bomIds, todoerBy, startDate, endDate, bsRemark);
+            ApiResponseResult result = customerBomService.doSendTodo(fileId, bomIds, todoerBy, startDate, endDate, bsRemark);
+            getSysLogService().success(module,method,methodName,"fileId:"+fileId+";bomIds:"+bomIds+";待办人ID:"+todoerBy+";询价日期:"+startDate+";询价截止日期:"+endDate+";备注:"+bsRemark);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"fileId:"+fileId+";bomIds:"+bomIds+";待办人ID:"+todoerBy+";询价日期:"+startDate+";询价截止日期:"+endDate+";备注:"+bsRemark+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("操作失败！");
         }
@@ -230,11 +252,14 @@ public class CustomerBomController extends WebController {
     })
     @RequestMapping(value = "/getBomExcel", method = RequestMethod.GET)
     public void getBomExcel(Long fileId){
+        String method="/customerBom/getBomExcel";String methodName="导出客户BOM匹配结果";
         try{
             costExcelService.getBomExcel(fileId, getResponse());
+            getSysLogService().success(module,method,methodName,"fileId:"+fileId);
             logger.info("导出成功！");
         }catch(Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"fileId:"+fileId+";"+e.toString());
             e.printStackTrace();
         }
     }
@@ -245,11 +270,14 @@ public class CustomerBomController extends WebController {
     })
     @RequestMapping(value = "/getBomExcelPrice", method = RequestMethod.GET)
     public void getBomExcelPrice(Long fileId){
+        String method="/customerBom/getBomExcelPrice";String methodName="导出客户BOM匹配结果(含价格)";
         try{
             costExcelService.getBomExcelPrice(fileId, getResponse());
+            getSysLogService().success(module,method,methodName,"fileId:"+fileId);
             logger.info("导出成功！");
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"fileId:"+fileId+";"+e.toString());
             e.printStackTrace();
         }
     }
@@ -260,10 +288,14 @@ public class CustomerBomController extends WebController {
     })
     @RequestMapping(value = "/copyBom", method = RequestMethod.POST)
     public ApiResponseResult copyBom(@RequestParam(value = "fileId", required = false) Long fileId){
+        String method="/customerBom/copyBom";String methodName="复制客户BOM";
         try{
-            return customerBomService.copyBom(fileId);
+            ApiResponseResult result = customerBomService.copyBom(fileId);
+            getSysLogService().success(module,method,methodName,"fileId:"+fileId);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"fileId:"+fileId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("复制客户BOM失败！");
         }
@@ -282,10 +314,13 @@ public class CustomerBomController extends WebController {
     //审核
     @RequestMapping(value = "/check",method = RequestMethod.POST)
     public ApiResponseResult updateCheck(Long id){
+        String method="/customerBom/check";String methodName="客户Bom审核";
         try {
             ApiResponseResult apiResponseResult = customerBomService.review(id);
-            return ApiResponseResult.success("审核成功");
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return apiResponseResult;
         } catch (Exception e) {
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("审核失败");
         }
@@ -308,10 +343,14 @@ public class CustomerBomController extends WebController {
     //反审核
     @RequestMapping(value = "/reverse",method = RequestMethod.POST)
     public ApiResponseResult reverseCheck(Long id){
+        String method="/customerBom/reverse";String methodName="客户Bom反审核";
         try {
-            return customerBomService.reserveReview(id);
+            ApiResponseResult result = customerBomService.reserveReview(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
+            getSysLogService().error(module,method,methodName,"id:"+id);
             return ApiResponseResult.failure("反审核失败");
         }
     }

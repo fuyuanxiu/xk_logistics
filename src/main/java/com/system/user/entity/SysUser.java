@@ -188,4 +188,21 @@ public class SysUser extends com.app.base.entity.BaseEntity {
     public void setPkModifiedBy(Long pkModifiedBy) {
         this.pkModifiedBy = pkModifiedBy;
     }
+
+    @Override
+    public String toString() {
+        return "SysUser{" +
+                "userCode='" + userCode + '\'' +
+                ", userName='" + userName + '\'' +
+                ", userPassword='" + userPassword + '\'' +
+                ", userType=" + userType +
+                ", userStatus=" + userStatus +
+                ", userComment='" + userComment + '\'' +
+                ", userEmail='" + userEmail + '\'' +
+                ", userMobile='" + userMobile + '\'' +
+                ", userIsSuper=" + userIsSuper +
+                ", pkCreatedBy=" + pkCreatedBy +
+                ", pkModifiedBy=" + pkModifiedBy +
+                '}';
+    }
 }
