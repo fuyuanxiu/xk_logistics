@@ -35,16 +35,17 @@ public class ProjectManageImpl implements ProjectManageService {
     @Override
     @Transactional
     public ApiResponseResult add(ProjectManage projectManage) throws Exception {
-        if(projectManage == null || StringUtils.isEmpty(projectManage.getPrName())){
+        if(projectManage == null || StringUtils.isEmpty(projectManage.getPrName().trim())){
             return ApiResponseResult.failure("项目分类名称不能为空！");
         }
-        List<ProjectManage> projectManages = projectManageDao.findByIsDelAndPrName(BasicStateEnum.FALSE.intValue(), projectManage.getPrName());
+        String s = projectManage.getPrName().replace(" ", "");
+        List<ProjectManage> projectManages = projectManageDao.findByIsDelAndPrName(BasicStateEnum.FALSE.intValue(),s);
         if(projectManages != null && projectManages.size() > 0){
             return ApiResponseResult.failure("此关键字分类名称已存在，不能重复添加！");
         }
         SysUser currUser = UserUtil.getCurrUser();  //获取当前用户
 
-        projectManage.setPrName(projectManage.getPrName().trim());
+        projectManage.setPrName(s);
         projectManage.setCreatedTime(new Date());
         projectManage.setPkCreatedBy((currUser != null) ? currUser.getId() : null);
         projectManageDao.save(projectManage);
@@ -70,7 +71,7 @@ public class ProjectManageImpl implements ProjectManageService {
         SysUser currUser = UserUtil.getCurrUser();  //获取当前用户
 
         //分类名称不能重复
-        String nameNew = projectManage.getPrName().trim();  //去除空格
+        String nameNew = projectManage.getPrName().replace(" ","");  //去除空格
         if(nameNew.equals(o.getPrName())){
             //1.如果名称和原来一致，则不用修改名称
             o.setPrName(projectManage.getPrName());

@@ -21,6 +21,8 @@ public class ReportController extends WebController {
     @Autowired
     private ReportService reportService;
 
+    private String module = "汇总表信息";
+
     @ApiOperation(value = "获取询价汇总表", notes = "获取询价汇总表")
     @RequestMapping(value = "/getEqReport", method = RequestMethod.POST)
     public ApiResponseResult getEqReport(Long fileId){
@@ -39,11 +41,14 @@ public class ReportController extends WebController {
     })
     @RequestMapping(value = "/getEqReportExcel", method = RequestMethod.GET)
     public void getEqReportExcel(Long fileId){
+        String method="/report/getEqReportExcel";String methodName="导出询价汇总表";
         try{
             reportService.getEqReportExcel(fileId, getResponse());
+            getSysLogService().success(module,method,methodName,"fileId:"+fileId);
             logger.info("导出成功！");
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"fileId:"+fileId+";"+e.toString());
             e.printStackTrace();
         }
     }
@@ -66,11 +71,14 @@ public class ReportController extends WebController {
     })
     @RequestMapping(value = "/getQtReportExcel", method = RequestMethod.GET)
     public void getQtReportExcel(Long fileId){
+        String method="/report/getQtReportExcel";String methodName="导出报价汇总表";
         try{
             reportService.getQtReportExcel(fileId, getResponse());
+            getSysLogService().success(module,method,methodName,"fileId:"+fileId);
             logger.info("导出成功！");
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"fileId:"+fileId+";"+e.toString());
             e.printStackTrace();
         }
     }
@@ -81,10 +89,14 @@ public class ReportController extends WebController {
     })
     @RequestMapping(value = "/getQtReportByBom", method = RequestMethod.POST)
     public ApiResponseResult getQtReportByBom(Long fileId){
+        String method="/report/getQtReportByBom";String methodName="从原bom同步数据";
         try{
-            return reportService.getQtReportByBom(fileId);
+            ApiResponseResult qtReportByBom = reportService.getQtReportByBom(fileId);
+            getSysLogService().success(module,method,methodName,"fileId:"+fileId);
+            return qtReportByBom;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"fileId:"+fileId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("同步失败！");
         }

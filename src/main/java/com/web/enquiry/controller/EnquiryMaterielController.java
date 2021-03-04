@@ -24,13 +24,19 @@ public class EnquiryMaterielController extends WebController {
     @Autowired
     private EnquiryMaterielService enquiryMaterielService;
 
+    private String module = "新料询价物料信息";
+
     @ApiOperation(value = "新增关联物料", notes = "新增关联物料")
     @PostMapping("/add")
     public ApiResponseResult add(EnquiryMateriel enquiryMateriel){
+        String method="/enquiryMateriel/add";String methodName="新增关联物料";
         try{
-            return enquiryMaterielService.add(enquiryMateriel);
+            ApiResponseResult add = enquiryMaterielService.add(enquiryMateriel);
+            getSysLogService().success(module,method,methodName,"物料信息:"+enquiryMateriel.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"物料信息:"+enquiryMateriel.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增关联物料失败！");
         }
@@ -39,10 +45,14 @@ public class EnquiryMaterielController extends WebController {
     @ApiOperation(value = "编辑关联物料", notes = "编辑关联物料")
     @PostMapping("/edit")
     public ApiResponseResult edit(EnquiryMateriel enquiryMateriel){
+        String method="/enquiryMateriel/edit";String methodName="编辑关联物料";
         try{
-            return enquiryMaterielService.edit(enquiryMateriel);
+            ApiResponseResult edit = enquiryMaterielService.edit(enquiryMateriel);
+            getSysLogService().success(module,method,methodName,"物料信息:"+enquiryMateriel.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"物料信息:"+enquiryMateriel.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增关联物料失败！");
         }
@@ -51,10 +61,14 @@ public class EnquiryMaterielController extends WebController {
     @ApiOperation(value = "删除关联物料", notes = "删除关联物料")
     @PostMapping("/delete")
     public ApiResponseResult delete(@RequestParam(value = "id", required = false) Long id){
+        String method="/enquiryMateriel/delete";String methodName="删除关联物料";
         try{
-            return enquiryMaterielService.delete(id);
+            ApiResponseResult delete = enquiryMaterielService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除关联物料失败！");
         }
@@ -79,10 +93,14 @@ public class EnquiryMaterielController extends WebController {
     @ApiOperation(value = "导入询价物料", notes = "导入询价物料")
     @RequestMapping(value = "/importMateExcel", method = RequestMethod.POST)
     public ApiResponseResult importMateExcel(MultipartFile file){
+        String method="/enquiryMateriel/importMateExcel";String methodName="导入询价物料";
         try{
-            return enquiryMaterielService.importMateExcel(file);
+            ApiResponseResult result = enquiryMaterielService.importMateExcel(file);
+            getSysLogService().success(module,method,methodName,null);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,null+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("导入询价物料失败！");
         }

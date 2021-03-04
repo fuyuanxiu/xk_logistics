@@ -77,11 +77,11 @@ public class PrdChartController extends WebController {
             ApiResponseResult result = prdChartService.updateOrderData(year, month);
             Date dateEnd = new Date();
             logger.info("手动同步K3产品销售订单价信息，开始时间："+ dateStart + "//n结束时间："+ dateEnd);
-            getSysLogService().success(module,method,methodName,"年:"+year+"月:"+month);
+            getSysLogService().success(module,method,methodName,"年:"+year+";月:"+month);
             return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
-            getSysLogService().error(module,method,methodName,"年:"+year+"月:"+month+";"+e.toString());
+            getSysLogService().error(module,method,methodName,"年:"+year+";月:"+month+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("手动同步K3产品销售订单价信息失败！");
         }
@@ -100,9 +100,11 @@ public class PrdChartController extends WebController {
             ApiResponseResult result = prdChartService.updateInvoiceData(year, month);
             Date dateEnd = new Date();
             logger.info("手动同步K3产品销售发票价信息，开始时间："+ dateStart + "//n结束时间："+ dateEnd);
+            getSysLogService().success(module,method,methodName,"年:"+year+";月:"+month);
             return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"年:"+year+";月:"+month+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("手动同步K3产品销售发票价信息失败！");
         }

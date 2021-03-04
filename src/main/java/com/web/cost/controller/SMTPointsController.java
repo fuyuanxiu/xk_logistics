@@ -26,6 +26,9 @@ public class SMTPointsController extends WebController {
     @Autowired
     private SMTPointsService smtPointsService;
 
+    private String module = "SMT点数信息";
+
+
     @ApiOperation(value = "获取SMT目录信息", notes = "获取SMT目录信息")
     @RequestMapping(value = "/getTreeList", method = RequestMethod.GET)
     public ApiResponseResult getTreeList(){
@@ -44,10 +47,14 @@ public class SMTPointsController extends WebController {
     @RequestMapping(value = "/updatePoints", method = RequestMethod.POST)
     public ApiResponseResult updatePoints(Long id, String sCode, String sName, Float sPoints,
                                           Integer isSpecial, Integer sLevel, Integer sFeetQty){
+        String method="/smtPoints/updatePoints";String methodName="修改SMT点数";
         try{
-            return smtPointsService.updatePoints(id, sCode, sName, sPoints, isSpecial, sLevel, sFeetQty);
+            ApiResponseResult result = smtPointsService.updatePoints(id, sCode, sName, sPoints, isSpecial, sLevel, sFeetQty);
+            getSysLogService().success(module,method,methodName,"id:"+id+";物料编码:"+sCode+";物料名:"+sName+";SMT点数:"+sPoints+";isSpecial:"+isSpecial+";sLevel:"+sLevel+";焊脚数量:"+sFeetQty);
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";物料编码:"+sCode+";物料名:"+sName+";SMT点数:"+sPoints+";isSpecial:"+isSpecial+";sLevel:"+sLevel+";焊脚数量:"+sFeetQty+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("修改SMT点数信息失败！");
         }

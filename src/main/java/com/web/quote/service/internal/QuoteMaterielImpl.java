@@ -473,7 +473,7 @@ public class QuoteMaterielImpl implements QuoteMaterielService {
         }
         int cellType = row.getCell(num).getCellType();
         if (cellType == Cell.CELL_TYPE_NUMERIC) {
-            Long partNoTemp = (long) row.getCell(num).getNumericCellValue();
+            Double partNoTemp =  row.getCell(num).getNumericCellValue();
             str = partNoTemp.toString();
         }
         if (cellType == Cell.CELL_TYPE_STRING) {

@@ -10,4 +10,6 @@ public interface ChildProjectService {
     public ApiResponseResult add(ChildProject childProject) throws Exception;
 
     public ApiResponseResult edit(ChildProject childProject) throws Exception;
+
+    public ApiResponseResult delete(Long id) throws Exception;
 }

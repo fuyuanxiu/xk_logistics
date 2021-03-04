@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.web.settings.dao.ChildProjectDao;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -644,6 +646,9 @@ public class MarketReportImpl implements MarketReportService {
         if (o == null) {
             return ApiResponseResult.failure("记录不存在！");
         }
+        if (detail.getBsQty().compareTo(BigDecimal.ZERO)<0){
+            return ApiResponseResult.failure("实际数量不能为负数！");
+        }
         SysUser currUser = UserUtil.getCurrUser();  //获取当前用户
 
         o.setModifiedTime(new Date());
@@ -732,19 +737,43 @@ public class MarketReportImpl implements MarketReportService {
             }
         }
         //1.查询条件1
-        List<SearchFilter> filters = new ArrayList<SearchFilter>();
-        filters.add(new SearchFilter("isDel", SearchFilter.Operator.EQ, BasicStateEnum.FALSE.intValue()));
-        filters.add(new SearchFilter("bsReportId", SearchFilter.Operator.EQ, reportId));
+        //List<SearchFilter> filters = new ArrayList<SearchFilter>();
+        //filters.add(new SearchFilter("isDel", SearchFilter.Operator.EQ, BasicStateEnum.FALSE.intValue()));
+        // filters.add(new SearchFilter("bsReportId", SearchFilter.Operator.EQ, reportId));
         //2.查询条件2
-        List<SearchFilter> filters1 = new ArrayList<SearchFilter>();
-        if (StringUtils.isNotEmpty(keyword)) {
-            filters1.add(new SearchFilter("bsUnit", SearchFilter.Operator.LIKE, keyword));
-        }
-        Specification<MarketReportDetail> spec = Specification.where(BaseService.and(filters, MarketReportDetail.class));
-        Specification<MarketReportDetail> spec1 = spec.and(BaseService.or(filters1, MarketReportDetail.class));
-        Page<MarketReportDetail> page = marketReportDetailDao.findAll(spec1, pageRequest);
+        //List<SearchFilter> filters1 = new ArrayList<SearchFilter>();
+        // if (StringUtils.isNotEmpty(keyword)) {
+        //    filters1.add(new SearchFilter("bsUnit", SearchFilter.Operator.LIKE, keyword));
+        //}
+        //Specification<MarketReportDetail> spec = Specification.where(BaseService.and(filters, MarketReportDetail.class));
+        //<MarketReportDetail> spec1 = spec.and(BaseService.or(filters1, MarketReportDetail.class));
+        // Page<MarketReportDetail> page = marketReportDetailDao.findAll(spec1, pageRequest);
 
-        return ApiResponseResult.success().data(DataGrid.create(page.getContent(), (int) page.getTotalElements(), pageRequest.getPageNumber() + 1, pageRequest.getPageSize()));
+
+        keyword = "%" + keyword + "%";
+        long startTime = System.currentTimeMillis();
+        List<Map<String, Object>> all3 = marketReportDetailDao.findAll3(BasicStateEnum.FALSE.intValue(), reportId, keyword);
+        List<Map<String, Object>> all4 = marketReportDetailDao.findAll4(BasicStateEnum.FALSE.intValue(), reportId, keyword);
+        for (int i = 0; i < all3.size(); i++) {
+            Map map1 = new HashMap();
+            for(int j = 0;j<all4.size();j++){
+                if(all4.get(j).get("id").equals(all3.get(i).get("id"))){
+                    map1 = all4.get(j);
+                }
+            }
+                marketReportDetailDao.modifyBsQty(new BigDecimal(all3.get(i).get("number").toString()), new BigDecimal(all3.get(i).get("id").toString()));
+                if (new BigDecimal(map1.get("bsQty").toString()).compareTo(BigDecimal.ONE)<0){
+                    marketReportDetailDao.modifyBsQty1(new BigDecimal(all3.get(i).get("number").toString()), new BigDecimal(all3.get(i).get("id").toString()));
+               }
+            //if (new BigDecimal(all3.get(i).get("bsQty").toString()).compareTo(BigDecimal.ONE)<0){
+             //   marketReportDetailDao.modifyBsQty1(new BigDecimal(all3.get(i).get("number").toString()), new BigDecimal(all3.get(i).get("id").toString()));
+            //}
+        }
+        Page<Map<String, Object>> maps = marketReportDetailDao.findAll2(BasicStateEnum.FALSE.intValue(), reportId, keyword, pageRequest);
+        long endTime = System.currentTimeMillis();    //获取结束时间
+
+        System.out.println("程序运行时间：" + (endTime - startTime) + "ms");    //输出程序运行时间
+        return ApiResponseResult.success().data(DataGrid.create(maps.getContent(), (int) maps.getTotalElements(), pageRequest.getPageNumber() + 1, pageRequest.getPageSize()));
     }
 
     private Map<String, String> getCountBomMeter(Long fileId) throws Exception {
@@ -875,6 +904,7 @@ public class MarketReportImpl implements MarketReportService {
             mapList.add(map5);
 
             detailList = marketReportDetailDao.findByIsDelAndBsReportIdOrderByIdAsc(0, reportId);
+//            List<Map<String, Object>> all1 = marketReportDetailDao.findAll1(BasicStateEnum.FALSE.intValue(), reportId);
             //统计
             BigDecimal price1 = new BigDecimal(0);
             BigDecimal price2 = new BigDecimal(0);
@@ -888,7 +918,14 @@ public class MarketReportImpl implements MarketReportService {
                     Map<String, String> mapBody = new HashMap<>();
                     mapBody.put("序号", Integer.toString(i + 1));
                     mapBody.put("机型", detail.getMarketReport() != null ? detail.getMarketReport().getBsMachine() : "");
-                    mapBody.put("项目", detail.getBsProject());
+                    List<Map<String, Object>> all1 = marketReportDetailDao.findAll1(BasicStateEnum.FALSE.intValue(), detail.getBsProject());
+                    if (all1 != null) {
+                        if (all1.get(0).get("prName") != null) {
+                            mapBody.put("项目", all1.get(0).get("prName").toString());
+                        } else {
+                            mapBody.put("项目", detail.getBsProject());
+                        }
+                    }
                     mapBody.put("规格", getFeeName(detail));
                     mapBody.put("数量", detail.getBsQty() != null ? this.toHalfUp(detail.getBsQty()) : "0");
                     mapBody.put("单位", detail.getBsUnit());
@@ -2274,7 +2311,12 @@ public class MarketReportImpl implements MarketReportService {
                 Map<String, String> mapBody = new HashMap<>();
                 mapBody.put("序号", Integer.toString(i + 1));
                 mapBody.put("机型", detail.getMarketReport() != null ? detail.getMarketReport().getBsMachine() : "");
-                mapBody.put("项目", detail.getBsProject());
+                List<Map<String, Object>> all1 = marketReportDetailDao.findAll1(BasicStateEnum.FALSE.intValue(), detail.getBsProject());
+                if (all1.get(0).get("prName") != null) {
+                    mapBody.put("项目", all1.get(0).get("prName").toString());
+                } else {
+                    mapBody.put("项目", detail.getBsProject());
+                }
                 mapBody.put("规格", getFeeName(detail));
                 mapBody.put("数量", detail.getBsQty() != null ? this.toHalfUp(detail.getBsQty()) : "");
                 mapBody.put("单位", detail.getBsUnit());
@@ -2701,7 +2743,12 @@ public class MarketReportImpl implements MarketReportService {
                 Map<String, String> mapBody = new HashMap<>();
                 mapBody.put("序号", Integer.toString(i + 1));
                 mapBody.put("机型", detail.getMarketReport() != null ? detail.getMarketReport().getBsMachine() : "");
-                mapBody.put("项目", detail.getBsProject());
+                List<Map<String, Object>> all1 = marketReportDetailDao.findAll1(BasicStateEnum.FALSE.intValue(), detail.getBsProject());
+                if (all1.get(0).get("prName") != null) {
+                    mapBody.put("项目", all1.get(0).get("prName").toString());
+                } else {
+                    mapBody.put("项目", detail.getBsProject());
+                }
                 //mapBody.put("规格", getFeeName(detail));
                 mapBody.put("数量", detail.getBsQty() != null ? this.toHalfUp(detail.getBsQty()) : "");
                 mapBody.put("单位", detail.getBsUnit());
@@ -3092,7 +3139,14 @@ public class MarketReportImpl implements MarketReportService {
                     Map<String, String> mapBody = new HashMap<>();
                     mapBody.put("序号", Integer.toString(i + 1));
                     mapBody.put("机型", detail.getMarketReport() != null ? detail.getMarketReport().getBsMachine() : "");
-                    mapBody.put("项目", detail.getBsProject());
+                    List<Map<String, Object>> all1 = marketReportDetailDao.findAll1(BasicStateEnum.FALSE.intValue(), detail.getBsProject());
+                    if (all1 != null) {
+                        if (all1.get(0).get("prName") != null) {
+                            mapBody.put("项目", all1.get(0).get("prName").toString());
+                        } else {
+                            mapBody.put("项目", detail.getBsProject());
+                        }
+                    }
                     mapBody.put("规格", getFeeName(detail));
                     mapBody.put("数量", detail.getBsQty() != null ? this.toHalfUp(detail.getBsQty()) : "0");
                     mapBody.put("单位", detail.getBsUnit());
@@ -3679,6 +3733,7 @@ public class MarketReportImpl implements MarketReportService {
         }
         return ApiResponseResult.failure("审批失败");
     }
+
     //反审核
     @Override
     @Transactional

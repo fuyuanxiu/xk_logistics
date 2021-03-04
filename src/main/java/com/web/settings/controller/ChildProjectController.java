@@ -66,4 +66,16 @@ public class ChildProjectController extends WebController {
             return ApiResponseResult.failure("修改子项目信息失败！");
         }
     }
+
+    @ApiOperation(value = "删除子项目信息", notes = "删除子项目信息")
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public ApiResponseResult delete(Long id){
+        try{
+            return childProjectService.delete(id);
+        }catch(Exception e){
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            return ApiResponseResult.failure("删除子项目信息失败！");
+        }
+    }
 }

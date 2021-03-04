@@ -21,6 +21,9 @@ public class EnquiryOrderDetailController extends WebController {
     @Autowired
     private EnquiryOrderDetailService enquiryOrderDetailService;
 
+    private String module = "询价成本清单详情信息";
+
+
     @ApiOperation(value = "获取询价成本清单详情", notes = "获取询价成本清单详情")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "keyword", value = "关键字", required = false, dataType = "String", paramType = "query", defaultValue = "")
@@ -75,10 +78,14 @@ public class EnquiryOrderDetailController extends WebController {
     })
     @RequestMapping(value = "/doAccept", method = RequestMethod.POST)
     public ApiResponseResult doAccept(Long bsOrderDetailId, String quoMateIds){
+        String method="/enquiryOrderDetail/doAccept";String methodName="采纳报价（询价成本清单）";
         try{
-            return enquiryOrderDetailService.doAccept(bsOrderDetailId, quoMateIds);
+            ApiResponseResult result = enquiryOrderDetailService.doAccept(bsOrderDetailId, quoMateIds);
+            getSysLogService().success(module,method,methodName,"报价明细ID:"+bsOrderDetailId+";询价成本清单详情ID"+bsOrderDetailId);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"报价明细ID:"+bsOrderDetailId+";询价成本清单详情ID"+bsOrderDetailId);
             e.printStackTrace();
             return ApiResponseResult.failure("采纳报价失败！");
         }
@@ -90,11 +97,14 @@ public class EnquiryOrderDetailController extends WebController {
     })
     @RequestMapping(value = "/getDetailExcel", method = RequestMethod.GET)
     public void getDetailExcel(Long bsOrderId){
+        String method="/enquiryOrderDetail/getDetailExcel";String methodName="导出已采纳的询价成本详情";
         try{
             enquiryOrderDetailService.getDetailExcel(bsOrderId, getResponse());
+            getSysLogService().success(module,method,methodName,"询价成本ID:"+bsOrderId);
             logger.info("导出成功！");
         }catch(Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"询价成本ID:"+bsOrderId+";"+e.toString());
             e.printStackTrace();
         }
     }
@@ -105,10 +115,14 @@ public class EnquiryOrderDetailController extends WebController {
     })
     @RequestMapping(value = "/sendSuppMsg", method = RequestMethod.POST)
     public ApiResponseResult sendSuppMsg(Long bsOrderId){
+        String method="/enquiryOrderDetail/sendSuppMsg";String methodName="发送消息通知供应商";
         try{
-            return enquiryOrderDetailService.sendSuppMsg(bsOrderId);
+            ApiResponseResult result = enquiryOrderDetailService.sendSuppMsg(bsOrderId);
+            getSysLogService().success(module,method,methodName,"询价成本清单ID"+bsOrderId);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"询价成本清单ID"+bsOrderId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("发送消息通知供应商失败！");
         }

@@ -141,7 +141,7 @@ public class MarketReportController extends WebController {
     @RequestMapping(value = "/getDetailList", method = RequestMethod.GET)
     public ApiResponseResult getDetailList(String keyword, Long reportId,Long fileId){
         try{
-            Sort sort = new Sort(Sort.Direction.ASC, "bsType").and(new Sort(Sort.Direction.ASC, "id"));
+            Sort sort = new Sort(Sort.Direction.ASC, "bs_type").and(new Sort(Sort.Direction.ASC, "id"));
             return marketReportService.getDetailList(keyword, reportId,fileId, super.getPageRequest(sort));
         }catch (Exception e){
             logger.error(e.getMessage(), e);

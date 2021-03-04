@@ -22,6 +22,9 @@ public class EnquiryOrderController extends WebController {
     @Autowired
     private EnquiryOrderService enquiryOrderService;
 
+    private String module = "询价成本清单信息";
+
+
     @ApiOperation(value = "获取询价成本清单列表", notes = "获取询价成本清单列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "keyword", value = "关键字", required = false, dataType = "String", paramType = "query", defaultValue = ""),
@@ -45,10 +48,14 @@ public class EnquiryOrderController extends WebController {
     })
     @RequestMapping(value = "/doApproval", method = RequestMethod.POST)
     public ApiResponseResult doApproval(Long bsOrderId){
+        String method="/enquiryOrder/doApproval";String methodName="审核";
         try{
-            return enquiryOrderService.doApproval(bsOrderId);
+            ApiResponseResult result = enquiryOrderService.doApproval(bsOrderId);
+            getSysLogService().success(module,method,methodName,"bsOrderId:"+bsOrderId);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"bsOrderId:"+bsOrderId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("审核通过操作失败！");
         }
@@ -60,10 +67,14 @@ public class EnquiryOrderController extends WebController {
     })
     @RequestMapping(value = "/doInvalid", method = RequestMethod.POST)
     public ApiResponseResult doInvalid(Long bsOrderId){
+        String method="/enquiryOrder/doInvalid";String methodName="作废";
         try{
-            return enquiryOrderService.doInvalid(bsOrderId);
+            ApiResponseResult apiResponseResult = enquiryOrderService.doInvalid(bsOrderId);
+            getSysLogService().success(module,method,methodName,"bsOrderId:"+bsOrderId);
+            return apiResponseResult;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"bsOrderId:"+bsOrderId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("作废操作失败！");
         }

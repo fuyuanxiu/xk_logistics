@@ -26,13 +26,19 @@ public class EnquirySupplierController extends WebController {
     @Autowired
     private EnquirySupplierService enquirySupplierService;
 
+    private String module = "新料询价供应商信息";
+
     @ApiOperation(value = "新增关联供应商", notes = "新增关联供应商")
     @PostMapping("/add")
     public ApiResponseResult add(EnquirySupplier enquirySupplier){
+        String method="/enquirySupplier/add";String methodName="新增关联供应商";
         try{
-            return enquirySupplierService.add(enquirySupplier);
+            ApiResponseResult add = enquirySupplierService.add(enquirySupplier);
+            getSysLogService().success(module,method,methodName,"供应商信息:"+enquirySupplier.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"供应商信息:"+e.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增关联供应商失败！");
         }
@@ -41,10 +47,14 @@ public class EnquirySupplierController extends WebController {
     @ApiOperation(value = "编辑关联供应商", notes = "编辑关联供应商")
     @PostMapping("/edit")
     public ApiResponseResult edit(EnquirySupplier enquirySupplier){
+        String method="/enquirySupplier/edit";String methodName="编辑关联供应商";
         try{
-            return enquirySupplierService.edit(enquirySupplier);
+            ApiResponseResult edit = enquirySupplierService.edit(enquirySupplier);
+            getSysLogService().success(module,method,methodName,"供应商信息:"+enquirySupplier.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"供应商信息:"+enquirySupplier.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑关联供应商失败！");
         }
@@ -53,10 +63,14 @@ public class EnquirySupplierController extends WebController {
     @ApiOperation(value = "删除关联供应商", notes = "删除关联供应商")
     @PostMapping("/delete")
     public ApiResponseResult delete(Long id){
+        String method="/enquirySupplier/delete";String methodName="删除关联供应商";
         try{
-            return enquirySupplierService.delete(id);
+            ApiResponseResult delete = enquirySupplierService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除关联供应商失败！");
         }

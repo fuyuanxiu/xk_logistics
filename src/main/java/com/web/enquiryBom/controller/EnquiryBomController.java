@@ -22,16 +22,23 @@ public class EnquiryBomController extends WebController {
     @Autowired
     private EnquiryBomService enquiryBomService;
 
+    private String module = "客户BOM新料询价信息";
+
+
     @ApiOperation(value = "删除客户BOM新料询价信息", notes = "删除客户BOM新料询价信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "记录ID", required = false, dataType = "Long", paramType = "query", defaultValue = "")
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/enquiryBom/delete";String methodName="删除客户BOM新料询价信息";
         try{
-            return enquiryBomService.delete(id);
+            ApiResponseResult delete = enquiryBomService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除失败！");
         }
@@ -66,10 +73,14 @@ public class EnquiryBomController extends WebController {
                                         @RequestParam(value = "bomIds", required = false) String bomIds,
                                         @RequestParam(value = "todoerBy", required = false) Long todoerBy,
                                         @RequestParam(value = "bsRemark", required = false) String bsRemark){
+        String method="/enquiryBom/doCreateEnquiry";String methodName="客户BOM新料询价";
         try{
-            return enquiryBomService.doCreateEnquiry(fileId, bomIds, todoerBy, bsRemark);
+            ApiResponseResult result = enquiryBomService.doCreateEnquiry(fileId, bomIds, todoerBy, bsRemark);
+            getSysLogService().success(module,method,methodName,"文件ID:"+fileId+";bomIds:"+bomIds+";待办人ID:"+todoerBy+";备注:"+bsRemark);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"文件ID:"+fileId+";bomIds:"+bomIds+";待办人ID:"+todoerBy+";备注:"+bsRemark+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增失败！");
         }

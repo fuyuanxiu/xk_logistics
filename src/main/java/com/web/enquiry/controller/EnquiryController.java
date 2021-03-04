@@ -25,13 +25,19 @@ public class EnquiryController extends WebController {
     @Autowired
     private EnquiryService enquiryService;
 
+    private String module = "新料询价信息";
+
     @ApiOperation(value = "新增询价", notes = "新增询价")
     @PostMapping("/add")
-    public ApiResponseResult add(@RequestBody(required = false) Enquiry enquiry){
-        try{
-            return enquiryService.add(enquiry);
-        }catch (Exception e){
+    public ApiResponseResult add(@RequestBody(required = false) Enquiry enquiry) {
+        String method="/enquiry/add";String methodName="新增询价";
+        try {
+            ApiResponseResult add = enquiryService.add(enquiry);
+            getSysLogService().success(module,method,methodName,"询价信息:"+enquiry.toString());
+            return add;
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"询价信息:"+enquiry.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增询价失败！");
         }
@@ -39,11 +45,15 @@ public class EnquiryController extends WebController {
 
     @ApiOperation(value = "编辑询价", notes = "编辑询价")
     @PostMapping("/edit")
-    public ApiResponseResult edit(@RequestBody(required = false) Enquiry enquiry){
-        try{
-            return enquiryService.edit(enquiry);
-        }catch (Exception e){
+    public ApiResponseResult edit(@RequestBody(required = false) Enquiry enquiry) {
+        String method="/enquiry/edit";String methodName="编辑询价";
+        try {
+            ApiResponseResult edit = enquiryService.edit(enquiry);
+            getSysLogService().success(module,method,methodName,"询价信息:"+enquiry.toString());
+            return edit;
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"询价信息:"+enquiry.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑询价失败！");
         }
@@ -51,11 +61,15 @@ public class EnquiryController extends WebController {
 
     @ApiOperation(value = "删除询价", notes = "删除询价")
     @PostMapping("/delete")
-    public ApiResponseResult delete(@RequestParam(value = "id", required = false) Long id){
-        try{
-            return enquiryService.delete(id);
-        }catch (Exception e){
+    public ApiResponseResult delete(@RequestParam(value = "id", required = false) Long id) {
+        String method="/enquiry/delete";String methodName="删除询价";
+        try {
+            ApiResponseResult delete = enquiryService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除询价失败！");
         }
@@ -73,11 +87,11 @@ public class EnquiryController extends WebController {
     public ApiResponseResult getlist(@RequestParam(value = "eqStatus", required = false) Integer eqStatus,
                                      @RequestParam(value = "keyword", required = false) String keyword,
                                      @RequestParam(value = "startDate", required = false) Date startDate,
-                                     @RequestParam(value = "endDate", required = false) Date endDate){
-        try{
+                                     @RequestParam(value = "endDate", required = false) Date endDate) {
+        try {
             Sort sort = new Sort(Sort.Direction.DESC, "id");
             return enquiryService.getlist(eqStatus, keyword, startDate, endDate, super.getPageRequest(sort));
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
             return ApiResponseResult.failure("获取询价列表失败！");
@@ -89,10 +103,10 @@ public class EnquiryController extends WebController {
             @ApiImplicitParam(name = "id", value = "ID", required = false, dataType = "Long", paramType = "query", defaultValue = "")
     })
     @RequestMapping(value = "/getEnquiryInfo", method = RequestMethod.GET)
-    public ApiResponseResult getEnquiryInfo(@RequestParam(value = "id", required = false) Long id){
-        try{
+    public ApiResponseResult getEnquiryInfo(@RequestParam(value = "id", required = false) Long id) {
+        try {
             return enquiryService.getEnquiryInfo(id);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
             return ApiResponseResult.failure("获取询价单详情失败！");

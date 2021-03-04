@@ -7,6 +7,7 @@ import com.utils.BaseService;
 import com.utils.SearchFilter;
 import com.utils.UserUtil;
 import com.utils.enumeration.BasicStateEnum;
+import com.web.keywords.entity.Keywords;
 import com.web.settings.dao.ChildProjectDao;
 import com.web.settings.entity.ChildProject;
 import com.web.settings.service.ChildProjectService;
@@ -59,18 +60,19 @@ public class ChildProjectImpl implements ChildProjectService {
         if (childProject.getParentId() == null) {
             return ApiResponseResult.failure("父项目ID不能为空");
         }
-        List<ChildProject> childProjectList= childProjectDao.findByIsDelAndChildName(BasicStateEnum.FALSE.intValue(), childProject.getChildName());
+             String s=childProject.getChildName().replace(" ","");
+        List<ChildProject> childProjectList= childProjectDao.findByIsDelAndChildName(BasicStateEnum.FALSE.intValue(), s);
         if(childProjectList != null && childProjectList.size() > 0){
             //Sql Server查询不区分大小写，需要查询出来后进行判断
             for(ChildProject project : childProjectList){
                 String oName = project.getChildName();
-                if(StringUtils.equals(oName, childProject.getChildName())){
+                if(StringUtils.equals(oName, s)){
                     return ApiResponseResult.failure("此子项目名称已存在，不能重复添加！");
                 }
             }
         }
         SysUser currUser = UserUtil.getCurrUser();
-        childProject.setChildName(childProject.getChildName().trim());
+        childProject.setChildName(childProject.getChildName().replace(" ",""));
         childProject.setCreatedTime(new Date());
         childProject.setPkCreatedBy((currUser != null) ? currUser.getId() : null);
         childProject.setParentId(childProject.getParentId());
@@ -92,7 +94,7 @@ public class ChildProjectImpl implements ChildProjectService {
             return ApiResponseResult.failure("子项目不存在");
         }
         SysUser currUser = UserUtil.getCurrUser();
-        String newName = childProject.getChildName().trim();
+        String newName = childProject.getChildName().replace(" ","");
         if (newName.equals(result.getChildName())) {
             //1.如果名称和原来一致，则不用修改名称
             result.setModifiedTime(new Date());
@@ -116,6 +118,27 @@ public class ChildProjectImpl implements ChildProjectService {
 
         return ApiResponseResult.success("修改成功").data(result);
     }
+
+    @Override
+    @Transactional
+    public ApiResponseResult delete(Long id) throws Exception {
+        if(id == null){
+            return ApiResponseResult.failure("记录ID不能为空！");
+        }
+        ChildProject o = childProjectDao.findById((long) id);
+        if(o == null){
+            return ApiResponseResult.failure("子项目不存在！");
+        }
+        SysUser currUser = UserUtil.getCurrUser();  //获取当前用户
+
+        o.setIsDel(BasicStateEnum.TRUE.intValue());
+        o.setModifiedTime(new Date());
+        o.setPkModifiedBy((currUser != null) ? currUser.getId() : null);
+        childProjectDao.save(o);
+
+        return ApiResponseResult.success("删除成功！").data(o);
+    }
+
 
 
 }
