@@ -11,7 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 4.13 客户运单结算表
- * 
+ *
  * @author Ansel
  *
  */
@@ -19,7 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class CustomerBillClear {
 	@Column
 	private String CustomerCode;
-	
+
 	@Id
 	@GeneratedValue(generator = "id")
 	@GenericGenerator(name = "id", strategy = "assigned")
@@ -188,14 +188,18 @@ public class CustomerBillClear {
 
 	@Override
 	public String toString() {
-		return "CustomerBillClear [CustomerCode=" + CustomerCode + ", goodsBillCode=" + goodsBillCode + ", billMoney="
-				+ billMoney + ", moneyReceivable=" + moneyReceivable + ", receivedMoney=" + receivedMoney
-				+ ", prepayMoney=" + prepayMoney + ", carriageReduceFund=" + carriageReduceFund + ", balance=" + balance
-				+ ", balanceTime=" + balanceTime + ", insurance=" + insurance + ", payKickback=" + payKickback
-				+ ", carryGoodsFee=" + carryGoodsFee + ", balanceType=" + balanceType + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("货运单编号:").append(this.goodsBillCode);
+		sb.append(",账单金额:").append(this.billMoney);
+		sb.append(",应收账款:").append(this.moneyReceivable);
+		sb.append(",已收金额:").append(this.receivedMoney);
+		sb.append(",预付金额:").append(this.prepayMoney);
+		sb.append(",保险:").append(this.insurance);
+		sb.append(",运费:").append(this.carryGoodsFee);
+		return sb.toString();
 	}
 
-	
-	
+
+
 
 }

@@ -24,13 +24,19 @@ public class MarketReportController extends WebController {
     @Autowired
     private MarketReportService marketReportService;
 
+    private String module = "市场报价信息";
+
     @ApiOperation(value = "新增", notes = "新增")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(MarketReport marketReport){
+        String method="/marketReport/add";String methodName="新增市场报价信息";
         try{
-            return marketReportService.add(marketReport);
+            ApiResponseResult add = marketReportService.add(marketReport);
+            getSysLogService().success(module,method,methodName,"新增信息:"+marketReport.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+marketReport.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增失败！");
         }
@@ -39,10 +45,14 @@ public class MarketReportController extends WebController {
     @ApiOperation(value = "编辑", notes = "编辑")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(MarketReport marketReport){
+        String method="/marketReport/edit";String methodName="新增市场报价信息";
         try{
-            return marketReportService.edit(marketReport);
+            ApiResponseResult edit = marketReportService.edit(marketReport);
+            getSysLogService().success(module,method,methodName,"新增信息:"+marketReport.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+marketReport.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑失败！");
         }
@@ -54,10 +64,14 @@ public class MarketReportController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/marketReport/delete";String methodName="删除市场报价信息";
         try{
-            return marketReportService.delete(id);
+            ApiResponseResult delete = marketReportService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除失败！");
         }
@@ -97,10 +111,14 @@ public class MarketReportController extends WebController {
     @ApiOperation(value = "新增详情", notes = "新增详情")
     @RequestMapping(value = "/addDetail", method = RequestMethod.POST)
     public ApiResponseResult addDetail(MarketReportDetail detail){
+        String method="/marketReport/addDetail";String methodName="新增详情";
         try{
-            return marketReportService.addDetail(detail);
+            ApiResponseResult result = marketReportService.addDetail(detail);
+            getSysLogService().success(module,method,methodName,"新增信息:"+detail.toString());
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+detail.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增详情失败！");
         }
@@ -109,10 +127,14 @@ public class MarketReportController extends WebController {
     @ApiOperation(value = "编辑详情", notes = "编辑详情")
     @RequestMapping(value = "/editDetail", method = RequestMethod.POST)
     public ApiResponseResult editDetail(MarketReportDetail detail){
+        String method="/marketReport/editDetail";String methodName="编辑详情";
         try{
-            return marketReportService.editDetail(detail);
+            ApiResponseResult result = marketReportService.editDetail(detail);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+detail.toString());
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+detail.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑详情失败！");
         }
@@ -124,10 +146,14 @@ public class MarketReportController extends WebController {
     })
     @RequestMapping(value = "/deleteDetail", method = RequestMethod.POST)
     public ApiResponseResult deleteDetail(Long id){
+        String method="/marketReport/deleteDetail";String methodName="删除详情";
         try{
-            return marketReportService.deleteDetail(id);
+            ApiResponseResult result = marketReportService.deleteDetail(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除详情失败！");
         }
@@ -153,11 +179,14 @@ public class MarketReportController extends WebController {
     @ApiOperation(value="导出", notes="导出")
     @RequestMapping(value = "/getExcel", method = RequestMethod.GET)
     public void getExcel(String bomCode){
+        String method="/marketReport/getExcel";String methodName="导出";
         try{
             marketReportService.getExcel(bomCode, getResponse());
+            getSysLogService().success(module,method,methodName,"BOM编号:"+bomCode);
             logger.info("导出成功！");
         }catch(Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"BOM编号:"+bomCode+";"+e.toString());
             e.printStackTrace();
         }
     }
@@ -180,11 +209,14 @@ public class MarketReportController extends WebController {
     })
     @RequestMapping(value = "/getQtReportExcel", method = RequestMethod.GET)
     public void getQtReportExcel(Long fileId){
+        String method="/marketReport/getQtReportExcel";String methodName="导出BOM物料清单报表";
         try{
             marketReportService.getQtReportExcel(fileId, getResponse());
+            getSysLogService().success(module,method,methodName,"文件ID:"+fileId);
             logger.info("导出成功！");
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"文件ID:"+fileId+";"+e.toString());
             e.printStackTrace();
         }
     }
@@ -205,11 +237,14 @@ public class MarketReportController extends WebController {
     @ApiOperation(value="导出工时-报价单报表", notes="导出工时-报价单报表")
     @RequestMapping(value = "/getExcel2", method = RequestMethod.GET)
     public void getExcel2(Long reportId, Long feeId){
+        String method="/marketReport/getExcel2";String methodName="导出工时-报价单报表";
         try{
             marketReportService.getExcel2(reportId, feeId, getResponse());
+            getSysLogService().success(module,method,methodName,"reportId:"+reportId+";feeId"+feeId);
             logger.info("导出成功！");
         }catch(Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"reportId:"+reportId+";feeId"+feeId+";"+e.toString());
             e.printStackTrace();
         }
     }
@@ -217,11 +252,14 @@ public class MarketReportController extends WebController {
     @ApiOperation(value="导出钢网夹具-报价单报表", notes="导出钢网夹具-报价单报表")
     @RequestMapping(value = "/getExcel3", method = RequestMethod.GET)
     public void getExcel3(Long reportId, Long feeId){
+        String method="/marketReport/getExcel3";String methodName="导出钢网夹具-报价单报表";
         try{
             marketReportService.getExcel3(reportId, feeId, getResponse());
+            getSysLogService().success(module,method,methodName,"reportId:"+reportId+";feeId"+feeId);
             logger.info("导出成功！");
         }catch(Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().success(module,method,methodName,"reportId:"+reportId+";feeId"+feeId+";"+e.toString());
             e.printStackTrace();
         }
     }
@@ -229,21 +267,28 @@ public class MarketReportController extends WebController {
     @ApiOperation(value="导出报价单报表（包含工时、钢网夹具）", notes="导出报价单报表（包含工时、钢网夹具）")
     @RequestMapping(value = "/getExcelAll", method = RequestMethod.GET)
     public void getExcelAll(Long reportId, Long feeId2, Long feeId3){
+        String method="/marketReport/getExcelAll";String methodName="导出报价单报表（包含工时、钢网夹具）";
         try{
             marketReportService.getExcelAll(reportId, feeId2, feeId3, getResponse());
+            getSysLogService().success(module,method,methodName,"reportId:"+reportId+";feeId2"+feeId2+";feeId3"+feeId3);
             logger.info("导出成功！");
         }catch(Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"reportId:"+reportId+";feeId2"+feeId2+";feeId3"+feeId3+";"+e.toString());
             e.printStackTrace();
         }
     }
     @ApiOperation(value="审批", notes="审批操作")
     @RequestMapping(value = "/editCheck", method = RequestMethod.POST)
     public ApiResponseResult editCheck(Long id){
+        String method="/marketReport/editCheck";String methodName="审批";
         try {
-           return marketReportService.editCheck(id);
+            ApiResponseResult result = marketReportService.editCheck(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return result;
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("审批失败！");
         }
@@ -264,10 +309,14 @@ public class MarketReportController extends WebController {
 
     @RequestMapping(value = "/editUncheck",method = RequestMethod.POST)
     public ApiResponseResult editUnCheck(Long id){
+        String method="/marketReport/editUncheck";String methodName="反审批";
         try {
-           return marketReportService.editUnCheck(id);
+            ApiResponseResult result = marketReportService.editUnCheck(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("反审核失败！");
         }
     }

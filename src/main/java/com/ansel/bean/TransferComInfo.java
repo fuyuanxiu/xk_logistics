@@ -11,16 +11,16 @@ import javax.persistence.Entity;
 @Entity(name = "transfercominfo")
 public class TransferComInfo extends AnselBaseEntity {
 
-	
+
 	@Column(length = 50)
 	private String city;
-	
+
 	@Column(length = 50)
 	private String companyName;
-	
+
 	@Column(length = 50)
 	private String linkPhone;
-	
+
 	@Column(length = 200)
 	private String detailAddress;
 
@@ -72,8 +72,12 @@ public class TransferComInfo extends AnselBaseEntity {
 
 	@Override
 	public String toString() {
-		return "TransferComInfo [id=" + id + ", city=" + city + ", companyName=" + companyName + ", linkPhone="
-				+ linkPhone + ", detailAddress=" + detailAddress + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("城市:").append(this.city);
+		sb.append(",公司名:").append(this.companyName);
+		sb.append(",联系电话:").append(this.linkPhone);
+		sb.append(",详细地址:").append(this.detailAddress);
+		return sb.toString();
 	}
-	
+
 }

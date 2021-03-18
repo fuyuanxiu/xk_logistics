@@ -22,6 +22,9 @@ public class QualityBomController extends WebController {
     @Autowired
     private QualityBomService qualityBomService;
 
+    private String module = "品质匹配信息";
+
+
     @ApiOperation(value="上传客户BOM", notes="上传客户BOM")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "BOM文件", dataType = "MultipartFile", paramType="query",defaultValue=""),
@@ -29,10 +32,14 @@ public class QualityBomController extends WebController {
     })
     @RequestMapping(value = "/importBom", method = RequestMethod.POST)
     public ApiResponseResult importBOM(MultipartFile file, Integer startRow) {
+        String method="/qualityBom/importBom";String methodName="上传客户BOM";
         try {
-            return qualityBomService.importBom(file, startRow);
+            ApiResponseResult result = qualityBomService.importBom(file, startRow);
+            getSysLogService().success(module,method,methodName,"开始行数:"+startRow);
+            return result;
         } catch (Exception e) {
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"开始行数:"+startRow+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("导入失败！");
         }
@@ -60,10 +67,14 @@ public class QualityBomController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(@RequestParam(value = "fileId", required = false) Long fileId){
+        String method="/qualityBom/delete";String methodName="删除客户BOM";
         try{
-            return qualityBomService.delete(fileId);
+            ApiResponseResult result = qualityBomService.delete(fileId);
+            getSysLogService().success(module,method,methodName,"文件ID:"+fileId);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"文件ID:"+fileId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除客户BOM失败！");
         }
@@ -92,10 +103,14 @@ public class QualityBomController extends WebController {
     @RequestMapping(value = "/getK3Bom", method = RequestMethod.GET)
     public ApiResponseResult getK3Bom(@RequestParam(value = "brandNumberCol", required = false) String brandNumberCol,
                                       @RequestParam(value = "fileId", required = true)  String fileId){
+        String method="/qualityBom/delete";String methodName="删除客户BOM";
         try{
-            return qualityBomService.getK3Bom(brandNumberCol, fileId);
+            ApiResponseResult k3Bom = qualityBomService.getK3Bom(brandNumberCol, fileId);
+            getSysLogService().success(module,method,methodName,"品牌料号的列的表头名:"+brandNumberCol+";文件ID:"+fileId);
+            return k3Bom;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"品牌料号的列的表头名:"+brandNumberCol+";文件ID:"+fileId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("匹配K3物料数据失败！");
         }
@@ -124,10 +139,14 @@ public class QualityBomController extends WebController {
     @RequestMapping(value = "/doCheckMateriel", method = RequestMethod.POST)
     public ApiResponseResult doCheckMateriel(@RequestParam(value = "id", required = false) Long id,
                                              @RequestParam(value = "checkStatus", required = false) int checkStatus){
+        String method="/qualityBom/doCheckMateriel";String methodName="选中/取消匹配的物料";
         try{
-            return qualityBomService.doCheckMateriel(id, checkStatus);
+            ApiResponseResult result = qualityBomService.doCheckMateriel(id, checkStatus);
+            getSysLogService().success(module,method,methodName,"id:"+id+";状态:"+checkStatus);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";状态:"+checkStatus+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("操作失败！");
         }
@@ -140,10 +159,14 @@ public class QualityBomController extends WebController {
     })
     @RequestMapping(value = "/addMate", method = RequestMethod.POST)
     public ApiResponseResult addMate(Long id, Long bomId){
+        String method="/qualityBom/addMate";String methodName="添加新物料到匹配数据";
         try{
-            return qualityBomService.addMate(id, bomId);
+            ApiResponseResult result = qualityBomService.addMate(id, bomId);
+            getSysLogService().success(module,method,methodName,"物料ID:"+id+";BOM的ID:"+bomId);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"物料ID:"+id+";BOM的ID:"+bomId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("添加失败！");
         }
@@ -155,11 +178,14 @@ public class QualityBomController extends WebController {
     })
     @RequestMapping(value = "/getBomExcel", method = RequestMethod.GET)
     public void getBomExcel(Long fileId){
+        String method="/qualityBom/getBomExcel";String methodName="导出客户BOM匹配结果";
         try{
             qualityBomService.getBomExcel(fileId, getResponse());
+            getSysLogService().success(module,method,methodName,"文件ID:"+fileId);
             logger.info("导出成功！");
         }catch(Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"文件ID:"+fileId+";"+e.toString());
             e.printStackTrace();
         }
     }

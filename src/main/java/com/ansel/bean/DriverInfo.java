@@ -11,13 +11,13 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 4.27 司机信息表
- * 
+ *
  * @author Ansel
  *
  */
 @Entity(name = "driverinfo")
 public class DriverInfo {
-	
+
 	@Id
 	@GeneratedValue(generator = "id")
 	@GenericGenerator(name = "id", strategy = "assigned")
@@ -86,7 +86,7 @@ public class DriverInfo {
 
 	@Column(length = 50)
 	private String carFrameNo;
-	
+
 	@Column(length = 50)
 	private String engineNo;
 
@@ -334,14 +334,14 @@ public class DriverInfo {
 
 	@Override
 	public String toString() {
-		return "DriverInfo [id=" + id + ", driverName=" + driverName + ", idCard=" + idCard + ", phone=" + phone
-				+ ", gender=" + gender + ", birthday=" + birthday + ", state=" + state + ", carNo=" + carNo
-				+ ", allowCarryVolume=" + allowCarryVolume + ", allowCarryWeight=" + allowCarryWeight + ", address="
-				+ address + ", carType=" + carType + ", carLength=" + carLength + ", carDept=" + carDept
-				+ ", carDeptTel=" + carDeptTel + ", driveLicence=" + driveLicence + ", runLicence=" + runLicence
-				+ ", bizLicence=" + bizLicence + ", insuranceCard=" + insuranceCard + ", carWidth=" + carWidth
-				+ ", goodsHeight=" + goodsHeight + ", carFrameNo=" + carFrameNo + ", engineNo=" + engineNo + ", remark="
-				+ remark + ", companyCar=" + companyCar + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("ID:").append(this.id);
+		sb.append(",司机名:").append(this.driverName);
+		sb.append(",电话:").append(this.phone);
+		sb.append(",性别:").append(this.gender);
+		sb.append(",状态:").append(this.state);
+		sb.append(",车号:").append(this.carNo);
+		return sb.toString();
 	}
 
 }

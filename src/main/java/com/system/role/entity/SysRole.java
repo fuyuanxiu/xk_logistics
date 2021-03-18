@@ -25,13 +25,13 @@ public class SysRole extends BaseEntity {
 	 */
 	@Column(length=255)
 	protected String roleComment;
-	
+
 	/**
 	 * 角色名
 	 */
 	@Column(length=255)
 	protected String roleName;
-	
+
 	/**
 	 * 角色代码
 	 */
@@ -75,4 +75,13 @@ public class SysRole extends BaseEntity {
     public void setBsPermission(String bsPermission) {
         this.bsPermission = bsPermission;
     }
+
+	@Override
+	public String toString() {
+		final StringBuffer sb = new StringBuffer();
+		sb.append("备注:").append(this.roleComment);
+		sb.append(",角色编号:").append(this.roleCode);
+		sb.append(",操作权限:").append(this.bsPermission);
+		return sb.toString();
+	}
 }

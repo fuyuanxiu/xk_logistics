@@ -11,7 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 4.6 货运回执单主表
- * 
+ *
  * @author Ansel
  *
  */
@@ -292,15 +292,18 @@ public class CargoReceipt {
 
 	@Override
 	public String toString() {
-		return "CargoReceipt [goodsRevertBillCode=" + goodsRevertBillCode + ", loadStation=" + loadStation
-				+ ", startCarryTime=" + startCarryTime + ", dealGoodsStation=" + dealGoodsStation + ", arriveTime="
-				+ arriveTime + ", receiveGoodsLinkman=" + receiveGoodsLinkman + ", linkmanPhone=" + linkmanPhone
-				+ ", receiveGoodsDetailAddr=" + receiveGoodsDetailAddr + ", carriageBanlanceMode="
-				+ carriageBanlanceMode + ", remark=" + remark + ", driverId=" + driverId + ", ifBalance=" + ifBalance
-				+ ", backBillState=" + backBillState + ", startAdvance=" + startAdvance + ", carryGoodsBillDeposit="
-				+ carryGoodsBillDeposit + ", carryGoodsInsurance=" + carryGoodsInsurance + ", dispatchServiceFee="
-				+ dispatchServiceFee + ", allCarriage=" + allCarriage + ", insurance=" + insurance + ", signTime="
-				+ signTime + ", acceptStation=" + acceptStation + ", carriageMode=" + carriageMode + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("货物回执单编号:").append(this.goodsRevertBillCode);
+		sb.append(",装载站:").append(this.loadStation);
+		sb.append(",开始运输时间:").append(this.startCarryTime);
+		sb.append(",货物交易站:").append(this.dealGoodsStation);
+		sb.append(",到达时间:").append(this.arriveTime);
+		sb.append(",收货联络人:").append(this.receiveGoodsLinkman);
+		sb.append(",联络人电话:").append(this.linkmanPhone);
+		sb.append(",收货详细地址:").append(this.receiveGoodsDetailAddr);
+		sb.append(",carriageBanlanceMode:").append(this.carriageBanlanceMode);
+		sb.append(",备注:").append(this.remark);
+		return sb.toString();
 	}
 
 }

@@ -109,4 +109,16 @@ public class Fee extends BaseEntity {
     public void setBsRemark(String bsRemark) {
         this.bsRemark = bsRemark;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("编号:").append(this.bsCode);
+        sb.append(",名称:").append(this.bsName);
+        sb.append(",计量方式:").append(this.bsMeasureType);
+        sb.append(",计量单位:").append(this.bsMeasureUnit);
+        sb.append(",备注:").append(this.bsRemark);
+        sb.append(",是否审核:").append(this.isChecked);
+        return sb.toString();
+    }
 }

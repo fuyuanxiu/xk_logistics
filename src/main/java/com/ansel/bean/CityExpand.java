@@ -18,7 +18,7 @@ import io.swagger.annotations.ApiModel;
 @DynamicUpdate
 @ApiModel
 public class CityExpand extends AnselBaseEntity {
-	
+
 	public static final String TABLE_NAME = "t_city_expand";
 
 	private int cityId;
@@ -55,7 +55,10 @@ public class CityExpand extends AnselBaseEntity {
 
 	@Override
 	public String toString() {
-		return "CityExpand [id=" + id + ", cityId=" + cityId + ", rangeCity=" + rangeCity + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("城市ID:").append(this.cityId);
+		sb.append(",城市范围:").append(this.rangeCity);
+		return sb.toString();
 	}
 
 }

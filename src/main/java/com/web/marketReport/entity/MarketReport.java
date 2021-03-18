@@ -166,4 +166,21 @@ public class MarketReport extends BaseEntity {
     public void setBsRemark(String bsRemark) {
         this.bsRemark = bsRemark;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("客户:").append(this.bsCustomer);
+        sb.append(",机型:").append(this.bsMachine);
+        sb.append(",BOM编号:").append(this.bsBomCode);
+        sb.append(",文件ID:").append(this.bsFileId);
+        sb.append(",折扣方案ID:").append(this.bsDiscountId);
+        sb.append(",折扣方案:").append(this.discount);
+        sb.append(",工序流ID:").append(this.bsFlowId);
+        sb.append(",工序流:").append(this.processFlow);
+        sb.append(",备注:").append(this.bsRemark);
+        sb.append(",是否审核:").append(this.isChecked);
+
+        return sb.toString();
+    }
 }

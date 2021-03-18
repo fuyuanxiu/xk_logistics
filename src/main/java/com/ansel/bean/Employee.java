@@ -11,7 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 4.26 职员信息表
- * 
+ *
  * @author Ansel
  *
  */
@@ -104,9 +104,14 @@ public class Employee {
 
 	@Override
 	public String toString() {
-		return "Employee [employeeCode=" + employeeCode + ", employeeName=" + employeeName
-				+ ", department=" + department + ", position=" + position + ", gender=" + gender + ", birthday="
-				+ birthday + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("员工编号:").append(this.employeeCode);
+		sb.append(",员工名:").append(this.employeeName);
+		sb.append(",部门:").append(this.department);
+		sb.append(",职位:").append(this.position);
+		sb.append(",性别:").append(this.gender);
+		sb.append(",生日:").append(this.birthday);
+		return sb.toString();
 	}
 
 }

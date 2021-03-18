@@ -108,4 +108,15 @@ public class ProcessInfo extends BaseEntity {
     public void setBsIsBan(Integer bsIsBan) {
         this.bsIsBan = bsIsBan;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("工段ID:").append(this.bsCateId);
+        sb.append(",编号:").append(this.bsCode);
+        sb.append(",名称:").append(this.bsName);
+        sb.append(",备注:").append(this.bsRemark);
+        sb.append(",是否禁用:").append(this.bsIsBan);
+        return sb.toString();
+    }
 }

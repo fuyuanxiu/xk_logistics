@@ -49,4 +49,12 @@ public class ChildProject extends BaseEntity {
     public void setChildName(String childName) {
         this.childName = childName;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("父ID:").append(this.parentId);
+        sb.append(",子项目名称:").append(this.childName);
+        return sb.toString();
+    }
 }

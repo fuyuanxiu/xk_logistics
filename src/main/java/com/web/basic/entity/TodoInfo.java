@@ -270,22 +270,20 @@ public class TodoInfo extends BaseEntity {
 
     @Override
     public String toString() {
-        return "TodoInfo{" +
-                "bsUserId=" + bsUserId +
-                ", bsRouter='" + bsRouter + '\'' +
-                ", bsStatus=" + bsStatus +
-                ", bsTitle='" + bsTitle + '\'' +
-                ", bsContent='" + bsContent + '\'' +
-                ", bsRemark='" + bsRemark + '\'' +
-                ", bsType=" + bsType +
-                ", bsPriority=" + bsPriority +
-                ", bsStartTime=" + bsStartTime +
-                ", bsEndTime=" + bsEndTime +
-                ", bsReferId=" + bsReferId +
-                ", bsExtend=" + bsExtend +
-                ", pkCreatedBy=" + pkCreatedBy +
-                ", pkModifiedBy=" + pkModifiedBy +
-                '}';
+        final StringBuffer sb = new StringBuffer();
+        sb.append("用户ID:").append(this.bsUserId);
+        sb.append(",页面路由:").append(this.bsRouter);
+        sb.append(",状态:").append(this.bsStatus);
+        sb.append(",类型:").append(this.bsType);
+        sb.append(",标题:").append(this.bsTitle);
+        sb.append(",内容:").append(this.bsContent);
+        sb.append(",关联ID:").append(this.bsReferId);
+        sb.append(",优先级:").append(this.bsPriority);
+        sb.append(",创建人:").append(this.pkCreatedBy);
+        sb.append(",修改人:").append(this.pkModifiedBy);
+
+
+        return sb.toString();
     }
 
     //

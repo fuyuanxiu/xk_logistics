@@ -75,4 +75,15 @@ public class Setting extends BaseEntity {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("编码:").append(this.code);
+        sb.append(",值:").append(this.value);
+        sb.append(",备注:").append(this.remark);
+        sb.append(",是否审核:").append(this.isChecked);
+        return sb.toString();
+    }
+
 }

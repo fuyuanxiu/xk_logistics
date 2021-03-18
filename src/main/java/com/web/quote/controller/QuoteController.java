@@ -25,16 +25,24 @@ public class QuoteController extends WebController {
     @Autowired
     private QuoteService quoteService;
 
+    private String module = "新料报价信息";
+
+
     @ApiOperation(value = "删除报价", notes = "删除报价")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "ID", required = false, dataType = "Long", paramType = "query", defaultValue = "")
     })
     @PostMapping("/delete")
     public ApiResponseResult delete(@RequestParam(value = "id", required = false) Long id){
+        String method="/quote/delete";String methodName="删除报价";
+
         try{
-            return quoteService.delete(id);
+            ApiResponseResult delete = quoteService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除报价失败！");
         }
@@ -80,10 +88,14 @@ public class QuoteController extends WebController {
     @ApiOperation(value = "确认报价", notes = "确认报价")
     @PostMapping("/doQuote")
     public ApiResponseResult doQuote(@RequestBody(required = false) Quote quote){
+        String method="/quote/doQuote";String methodName="确认报价";
         try{
-            return quoteService.doQuote(quote);
+            ApiResponseResult result = quoteService.doQuote(quote);
+            getSysLogService().success(module,method,methodName,"报价信息:"+quote.toString());
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"报价信息:"+quote.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("确认报价失败！");
         }
@@ -111,10 +123,14 @@ public class QuoteController extends WebController {
     })
     @RequestMapping(value = "/doAccept", method = RequestMethod.POST)
     public ApiResponseResult doAccept(Long bsEqId, String quoMateIds){
+        String method="/quote/doAccept";String methodName="采纳报价";
         try{
-            return quoteService.doAccept(bsEqId, quoMateIds);
+            ApiResponseResult result = quoteService.doAccept(bsEqId, quoMateIds);
+            getSysLogService().success(module,method,methodName,"询价ID:"+bsEqId+";报价明细ID:"+quoMateIds);
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"询价ID:"+bsEqId+";报价明细ID:"+quoMateIds+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("采纳报价失败！");
         }

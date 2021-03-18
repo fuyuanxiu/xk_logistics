@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModel;
 
 /**
  * 4.18 回告信息表
- * 
+ *
  * @author Ansel
  *
  */
@@ -30,7 +30,7 @@ public class CallbackInfo extends AnselBaseEntity {
 	private String type;
 
 	private String content;
-	
+
 	@Column(length = 50)
 	private String goodsBillId;
 
@@ -162,10 +162,20 @@ public class CallbackInfo extends AnselBaseEntity {
 
 	@Override
 	public String toString() {
-		return "CallbackInfo [id=" + id + ", dialNo=" + dialNo + ", type=" + type + ", content=" + content
-				+ ", goodsBillId=" + goodsBillId + ", writeTime=" + writeTime + ", writer=" + writer
-				+ ", finallyDialTime=" + finallyDialTime + ", success=" + success + ", locked=" + locked + ", billId="
-				+ billId + ", billType=" + billType + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("dialNo:").append(this.dialNo);
+		sb.append(",类型:").append(this.type);
+		sb.append(",内容").append(this.content);
+		sb.append(",goodsBillId:").append(this.goodsBillId);
+		sb.append(",写入时间:").append(this.writeTime);
+		sb.append(",撰写人:").append(this.writer);
+		sb.append(",finallyDialTime:").append(this.finallyDialTime);
+		sb.append(",是否成功:").append(this.success);
+		sb.append(",是否可用:").append(this.locked);
+		sb.append(",billId:").append(this.billId);
+		sb.append(",bill类型:").append(this.billType);
+
+		return sb.toString();
 	}
 
 }

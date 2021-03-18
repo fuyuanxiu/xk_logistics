@@ -13,19 +13,19 @@ import javax.persistence.Entity;
 @Entity(name = "goodsreceiptinfo")
 public class GoodsReceiptInfo extends AnselBaseEntity {
 
-	
+
 	@Column(length = 50)
 	private String goodsRevertCode;
-	
+
 	@Column(length = 50)
 	private String driverName;
-	
+
 	@Column(length = 50)
 	private String checkGoodsRecord;
-	
+
 	@Column(length = 50)
 	private String receiveGoodsPerson;
-	
+
 	@Column(length = 50)
 	private Date rceiveGoodsDate;
 
@@ -87,9 +87,14 @@ public class GoodsReceiptInfo extends AnselBaseEntity {
 
 	@Override
 	public String toString() {
-		return "GoodsReceiptInfo [id=" + id + ", goodsRevertCode=" + goodsRevertCode + ", driverName=" + driverName
-				+ ", checkGoodsRecord=" + checkGoodsRecord + ", receiveGoodsPerson=" + receiveGoodsPerson
-				+ ", rceiveGoodsDate=" + rceiveGoodsDate + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("id:").append(this.id);
+		sb.append(",回执编号:").append(this.goodsRevertCode);
+		sb.append(",司机名:").append(this.driverName);
+		sb.append(",检查货物记录:").append(this.checkGoodsRecord);
+		sb.append(",货物接收人:").append(this.receiveGoodsPerson);
+		sb.append(",收货日期:").append(this.rceiveGoodsDate);
+		return sb.toString();
 	}
-	
+
 }

@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 
 /**
  * 4.20 营业外收入表
- * 
+ *
  * @author Ansel
  *
  */
@@ -67,8 +67,12 @@ public class ExtraIncome extends AnselBaseEntity {
 
 	@Override
 	public String toString() {
-		return "ExtraIncome [id=" + id + ", name=" + name + ", money=" + money + ", incomeMonth=" + incomeMonth
-				+ ", writeDate=" + writeDate + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("姓名:").append(this.name);
+		sb.append(",金额:").append(this.money);
+		sb.append(",月收入:").append(this.incomeMonth);
+		sb.append(",录入日期:").append(this.writeDate);
+		return sb.toString();
 	}
 
 }

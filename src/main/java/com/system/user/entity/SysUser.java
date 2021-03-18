@@ -191,18 +191,17 @@ public class SysUser extends com.app.base.entity.BaseEntity {
 
     @Override
     public String toString() {
-        return "SysUser{" +
-                "userCode='" + userCode + '\'' +
-                ", userName='" + userName + '\'' +
-                ", userPassword='" + userPassword + '\'' +
-                ", userType=" + userType +
-                ", userStatus=" + userStatus +
-                ", userComment='" + userComment + '\'' +
-                ", userEmail='" + userEmail + '\'' +
-                ", userMobile='" + userMobile + '\'' +
-                ", userIsSuper=" + userIsSuper +
-                ", pkCreatedBy=" + pkCreatedBy +
-                ", pkModifiedBy=" + pkModifiedBy +
-                '}';
+        final StringBuffer sb = new StringBuffer();
+        sb.append("用户名:").append(this.userCode);
+        sb.append(",名称:").append(this.userName);
+        sb.append(",类型:").append(this.userType);
+        sb.append(",状态:").append(this.userStatus);
+        sb.append(",备注:").append(this.userComment);
+        sb.append(",邮箱:").append(this.userEmail);
+        sb.append(",手机号:").append(this.userMobile);
+        sb.append(",普通或超级用户:").append(this.userIsSuper);
+        sb.append(",创建人:").append(this.pkCreatedBy);
+        sb.append(",修改人:").append(this.pkModifiedBy);
+        return sb.toString();
     }
 }

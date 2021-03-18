@@ -64,4 +64,13 @@ public class DiscountCategory extends BaseEntity {
     public void setBsNumber(Integer bsNumber) {
         this.bsNumber = bsNumber;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("类别名称:").append(this.bsName);
+        sb.append(",备注:").append(this.bsRemark);
+        sb.append(",折扣方案序号递增数量:").append(this.bsNumber);
+        return sb.toString();
+    }
 }

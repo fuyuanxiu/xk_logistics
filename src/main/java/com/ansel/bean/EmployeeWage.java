@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 
 /**
  * 4.21 员工工资表
- * 
+ *
  * @author Ansel
  *
  */
@@ -76,7 +76,7 @@ public class EmployeeWage extends AnselBaseEntity {
 	public void setAllowance(double allowance) {
 		this.allowance = allowance;
 	}
-	
+
 
 	public Date getWageDate() {
 		return wageDate;
@@ -96,9 +96,14 @@ public class EmployeeWage extends AnselBaseEntity {
 
 	@Override
 	public String toString() {
-		return "EmployeeWage [id=" + id + ", employeeCode=" + employeeCode + ", basicWage=" + basicWage
-				+ ", stationWage=" + stationWage + ", allowance=" + allowance + ", date=" + wageDate + ", employee="
-				+ employee + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("员工编号:").append(this.employeeCode);
+		sb.append(",基本工资:").append(this.basicWage);
+		sb.append(",岗位工资:").append(this.stationWage);
+		sb.append(",津贴:").append(this.allowance);
+		sb.append(",工资日期:").append(this.wageDate);
+		sb.append(",员工:").append(this.employee);
+		return sb.toString();
 	}
 
 }

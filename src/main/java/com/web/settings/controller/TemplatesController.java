@@ -21,13 +21,19 @@ public class TemplatesController extends WebController {
     @Autowired
     private TemplatesService templatesService;
 
+    private String module = "模板文件管理信息";
+
     @ApiOperation(value = "新增模板文件", notes = "新增模板文件")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(Templates templates){
+        String method="/templates/add";String methodName="新增模板文件";
         try{
-            return templatesService.add(templates);
+            ApiResponseResult add = templatesService.add(templates);
+            getSysLogService().success(module,method,methodName,"新增信息:"+templates.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+templates.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增模板文件失败！");
         }
@@ -36,10 +42,14 @@ public class TemplatesController extends WebController {
     @ApiOperation(value = "编辑模板文件", notes = "编辑模板文件")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(Templates templates){
+        String method="/templates/edit";String methodName="编辑模板文件";
         try{
-            return templatesService.edit(templates);
+            ApiResponseResult edit = templatesService.edit(templates);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+templates.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+templates.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑模板文件失败！");
         }
@@ -51,10 +61,14 @@ public class TemplatesController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/templates/delete";String methodName="删除模板文件";
         try{
-            return templatesService.delete(id);
+            ApiResponseResult delete = templatesService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除模板文件失败！");
         }
@@ -79,10 +93,13 @@ public class TemplatesController extends WebController {
     })
     @RequestMapping(value = "/getTempByType", method = RequestMethod.GET)
     public void getTempByType(Integer bsType){
+        String method="/templates/getTempByType";String methodName="根据模板类型下载文件";
         try{
             templatesService.getTempByType(bsType, getResponse());
+            getSysLogService().success(module,method,methodName,"模板类型:"+bsType);
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"模板类型:"+bsType+";"+e.toString());
         }
     }
 }

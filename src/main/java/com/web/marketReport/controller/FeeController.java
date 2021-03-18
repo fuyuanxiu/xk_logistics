@@ -22,13 +22,20 @@ public class FeeController extends WebController {
     @Autowired
     private FeeService feeService;
 
+    private String module = "计费方式信息";
+
+
     @ApiOperation(value = "新增", notes = "新增")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(Fee fee){
+        String method="/fee/add";String methodName="新增计费方式信息";
         try{
-            return feeService.add(fee);
+            ApiResponseResult add = feeService.add(fee);
+            getSysLogService().success(module,method,methodName,"新增信息:"+fee.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+fee.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增失败！");
         }
@@ -37,10 +44,14 @@ public class FeeController extends WebController {
     @ApiOperation(value = "编辑", notes = "编辑")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(Fee fee){
+        String method="/fee/edit";String methodName="编辑计费方式信息";
         try{
-            return feeService.edit(fee);
+            ApiResponseResult edit = feeService.edit(fee);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+fee.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+fee.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑失败！");
         }
@@ -52,10 +63,14 @@ public class FeeController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/fee/delete";String methodName="删除计费方式信息";
         try{
-            return feeService.delete(id);
+            ApiResponseResult delete = feeService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除失败！");
         }
@@ -80,11 +95,14 @@ public class FeeController extends WebController {
     //审核
     @RequestMapping(value = "/check",method = RequestMethod.POST)
     public ApiResponseResult updateCheck(Long id){
+        String method="/fee/check";String methodName="审核";
         try {
             ApiResponseResult apiResponseResult = feeService.modifyCheckByid(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
             return apiResponseResult;
         } catch (Exception e) {
             e.printStackTrace();
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("审核失败");
         }
 
@@ -94,10 +112,14 @@ public class FeeController extends WebController {
     //反审核
     @RequestMapping(value = "/reverse",method = RequestMethod.POST)
     public ApiResponseResult reverseCheck(Long id){
+        String method="/fee/reverse";String methodName="反审核";
         try {
-            return feeService.reverseReviewByid(id);
+            ApiResponseResult result = feeService.reverseReviewByid(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("反审核失败");
         }
     }

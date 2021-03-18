@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 
 /**
  * 4.7 客户回执信息表
- * 
+ *
  * @author Ansel
  *
  */
@@ -16,19 +16,19 @@ public class CustomerReceiptInfo extends AnselBaseEntity {
 
 	@Column(length = 50)
 	private String goodsBillCode;
-	
+
 	@Column(length = 50)
 	private String customer;
-	
+
 	@Column(length = 50)
 	private String checkGoodsRecord;
-	
+
 	@Column(length = 50)
 	private String receiveGoodsPerson;
-	
+
 	@Column
 	private Date receiveGoodsDate;
-	
+
 	private int carryBillEventId;
 
 	public CustomerReceiptInfo() {
@@ -98,9 +98,14 @@ public class CustomerReceiptInfo extends AnselBaseEntity {
 
 	@Override
 	public String toString() {
-		return "CustomerReceiptInfo [id=" + id + ", goodsBillCode=" + goodsBillCode + ", customer=" + customer
-				+ ", checkGoodsRecord=" + checkGoodsRecord + ", receiveGoodsPerson=" + receiveGoodsPerson
-				+ ", receiveGoodsDate=" + receiveGoodsDate + ", carryBillEventId=" + carryBillEventId + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("货运单编号:").append(this.goodsBillCode);
+		sb.append(",客户:").append(this.customer);
+		sb.append(",商品检查记录:").append(this.checkGoodsRecord);
+		sb.append(",收货人:").append(this.receiveGoodsPerson);
+		sb.append(",收货日期:").append(this.receiveGoodsDate);
+		sb.append(",carryBillEventId:").append(this.carryBillEventId);
+		return sb.toString();
 	}
 
 }

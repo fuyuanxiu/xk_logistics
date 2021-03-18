@@ -65,4 +65,13 @@ public class Templates extends BaseEntity {
     public void setBsFileName(String bsFileName) {
         this.bsFileName = bsFileName;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("模板类型:").append(this.bsType);
+        sb.append(",文件ID:").append(this.bsFileId);
+        sb.append(",文件名称:").append(this.bsFileName);
+        return sb.toString();
+    }
 }

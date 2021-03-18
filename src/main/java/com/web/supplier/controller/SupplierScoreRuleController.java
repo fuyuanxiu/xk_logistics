@@ -21,13 +21,20 @@ public class SupplierScoreRuleController extends WebController {
     @Autowired
     private SupplierScoreRuleService supplierScoreRuleService;
 
+
+    private String module = "供应商评分规则信息";
+
     @ApiOperation(value = "新增供应商评分规则", notes = "新增供应商评分规则")
     @PostMapping("/add")
     public ApiResponseResult add(@RequestBody(required=false) SupplierScoreRule supplierScoreRule){
+        String method="/supplierScoreRule/add";String methodName="新增供应商评分规则";
         try{
-            return supplierScoreRuleService.add(supplierScoreRule);
+            ApiResponseResult add = supplierScoreRuleService.add(supplierScoreRule);
+            getSysLogService().success(module,method,methodName,"新增信息:"+supplierScoreRule.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+supplierScoreRule.toString()+";"+e.toString());
             return ApiResponseResult.failure("添加供应商评分规则失败！");
         }
     }
@@ -35,10 +42,14 @@ public class SupplierScoreRuleController extends WebController {
     @ApiOperation(value = "编辑供应商评分规则", notes = "编辑供应商评分规则")
     @PostMapping("/edit")
     public ApiResponseResult edit(@RequestBody(required=false) SupplierScoreRule supplierScoreRule){
+        String method="/supplierScoreRule/edit";String methodName="编辑供应商评分规则";
         try{
-            return supplierScoreRuleService.edit(supplierScoreRule);
+            ApiResponseResult edit = supplierScoreRuleService.edit(supplierScoreRule);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+supplierScoreRule.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+supplierScoreRule.toString()+";"+e.toString());
             return ApiResponseResult.failure("编辑供应商评分规则失败！");
         }
     }
@@ -51,10 +62,14 @@ public class SupplierScoreRuleController extends WebController {
     @PostMapping("/updateScore")
     public ApiResponseResult updateScore(@RequestParam(value = "id", required = false) Long id,
                                          @RequestParam(value = "ruleScore", required = false) Integer ruleScore){
+        String method="/supplierScoreRule/updateScore";String methodName="修改评分标准得分";
         try{
-            return supplierScoreRuleService.updateScore(id, ruleScore);
+            ApiResponseResult result = supplierScoreRuleService.updateScore(id, ruleScore);
+            getSysLogService().success(module,method,methodName,"id:"+id+";评分标准得分:"+ruleScore.toString());
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";评分标准得分:"+ruleScore.toString()+";"+e.toString());
             return ApiResponseResult.failure("删除供应商评分规则失败！");
         }
     }
@@ -62,10 +77,14 @@ public class SupplierScoreRuleController extends WebController {
     @ApiOperation(value = "删除供应商评分规则", notes = "删除供应商评分规则")
     @PostMapping("/delete")
     public ApiResponseResult delete(@RequestParam(value = "id",required = false) Long id){
+        String method="/supplierScoreRule/delete";String methodName="删除供应商评分规则";
         try{
-            return supplierScoreRuleService.delete(id);
+            ApiResponseResult delete = supplierScoreRuleService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("删除供应商评分规则失败！");
         }
     }

@@ -351,4 +351,27 @@ public class QuoteMateriel extends BaseEntity {
     public void setBsCusCode(String bsCusCode) {
         this.bsCusCode = bsCusCode;
     }
+
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("报价单ID:").append(this.qtId);
+        sb.append(",询价单ID:").append(this.bsEqId);
+        sb.append(",询价物料关联表ID:").append(this.bsEqMateId);
+        sb.append(",BOM的ID:").append(this.bsBomId);
+        sb.append(",询价成本清单详情ID:").append(this.bsOrderDetailId);
+        sb.append(",物料ID:").append(this.mateId);
+        sb.append(",报价数量:").append(this.bsRealNum);
+        sb.append(",单价:").append(this.qtUnitPrice);
+        sb.append(",含税单价:").append(this.bsTaxUnitPrice);
+        sb.append(",总价:").append(this.qtTotalPrice);
+        sb.append(",含税金额:").append(this.bsTaxTotalPrice);
+        sb.append(",报价备注:").append(this.qtMateDesc);
+        sb.append(",实际交货期限:").append(this.bsDelDeadlineReal);
+        sb.append(",最小包装:").append(this.bsPackageMin);
+        sb.append(",品牌名称:").append(this.bsCusName);
+        sb.append(",品牌料号:").append(this.bsCusCode);
+        return sb.toString();
+    }
 }

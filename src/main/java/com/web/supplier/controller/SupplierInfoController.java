@@ -29,14 +29,19 @@ public class SupplierInfoController extends WebController {
     @Autowired
     private SupplierInfoService supplierInfoService;
 
+    private String module = "供应商基础信息";
 
     @ApiOperation(value = "新增供应商", notes = "新增供应商")
     @PostMapping("/add")
     public ApiResponseResult add(@RequestBody(required=false) SupplierInfo supplierInfo) {
+        String method="/supplierInfo/add";String methodName="新增供应商";
         try{
-            return supplierInfoService.add(supplierInfo);
+            ApiResponseResult add = supplierInfoService.add(supplierInfo);
+            getSysLogService().success(module,method,methodName,"新增信息:"+supplierInfo.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+supplierInfo.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增供应商失败！");
         }
@@ -45,10 +50,14 @@ public class SupplierInfoController extends WebController {
     @ApiOperation(value = "编辑供应商", notes = "编辑供应商")
     @PostMapping("/edite")
     public ApiResponseResult edite(@RequestBody(required=false) SupplierInfo supplierInfo) {
+        String method="/supplierInfo/edite";String methodName="编辑供应商";
         try{
-            return supplierInfoService.edite(supplierInfo);
+            ApiResponseResult edite = supplierInfoService.edite(supplierInfo);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+supplierInfo.toString());
+            return edite;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+supplierInfo.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑供应商失败！");
         }
@@ -57,10 +66,14 @@ public class SupplierInfoController extends WebController {
     @ApiOperation(value = "删除供应商", notes = "删除供应商")
     @PostMapping("/delete")
     public ApiResponseResult delete(@RequestParam(value = "id",required = false) Long id) {
+        String method="/supplierInfo/delete";String methodName="删除供应商";
         try{
-            return supplierInfoService.delete(id);
+            ApiResponseResult delete = supplierInfoService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除供应商失败！");
         }
@@ -70,18 +83,24 @@ public class SupplierInfoController extends WebController {
     @PostMapping("/updateStatus")
     public ApiResponseResult updateStatus(@RequestParam(value = "idsArray", required = false) Long[] idsArray,
                                           @RequestParam(value = "suppGrade", required = false) Integer suppGrade){
+        String method="/supplierInfo/updateStatus";String methodName="更新供应商级别";
         try{
             if(suppGrade == null){
                 return ApiResponseResult.failure("供应商审核或者禁用失败！");
             } else if(suppGrade == SupplierStateEnum.SUPP_GRADE_NOPASS.intValue()){
-                return supplierInfoService.doNoPass(idsArray);
+                ApiResponseResult result = supplierInfoService.doNoPass(idsArray);
+                getSysLogService().success(module,method,methodName,"idsArray:"+idsArray+";供应商级别:"+suppGrade);
+                return result;
             } else if(suppGrade == SupplierStateEnum.SUPP_GRADE_PASS.intValue()){
-                return supplierInfoService.doPass(idsArray);
+                ApiResponseResult result = supplierInfoService.doPass(idsArray);
+                getSysLogService().success(module,method,methodName,"idsArray:"+idsArray+";供应商级别:"+suppGrade);
+                return result;
             } else{
                 return ApiResponseResult.failure("供应商审核或者禁用失败！");
             }
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"idsArray:"+idsArray+";供应商级别:"+suppGrade+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("供应商审核或者禁用失败！");
         }
@@ -141,14 +160,18 @@ public class SupplierInfoController extends WebController {
             return ApiResponseResult.failure("获取供应商列表失败！");
         }
     }
-    
+
     @ApiOperation(value = "srm供应商匹配K3", notes = "srm供应商匹配K3")
     @RequestMapping(value = "/doMatchK3", method = RequestMethod.GET)
     public ApiResponseResult doMatchK3(){
+        String method="/supplierInfo/doMatchK3";String methodName="srm供应商匹配K3";
         try{
-        	 return supplierInfoService.doMatchK3();
+            ApiResponseResult result = supplierInfoService.doMatchK3();
+            getSysLogService().success(module,method,methodName,null);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,null+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("srm供应商匹配K3失败！");
         }

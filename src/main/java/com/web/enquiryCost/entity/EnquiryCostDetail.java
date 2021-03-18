@@ -577,4 +577,19 @@ public class EnquiryCostDetail extends BaseEntity {
     public void setBsProp20(String bsProp20) {
         this.bsProp20 = bsProp20;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("询价主表ID:").append(this.bsEqId);
+        sb.append(",最小包装:").append(this.bsPackageMin);
+        sb.append(",交期:").append(this.bsDelivery);
+        sb.append(",品牌名称:").append(this.bsCusName);
+        sb.append(",品牌料号:").append(this.bsCusCode);
+        sb.append(",规格描述:").append(this.bsModel);
+        sb.append(",产地:").append(this.bsProduction);
+        sb.append(",备注:").append(this.bsRemark);
+        sb.append(",供应商中文名称:").append(this.bsSuppChineseName);
+        return sb.toString();
+    }
 }

@@ -23,37 +23,37 @@ public class SysRouter extends BaseEntity {
 	/**
 	 * 备注
 	 */
-	@Column(length=255)
+	@Column(length = 255)
 	protected String routerComment;
 
 	/**
 	 * 菜单名
 	 */
-	@Column(length=255)
+	@Column(length = 255)
 	protected String routerName;
 
 	/**
 	 * 菜单代码
 	 */
-	@Column(length=255)
+	@Column(length = 255)
 	protected String routerCode;
 
 	/**
 	 * 是否启用
 	 */
-	@Column(length=255)
-    protected int routerStatus;
+	@Column(length = 255)
+	protected int routerStatus;
 
 	/**
 	 * 序号
 	 */
-	@Column(length=255)
-    protected int routerIndex;
+	@Column(length = 255)
+	protected int routerIndex;
 
 	/**
 	 * 父节点Id
 	 */
-	@Column(length=255)
+	@Column(length = 255)
 	protected Long parentId;
 
 
@@ -81,23 +81,23 @@ public class SysRouter extends BaseEntity {
 		this.routerCode = routerCode;
 	}
 
-    public int getRouterStatus() {
-        return routerStatus;
-    }
+	public int getRouterStatus() {
+		return routerStatus;
+	}
 
-    public void setRouterStatus(int routerStatus) {
-        this.routerStatus = routerStatus;
-    }
+	public void setRouterStatus(int routerStatus) {
+		this.routerStatus = routerStatus;
+	}
 
-    public int getRouterIndex() {
-        return routerIndex;
-    }
+	public int getRouterIndex() {
+		return routerIndex;
+	}
 
-    public void setRouterIndex(int routerIndex) {
-        this.routerIndex = routerIndex;
-    }
+	public void setRouterIndex(int routerIndex) {
+		this.routerIndex = routerIndex;
+	}
 
-    public Long getParentId() {
+	public Long getParentId() {
 		return parentId;
 	}
 
@@ -107,13 +107,13 @@ public class SysRouter extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return "SysRouter{" +
-				"routerComment='" + routerComment + '\'' +
-				", routerName='" + routerName + '\'' +
-				", routerCode='" + routerCode + '\'' +
-				", routerStatus=" + routerStatus +
-				", routerIndex=" + routerIndex +
-				", parentId=" + parentId +
-				'}';
+		final StringBuffer sb = new StringBuffer();
+		sb.append("备注:").append(this.routerComment);
+		sb.append(",菜单名:").append(this.routerName);
+		sb.append(",菜单编号:").append(this.routerCode);
+		sb.append(",是否启用:").append(this.routerStatus);
+		sb.append(",序号:").append(this.routerIndex);
+		sb.append(",父节点:").append(this.parentId);
+		return sb.toString();
 	}
 }

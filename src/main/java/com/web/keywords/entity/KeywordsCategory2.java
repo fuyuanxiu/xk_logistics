@@ -50,4 +50,12 @@ public class KeywordsCategory2 extends BaseEntity {
     public void setBsRemark(String bsRemark) {
         this.bsRemark = bsRemark;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("分类名称:").append(this.bsName);
+        sb.append(",备注:").append(this.bsRemark);
+        return sb.toString();
+    }
 }

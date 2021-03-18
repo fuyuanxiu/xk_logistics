@@ -9,13 +9,13 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 4.25 客户基本信息表
- * 
+ *
  * @author Ansel
  *
  */
 @Entity(name = "customerinfo")
 public class CustomerInfo {
-	
+
 	@Id
 	@GeneratedValue(generator = "id")
 	@GenericGenerator(name = "id", strategy = "assigned")
@@ -175,10 +175,18 @@ public class CustomerInfo {
 
 	@Override
 	public String toString() {
-		return "CustomerInfo [customerCode=" + customerCode + ", customer=" + customer + ", phone="
-				+ phone + ", fax=" + fax + ", address=" + address + ", postCode=" + postCode + ", linkman=" + linkman
-				+ ", linkmanMobile=" + linkmanMobile + ", customerType=" + customerType + ", enterpriseProperty="
-				+ enterpriseProperty + ", enterpriseSize=" + enterpriseSize + ", email=" + email + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("客户编号:").append(this.customerCode);
+		sb.append(",客户:").append(this.customer);
+		sb.append(",电话:").append(this.phone);
+		sb.append(",传真:").append(this.fax);
+		sb.append(",地址:").append(this.address);
+		sb.append(",邮编:").append(this.postCode);
+		sb.append(",联系人:").append(this.linkman);
+		sb.append(",联系人电话:").append(this.linkmanMobile);
+		sb.append(",顾客类型:").append(this.customerType);
+		sb.append(",邮箱:").append(this.email);
+		return sb.toString();
 	}
 
 }

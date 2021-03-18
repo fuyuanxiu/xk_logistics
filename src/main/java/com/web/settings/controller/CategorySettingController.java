@@ -20,13 +20,20 @@ public class CategorySettingController extends WebController {
     @Autowired
     private CategorySettingService categorySettingService;
 
+    private String module = "物料类别筛选设置（质量文件）信息";
+
+
     @ApiOperation(value = "新增", notes = "新增")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(String bsName, String bsCode, Integer bsStatus){
+        String method="/categorySetting/add";String methodName="新增";
         try{
-            return categorySettingService.add(bsName, bsCode, bsStatus);
+            ApiResponseResult add = categorySettingService.add(bsName, bsCode, bsStatus);
+            getSysLogService().success(module,method,methodName,"名称:"+bsName+";编号:"+bsCode+";状态:"+bsStatus);
+            return add;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"名称:"+bsName+";编号:"+bsCode+";状态:"+bsStatus+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增失败！");
         }
@@ -35,10 +42,14 @@ public class CategorySettingController extends WebController {
     @ApiOperation(value = "编辑", notes = "编辑")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(Long id, String bsName, String bsCode, Integer bsStatus){
+        String method="/categorySetting/edit";String methodName="编辑";
         try{
-            return categorySettingService.edit(id, bsName, bsCode, bsStatus);
+            ApiResponseResult edit = categorySettingService.edit(id, bsName, bsCode, bsStatus);
+            getSysLogService().success(module,method,methodName,"id:"+id+";名称:"+bsName+";编号:"+bsCode+";状态:"+bsStatus);
+            return edit;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";名称:"+bsName+";编号:"+bsCode+";状态:"+bsStatus+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑失败！");
         }
@@ -47,10 +58,14 @@ public class CategorySettingController extends WebController {
     @ApiOperation(value = "删除", notes = "删除")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/categorySetting/delete";String methodName="删除";
         try{
-            return categorySettingService.delete(id);
+            ApiResponseResult delete = categorySettingService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除失败！");
         }
@@ -72,10 +87,14 @@ public class CategorySettingController extends WebController {
     @ApiOperation(value = "修改筛选状态", notes = "修改筛选状态")
     @RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
     public ApiResponseResult updateStatus(Long[] idsArray, Integer bsStatus){
+        String method="/categorySetting/delete";String methodName="修改筛选状态";
         try{
-            return categorySettingService.updateStatus(idsArray, bsStatus);
+            ApiResponseResult result = categorySettingService.updateStatus(idsArray, bsStatus);
+            getSysLogService().success(module,method,methodName,"idsArray:"+idsArray+";状态:"+bsStatus);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"idsArray:"+idsArray+";状态:"+bsStatus+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("修改失败！");
         }

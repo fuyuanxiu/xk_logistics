@@ -22,6 +22,9 @@ public class QualityFileController extends WebController {
     @Autowired
     private QualityFileService qualityFileService;
 
+    private String module = "质量文件管理信息";
+
+
     @ApiOperation(value="上传质量文件", notes="上传质量文件")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "质量文件", dataType = "MultipartFile", paramType = "query", defaultValue = ""),
@@ -29,10 +32,14 @@ public class QualityFileController extends WebController {
     })
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(MultipartFile file, Long mateId) {
+        String method="/qualityFile/add";String methodName="上传质量文件";
         try {
-            return qualityFileService.add(file, mateId);
+            ApiResponseResult add = qualityFileService.add(file, mateId);
+            getSysLogService().success(module,method,methodName,"物料ID:"+mateId);
+            return add;
         } catch (Exception e) {
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"物料ID:"+mateId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("上传失败！");
         }
@@ -45,10 +52,14 @@ public class QualityFileController extends WebController {
     })
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(MultipartFile file, Long id) {
+        String method="/qualityFile/edit";String methodName="重新上传质量文件";
         try {
-            return qualityFileService.edit(file, id);
+            ApiResponseResult edit = qualityFileService.edit(file, id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return edit;
         } catch (Exception e) {
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("重新上传失败！");
         }
@@ -60,10 +71,14 @@ public class QualityFileController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/qualityFile/delete";String methodName="删除上传质量文件";
         try {
-            return qualityFileService.delete(id);
+            ApiResponseResult delete = qualityFileService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         } catch (Exception e) {
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除上传失败！");
         }
@@ -93,10 +108,14 @@ public class QualityFileController extends WebController {
     })
     @RequestMapping(value = "/doApproval", method = RequestMethod.POST)
     public ApiResponseResult doApproval(Long id, Integer bsStatus){
+        String method="/qualityFile/doApproval";String methodName="审核";
         try{
-            return qualityFileService.doApproval(id, bsStatus);
+            ApiResponseResult result = qualityFileService.doApproval(id, bsStatus);
+            getSysLogService().success(module,method,methodName,"id:"+id+";审核状态:"+bsStatus);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";审核状态:"+bsStatus+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("审核操作失败！");
         }
@@ -108,10 +127,14 @@ public class QualityFileController extends WebController {
     })
     @RequestMapping(value = "/doBack", method = RequestMethod.POST)
     public ApiResponseResult doBack(Long id){
+        String method="/qualityFile/doBack";String methodName="驳回";
         try{
-            return qualityFileService.doBack(id);
+            ApiResponseResult result = qualityFileService.doBack(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("审核操作失败！");
         }
@@ -120,11 +143,14 @@ public class QualityFileController extends WebController {
     @ApiOperation(value="导出", notes="导出")
     @RequestMapping(value = "/getQualityExcel", method = RequestMethod.GET)
     public void getQualityExcel(String keyword, String mateK3Code, String mateName, Integer isQuality){
+        String method="/qualityFile/getQualityExcel";String methodName="导出";
         try{
             qualityFileService.getQualityExcel(keyword, mateK3Code, mateName, isQuality, getResponse());
+            getSysLogService().success(module,method,methodName,"keyword:"+keyword+";K3物料编号:"+mateK3Code+";物料名:"+mateName+";物料类型:"+isQuality);
             logger.info("导出成功！");
         }catch(Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"keyword:"+keyword+";K3物料编号:"+mateK3Code+";物料名:"+mateName+";物料类型:"+isQuality+";"+e.toString());
             e.printStackTrace();
         }
     }

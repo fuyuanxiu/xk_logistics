@@ -112,10 +112,14 @@ public class EnquiryBomController extends WebController {
     })
     @RequestMapping(value = "/setSupplier", method = RequestMethod.POST)
     public ApiResponseResult setSupplier(Long eqBomId, String detailIds, String suppIds){
+        String method="/enquiryBom/setSupplier";String methodName="设置询价供应商";
         try{
-            return enquiryBomService.setSupplier(eqBomId, detailIds, suppIds);
+            ApiResponseResult result = enquiryBomService.setSupplier(eqBomId, detailIds, suppIds);
+            getSysLogService().success(module,method,methodName,"中间表ID:"+eqBomId+";详情表ID:"+detailIds+";供应商ID:"+suppIds);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"中间表ID:"+eqBomId+";详情表ID:"+detailIds+";供应商ID:"+suppIds+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("设置失败！");
         }
@@ -127,10 +131,14 @@ public class EnquiryBomController extends WebController {
     })
     @RequestMapping(value = "/deleteDetail", method = RequestMethod.POST)
     public ApiResponseResult deleteDetail(Long id){
+        String method="/enquiryBom/deleteDetail";String methodName="删除详情";
         try{
-            return enquiryBomService.deleteDetail(id);
+            ApiResponseResult result = enquiryBomService.deleteDetail(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除失败！");
         }

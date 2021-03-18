@@ -57,7 +57,6 @@ public class SysLogImpl implements SysLogService {
     public ApiResponseResult getlist(String keyword, PageRequest pageRequest) throws Exception {
         //查询条件1
         List<SearchFilter> filters = new ArrayList<>();
-        filters.add(new SearchFilter("delFlag", SearchFilter.Operator.EQ, BasicStateEnum.FALSE.intValue()));
         //查询2
         List<SearchFilter> filters1 = new ArrayList<>();
         if (StringUtils.isNotEmpty(keyword)) {

@@ -13,19 +13,19 @@ import javax.persistence.Entity;
 @Entity(name = "extraclear")
 public class ExtraClear extends AnselBaseEntity {
 
-	
+
 	@Column(length = 50)
 	private String subjectName;
-	
+
 	@Column
 	private double balanceMoney;
-	
+
 	@Column(length = 50)
 	private String remark;
-	
+
 	@Column
 	private Date balanceDate;
-	
+
 	@Column(length = 50)
 	private String balanceType;
 
@@ -87,8 +87,14 @@ public class ExtraClear extends AnselBaseEntity {
 
 	@Override
 	public String toString() {
-		return "ExtraClear [id=" + id + ", subjectName=" + subjectName + ", balanceMoney=" + balanceMoney + ", remark="
-				+ remark + ", balanceDate=" + balanceDate + ", balanceType=" + balanceType + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("名称:").append(this.subjectName);
+		sb.append(",金额:").append(this.balanceMoney);
+		sb.append(",备注:").append(this.remark);
+		sb.append(",日期:").append(this.balanceDate);
+		sb.append(",类型:").append(this.balanceType);
+
+		return sb.toString();
 	}
 
 }

@@ -38,7 +38,12 @@ public class ProjectManage extends BaseEntity {
         this.prName = prName;
     }
 
-
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("项目类别名称:").append(this.prName);
+        return sb.toString();
+    }
 }
 
 

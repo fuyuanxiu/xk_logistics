@@ -387,4 +387,32 @@ public class Enquiry extends BaseEntity {
     public void setEqSuppList(List<EnquirySupplier> eqSuppList) {
         this.eqSuppList = eqSuppList;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("编号:").append(this.eqCode);
+        sb.append(",标题:").append(this.eqTitle);
+        sb.append(",询价日期:").append(this.eqStartDate);
+        sb.append(",询价截止日期:").append(this.eqDelDeadline);
+        sb.append(",工程地点:").append(this.eqLocation);
+        sb.append(",付款方式:").append(this.eqPayMethod);
+        sb.append(",交货期限:").append(this.eqDelDeadline);
+        sb.append(",是否含税:").append(this.eqIsTax);
+        sb.append(",税点:").append(this.eqTaxPoint);
+        sb.append(",补充说明:").append(this.eqDesc);
+        sb.append(",是否公开报价:").append(this.eqIsPublish);
+        sb.append(",是否公开联系方式:").append(this.eqIsContact);
+        sb.append(",负责部门:").append(this.eqDept);
+        sb.append(",联系人名称:").append(this.eqContactName);
+        sb.append(",联系人电话:").append(this.eqContactMobile);
+        sb.append(",传真:").append(this.eqFax);
+        sb.append(",邮箱:").append(this.eqEmail);
+        sb.append(",修改时间:").append(this.modifiedTime);
+        sb.append(",修改人:").append(this.pkModifiedBy);
+        sb.append(",询价状态:").append(this.eqStatus);
+        sb.append(",关联物料列表:").append(this.eqMateList);
+        sb.append(",关联供应商列表:").append(this.eqSuppList);
+        return sb.toString();
+    }
 }

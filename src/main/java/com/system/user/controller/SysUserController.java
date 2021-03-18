@@ -103,11 +103,11 @@ public class SysUserController extends WebController{
 
         try{
             ApiResponseResult result = sysUserService.resetPassword(id, password, rePassword);
-            getSysLogService().success(module,method,methodName,null);
+            getSysLogService().success(module,method,methodName,"id:"+id);
             return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
-            getSysLogService().error(module,method,methodName,null+";"+e.toString());
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("重置密码失败！");
         }
     }
@@ -144,10 +144,14 @@ public class SysUserController extends WebController{
     @ApiOperation(value = "忘记密码（找回密码）", notes = "忘记密码（找回密码）")
     @RequestMapping(value = "/forgotPassword", method = RequestMethod.POST)
     public ApiResponseResult forgotPassword(String loginName, String email){
+        String method="/sysUser/forgotPassword";String methodName="忘记密码";
         try{
-            return sysUserService.forgotPassword(loginName, email);
+            ApiResponseResult apiResponseResult = sysUserService.forgotPassword(loginName, email);
+            getSysLogService().success(module,method,methodName,"登录名:"+loginName+";邮箱:"+email);
+            return apiResponseResult;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"登录名:"+loginName+";邮箱:"+email+";"+e.toString());
             return ApiResponseResult.failure("密码找回失败！");
         }
     }

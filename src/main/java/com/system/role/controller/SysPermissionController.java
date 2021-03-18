@@ -121,7 +121,7 @@ public class SysPermissionController extends WebController {
             return apiResponseResult;
         }catch (Exception e){
             logger.error(e.toString(), e);
-            getSysLogService().error(module,method,methodName,"设置权限:"+permMap.toString()+";"+e.toString());
+            getSysLogService().error(module,method,methodName,"设置权限:"+ permMap.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("权限设置失败！");
         }

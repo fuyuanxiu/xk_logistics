@@ -21,13 +21,19 @@ public class ProcessCategoryController extends WebController {
     @Autowired
     private ProcessCategoryService processCategoryService;
 
+    private String module = "工段（工序类别）信息";
+
     @ApiOperation(value = "新增", notes = "新增")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(ProcessCategory processCategory){
+        String method="/processCategory/add";String methodName="新增";
         try{
-            return processCategoryService.add(processCategory);
+            ApiResponseResult add = processCategoryService.add(processCategory);
+            getSysLogService().success(module,method,methodName,"新增信息:"+processCategory.toString());
+            return add;
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+processCategory.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增失败！");
         }
@@ -36,10 +42,14 @@ public class ProcessCategoryController extends WebController {
     @ApiOperation(value = "编辑", notes = "编辑")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(ProcessCategory processCategory){
+        String method="/processCategory/edit";String methodName="编辑";
         try{
-            return processCategoryService.edit(processCategory);
+            ApiResponseResult edit = processCategoryService.edit(processCategory);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+processCategory.toString());
+            return edit;
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+processCategory.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑失败！");
         }
@@ -51,10 +61,14 @@ public class ProcessCategoryController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/processCategory/delete";String methodName="删除";
         try{
-            return processCategoryService.delete(id);
+            ApiResponseResult delete = processCategoryService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除失败！");
         }

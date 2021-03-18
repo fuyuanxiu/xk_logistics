@@ -22,13 +22,19 @@ public class ProcessFlowController extends WebController {
     @Autowired
     private ProcessFlowService processFlowService;
 
+    private String module = "工序流信息";
+
     @ApiOperation(value = "新增", notes = "新增")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(ProcessFlow processFlow){
+        String method="/processFlow/add";String methodName="新增工序流信息";
         try{
-            return processFlowService.add(processFlow);
+            ApiResponseResult add = processFlowService.add(processFlow);
+            getSysLogService().success(module,method,methodName,"新增信息:"+processFlow.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+processFlow.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增失败！");
         }
@@ -37,10 +43,14 @@ public class ProcessFlowController extends WebController {
     @ApiOperation(value = "编辑", notes = "编辑")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(ProcessFlow processFlow){
+        String method="/processFlow/edit";String methodName="编辑工序流信息";
         try{
-            return processFlowService.edit(processFlow);
+            ApiResponseResult edit = processFlowService.edit(processFlow);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+processFlow.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+processFlow.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增失败！");
         }
@@ -52,10 +62,14 @@ public class ProcessFlowController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/processFlow/delete";String methodName="删除工序流信息";
         try{
-            return processFlowService.delete(id);
+            ApiResponseResult delete = processFlowService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除失败！");
         }
@@ -86,10 +100,14 @@ public class ProcessFlowController extends WebController {
     })
     @RequestMapping(value = "/doBan", method = RequestMethod.POST)
     public ApiResponseResult doBan(Long id, Integer bsIsBan){
+        String method="/processFlow/doBan";String methodName="禁用或解禁";
         try{
-            return processFlowService.doBan(id, bsIsBan);
+            ApiResponseResult result = processFlowService.doBan(id, bsIsBan);
+            getSysLogService().success(module,method,methodName,"id:"+id+";是否禁用:"+bsIsBan);
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";是否禁用:"+bsIsBan+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("操作失败！");
         }
@@ -102,10 +120,14 @@ public class ProcessFlowController extends WebController {
     })
     @RequestMapping(value = "/setFlows", method = RequestMethod.POST)
     public ApiResponseResult setFlows(Long flowId, String processIds){
+        String method="/processFlow/setFlows";String methodName="设置工序流程";
         try{
-            return processFlowService.setFlows(flowId, processIds);
+            ApiResponseResult result = processFlowService.setFlows(flowId, processIds);
+            getSysLogService().success(module,method,methodName,"工序流ID:"+flowId+";工序ID"+processIds);
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"工序流ID:"+flowId+";工序ID"+processIds+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("设置失败！");
         }
@@ -130,11 +152,14 @@ public class ProcessFlowController extends WebController {
     //审核
     @RequestMapping(value = "/check",method = RequestMethod.POST)
     public ApiResponseResult updateCheck(Long id){
+        String method="/processFlow/check";String methodName="审核";
         try {
             ApiResponseResult apiResponseResult = processFlowService.reviewByid(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
             return apiResponseResult;
         } catch (Exception e) {
             e.printStackTrace();
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("审核失败");
         }
 
@@ -144,10 +169,14 @@ public class ProcessFlowController extends WebController {
     //反审核
     @RequestMapping(value = "/reverse",method = RequestMethod.POST)
     public ApiResponseResult reverseCheck(Long id){
+        String method="/processFlow/reverse";String methodName="反审核";
         try {
-            return processFlowService.reverseReview(id);
+            ApiResponseResult result = processFlowService.reverseReview(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("反审核失败");
         }
     }

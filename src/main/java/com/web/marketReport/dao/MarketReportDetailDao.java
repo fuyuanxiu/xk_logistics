@@ -115,4 +115,31 @@ public interface MarketReportDetailDao extends CrudRepository<MarketReportDetail
                     "                                                                                                                       and a.bs_report_id= ?2 and isnull(a.bs_unit,'') like ?3 and pr_name is null")
     public Page<Map<String,Object>> findAll2(Integer isDel, Long bsReportId,String bsUnit,Pageable pageable);
 
+
+
+    @Query(value = " select  a.bs_project as bsProject,m.bs_machine as bsMachine,a.id,a.number as number," +
+            "        a.bs_qty as bsQty,p.pr_name as prName,t.bs_name as bsFee,a.bs_type as bsType," +
+            "        a.bs_unit as bsUnit,a.price1 as price1,a.price2 as price2,a.price3 as price3,a.price1total as price1Total," +
+            "        a.price2total as price2total,a.price3total as price3Total,a.bs_fee_id as bsFeeId,a.bs_report_id as bsReportId," +
+            "        a.bs_remark as bsRemark from t_market_report_detail a" +
+            "                                         left join t_fee t on a.bs_fee_id =t.id" +
+            "                                         left join t_market_report m on a.bs_report_id=m.id" +
+            "                                         left join child_project c on a.bs_project = c.child_name and c.is_del=?1" +
+            "                                         left join project_manage p on p.id = c.parent_id and p.is_del=?1  where a.id in( select min(a.id) from (select  a.id,p.pr_name as prName from t_market_report_detail a" +
+            "                                         left join t_fee t on a.bs_fee_id =t.id" +
+            "                                         left join t_market_report m on a.bs_report_id=m.id" +
+            "                                         left join child_project c on a.bs_project = c.child_name and c.is_del=?1" +
+            "                                         left join project_manage p on p.id = c.parent_id and p.is_del=?1 where a.is_del= ?1" +
+            "                                          and a.bs_report_id= ?2 and isnull(a.bs_unit,'') like ?3 and pr_name is not null) a group by a.prName)" +
+            "union   select  a.bs_project as bsProject,m.bs_machine as bsMachine,a.id,a.number as number," +
+            "                   a.bs_qty as bsQty,p.pr_name as prName,t.bs_name as bsFee,a.bs_type as bsType," +
+            "                   a.bs_unit as bsUnit,a.price1 as price1,a.price2 as price2,a.price3 as price3,a.price1total as price1Total," +
+            "                   a.price2total as price2total,a.price3total as price3Total,a.bs_fee_id as bsFeeId,a.bs_report_id as bsReportId," +
+            "                   a.bs_remark as bsRemark from t_market_report_detail a" +
+            "                                                    left join t_fee t on a.bs_fee_id =t.id" +
+            "                                                    left join t_market_report m on a.bs_report_id=m.id" +
+            "                                                    left join child_project c on a.bs_project = c.child_name and c.is_del=?1" +
+            "                                                    left join project_manage p on p.id = c.parent_id and p.is_del=?1 where a.is_del= ?1" +
+            "                                                                                                                       and a.bs_report_id= ?2 and isnull(a.bs_unit,'') like ?3 and pr_name is null" ,nativeQuery = true)
+    public List<Map<String,Object>> findAll5(Integer isDel, Long bsReportId,String bsUnit);
 }

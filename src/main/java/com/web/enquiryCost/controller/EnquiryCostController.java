@@ -26,13 +26,19 @@ public class EnquiryCostController extends WebController {
     @Autowired
     private EnquiryCostService enquiryCostService;
 
+    private String module = "新料询价管理信息";
+
     @ApiOperation(value = "修改询价", notes = "修改询价")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(EnquiryCost enquiryCost){
+        String method="/enquiryCost/edit";String methodName="修改询价";
         try{
-            return enquiryCostService.edit(enquiryCost);
+            ApiResponseResult edit = enquiryCostService.edit(enquiryCost);
+            getSysLogService().success(module,method,methodName,"询价信息:"+enquiryCost.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"询价信息:"+enquiryCost.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("修改询价失败！");
         }
@@ -41,10 +47,14 @@ public class EnquiryCostController extends WebController {
     @ApiOperation(value = "删除询价", notes = "删除询价")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/enquiryCost/delete";String methodName="删除询价";
         try{
-            return enquiryCostService.delete(id);
+            ApiResponseResult delete = enquiryCostService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除询价失败！");
         }
@@ -75,11 +85,14 @@ public class EnquiryCostController extends WebController {
     })
     @RequestMapping(value = "/getEnquiryExcel", method = RequestMethod.GET)
     public void getEnquiryExcel(Long id){
+        String method="/enquiryCost/getEnquiryExcel";String methodName="导出询价单";
         try{
             enquiryCostService.getEnquiryExcel(id, getResponse());
+            getSysLogService().success(module,method,methodName,"id:"+id);
             logger.info("询价单导出成功！");
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id"+id+";"+e.toString());
             e.printStackTrace();
         }
     }
@@ -87,10 +100,14 @@ public class EnquiryCostController extends WebController {
     @ApiOperation(value = "修改询价详情", notes = "修改询价详情")
     @RequestMapping(value = "/updateDetail", method = RequestMethod.POST)
     public ApiResponseResult updateDetail(EnquiryCostDetail enquiryCostDetail){
+        String method="/enquiryCost/updateDetail";String methodName="修改询价详情";
         try{
-            return enquiryCostService.updateDetail(enquiryCostDetail);
+            ApiResponseResult result = enquiryCostService.updateDetail(enquiryCostDetail);
+            getSysLogService().success(module,method,methodName,"修改详情:"+enquiryCostDetail.toString());
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"修改详情:"+enquiryCostDetail.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("修改询价详情失败！");
         }
@@ -99,10 +116,14 @@ public class EnquiryCostController extends WebController {
     @ApiOperation(value = "删除询价详情", notes = "删除询价详情")
     @RequestMapping(value = "/deleteDetail", method = RequestMethod.POST)
     public ApiResponseResult deleteDetail(Long id){
+        String method="/enquiryCost/deleteDetail";String methodName="删除询价详情";
         try{
-            return enquiryCostService.deleteDetail(id);
+            ApiResponseResult result = enquiryCostService.deleteDetail(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除询价详情失败！");
         }
@@ -132,10 +153,14 @@ public class EnquiryCostController extends WebController {
     })
     @RequestMapping(value = "/addDetailExcel", method = RequestMethod.POST)
     public ApiResponseResult addDetailExcel(Long eqId, MultipartFile file){
+        String method="/enquiryCost/addDetailExcel";String methodName="导入询价单";
         try{
-            return enquiryCostService.addDetailExcel(eqId, file);
+            ApiResponseResult result = enquiryCostService.addDetailExcel(eqId, file);
+            getSysLogService().success(module,method,methodName,"询价主表ID:"+eqId);
+            return result;
         }catch (Exception e){
             logger.error("导入询价单失败！", e);
+            getSysLogService().error(module,method,methodName,"询价主表ID:"+eqId+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("导入询价单失败！");
         }

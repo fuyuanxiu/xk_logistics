@@ -289,15 +289,15 @@ public class SupplierInfo extends BaseEntity {
     @ApiModelProperty(name = "suppFile5", value = "资质文件附件5")
     @Column(length=500)
     protected String suppFile5;
-    
+
     @ApiModelProperty(name = "suppFile6", value = "资质文件附件6")
     @Column(length=500)
     protected String suppFile6;
-    
+
     @ApiModelProperty(name = "suppFile7", value = "资质文件附件7")
     @Column(length=500)
     protected String suppFile7;
-    
+
     @ApiModelProperty(name = "suppFile8", value = "资质文件附件8")
     @Column(length=500)
     protected String suppFile8;
@@ -308,7 +308,7 @@ public class SupplierInfo extends BaseEntity {
     @ApiModelProperty(name = "remarks", value = "备注")
     @Column(length=500)
     protected String remarks;
-    
+
     /**
      * 创建人
      */
@@ -681,5 +681,32 @@ public class SupplierInfo extends BaseEntity {
 
     public void setPkModifiedBy(Long pkModifiedBy) {
         this.pkModifiedBy = pkModifiedBy;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("登录用户名:").append(this.loginName);
+        sb.append(",供应商中文名称:").append(this.suppChineseName);
+        sb.append(",电子邮箱:").append(this.suppEmail);
+        sb.append(",联系电话:").append(this.suppMobile);
+        sb.append(",英文名称:").append(this.suppEnglishName);
+        sb.append(",供应商简称:").append(this.suppAliaName);
+        sb.append(",类型:").append(this.suppType);
+        sb.append(",申请物料:").append(this.metalDescribe);
+        sb.append(",地址:").append(this.suppAddress);
+        sb.append(",省份:").append(this.province);
+        sb.append(",城市:").append(this.city);
+        sb.append(",联系人:").append(this.suppContactName);
+        sb.append(",联系人职位:").append(this.suppPosition);
+        sb.append(",付款方式:").append(this.payMethod);
+        sb.append(",付款条件:").append(this.payCondition);
+        sb.append(",开户银行:").append(this.depositBank);
+        sb.append(",账户名:").append(this.accountName);
+        sb.append(",注册资金:").append(this.registeredCapital);
+        sb.append(",货币类型:").append(this.currencyType);
+        sb.append(",发票抬头:").append(this.bsInvoiceTitle);
+        sb.append(",纳税人识别号:").append(this.bsTaxpayerNumber);
+        return sb.toString();
     }
 }

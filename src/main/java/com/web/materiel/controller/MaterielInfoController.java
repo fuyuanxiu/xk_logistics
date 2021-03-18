@@ -22,13 +22,20 @@ public class MaterielInfoController extends WebController {
     @Autowired
     private MaterielInfoService materielInfoService;
 
+
+    private String module = "物料基础信息";
+
     @ApiOperation(value = "新增物料", notes = "新增物料")
     @PostMapping("/add")
     public ApiResponseResult add(@RequestBody(required=false) MaterielInfo materielInfo){
+        String method="/materielInfo/add";String methodName="新增物料";
         try{
-            return materielInfoService.add(materielInfo);
+            ApiResponseResult add = materielInfoService.add(materielInfo);
+            getSysLogService().success(module,method,methodName,"新增信息:"+materielInfo.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+materielInfo.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增物料失败！");
         }
@@ -37,10 +44,14 @@ public class MaterielInfoController extends WebController {
     @ApiOperation(value = "编辑物料", notes = "编辑物料")
     @PostMapping("/edit")
     public ApiResponseResult edit(@RequestBody(required=false) MaterielInfo materielInfo){
+        String method="/materielInfo/edit";String methodName="编辑物料";
         try{
-            return materielInfoService.edit(materielInfo);
+            ApiResponseResult edit = materielInfoService.edit(materielInfo);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+materielInfo.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+materielInfo.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑物料失败！");
         }
@@ -49,10 +60,14 @@ public class MaterielInfoController extends WebController {
     @ApiOperation(value = "删除物料", notes = "删除物料")
     @PostMapping("/delete")
     public ApiResponseResult delete(@RequestParam(value = "id",required = false) Long id){
+        String method="/materielInfo/delete";String methodName="删除物料";
         try{
-            return materielInfoService.delete(id);
+            ApiResponseResult delete = materielInfoService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除物料失败！");
         }
@@ -101,14 +116,17 @@ public class MaterielInfoController extends WebController {
     @ApiOperation(value = "手动同步K3物料数据", notes = "手动同步K3物料数据")
     @RequestMapping(value = "/updateMateData", method = RequestMethod.POST)
     public ApiResponseResult updateMateData(){
+        String method="/materielInfo/updateMateData";String methodName="手动同步K3物料数据";
         try{
             Date dateStart = new Date();
             ApiResponseResult result = materielInfoService.updateMateData();
             Date dateEnd = new Date();
+            getSysLogService().success(module,method,methodName,null);
             logger.info("开始时间："+ dateStart + "//n结束时间："+ dateEnd);
             return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,null+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("获取物料列表失败！");
         }

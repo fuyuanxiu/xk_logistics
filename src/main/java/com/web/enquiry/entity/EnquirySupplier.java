@@ -231,4 +231,24 @@ public class EnquirySupplier extends BaseEntity {
     public void setEqTotalPrice(Float eqTotalPrice) {
         this.eqTotalPrice = eqTotalPrice;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("询价单ID:").append(this.eqId);
+        sb.append(",供应商ID:").append(this.suppId);
+        sb.append(",供应商K3编号:").append(this.suppK3Code);
+        sb.append(",供应商简称:").append(this.suppAliaName);
+        sb.append(",供应商中文名称:").append(this.suppChineseName);
+        sb.append(",联系人:").append(this.suppContactName);
+        sb.append(",联系电话:").append(this.suppMobile);
+        sb.append(",传真:").append(this.suppFax);
+        sb.append(",邮箱:").append(this.suppEmail);
+        sb.append(",补充信息:").append(this.eqSuppDesc);
+        sb.append(",是否在线报价:").append(this.eqIsOnline);
+        sb.append(",是否邮件提醒:").append(this.eqIsEmail);
+        sb.append(",修改时间:").append(this.modifiedTime);
+        sb.append(",修改人:").append(this.pkModifiedBy);
+        return sb.toString();
+    }
 }

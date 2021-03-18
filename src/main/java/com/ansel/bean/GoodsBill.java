@@ -11,7 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 4.3 货运单主表
- * 
+ *
  * @author Ansel
  *
  */
@@ -447,23 +447,16 @@ public class GoodsBill {
 
 	@Override
 	public String toString() {
-		return "GoodsBill [goodsBillCode=" + goodsBillCode + ", sendGoodsCustomerNo=" + sendGoodsCustomerNo
-				+ ", sendGoodsCustomer=" + sendGoodsCustomer + ", sendGoodsCustomerTel=" + sendGoodsCustomerTel
-				+ ", sendGoodsCustomerAddr=" + sendGoodsCustomerAddr + ", receiveGoodsCustomerCode="
-				+ receiveGoodsCustomerCode + ", receiveGoodsCustomer=" + receiveGoodsCustomer
-				+ ", receiveGoodsCustomerTel=" + receiveGoodsCustomerTel + ", receiveGoodsCustomerAddr="
-				+ receiveGoodsCustomerAddr + ", sendGoodsDate=" + sendGoodsDate + ", sendGoodsAddr=" + sendGoodsAddr
-				+ ", receiveGoodsAddr=" + receiveGoodsAddr + ", predeliveryDate=" + predeliveryDate + ", factDealDate="
-				+ factDealDate + ", helpAcceptPayment=" + helpAcceptPayment + ", acceptProcedureRate="
-				+ acceptProcedureRate + ", payMode=" + payMode + ", fetchGoodsMode=" + fetchGoodsMode
-				+ ", writeBillPerson=" + writeBillPerson + ", writeDate=" + writeDate + ", validity=" + validity
-				+ ", ifAudit=" + ifAudit + ", ifSettleAccounts=" + ifSettleAccounts + ", transferStation="
-				+ transferStation + ", transferFee=" + transferFee + ", reduceFund=" + reduceFund + ", payKickback="
-				+ payKickback + ", moneyOfChangePay=" + moneyOfChangePay + ", carryGoodsFee=" + carryGoodsFee
-				+ ", carriage=" + carriage + ", insurance=" + insurance + ", employeeCode=" + employeeCode + ", remark="
-				+ remark + ", acceptStation=" + acceptStation + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("货运单编号:").append(this.goodsBillCode);
+		sb.append(",是否验证有效:").append(this.validity);
+		sb.append(",是否审查:").append(this.ifAudit);
+		sb.append(",备注:").append(this.remark);
+		sb.append(",接收站:").append(this.acceptStation);
+
+		return sb.toString();
 	}
 
-	
-	
+
+
 }

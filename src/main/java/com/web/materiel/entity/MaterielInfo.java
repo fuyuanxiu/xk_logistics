@@ -48,7 +48,7 @@ public class MaterielInfo extends BaseEntity {
     @ApiModelProperty(name = "mateName", value = "物料名称")
     @Column(length = 500)
     protected String mateName;
-    
+
     /**
      * 物料全称
      */
@@ -554,5 +554,18 @@ public class MaterielInfo extends BaseEntity {
 
     public void setIsBan(Integer isBan) {
         this.isBan = isBan;
+    }
+
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("物料名称:").append(this.mateName);
+        sb.append(",物料规格:").append(this.mateModel);
+        sb.append(",物料类别名称:").append(this.categoryName);
+        sb.append(",供应商编号:").append(this.suppCode);
+        sb.append(",供应商中文名称:").append(this.suppChineseName);
+        sb.append(",备注:").append(this.remark);
+        return sb.toString();
     }
 }

@@ -109,4 +109,16 @@ public class Keywords2 extends BaseEntity {
     public void setBsRemark(String bsRemark) {
         this.bsRemark = bsRemark;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("分类ID:").append(this.bsCateId);
+        sb.append(",分类名称:").append(this.bsCateName);
+        sb.append(",关键字名称:").append(this.bsName);
+        sb.append(",是否100%匹配:").append(this.bsValue);
+        sb.append(",备注:").append(this.bsRemark);
+        sb.append(",是否审核:").append(this.isChecked);
+        return sb.toString();
+    }
 }

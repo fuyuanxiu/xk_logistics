@@ -419,4 +419,20 @@ public class Quote extends BaseEntity {
     public void setQtMateList(List<QuoteMateriel> qtMateList) {
         this.qtMateList = qtMateList;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("报价状态:").append(this.qtStatus);
+        sb.append(",报价单标题:").append(this.qtTitle);
+        sb.append(",报价日期:").append(this.qtStartDate);
+        sb.append(",报价截止日期:").append(this.qtDeadLine);
+        sb.append(",交货期限:").append(this.qtDelDeadline);
+        sb.append(",交货地点:").append(this.qtDelLocation);
+        sb.append(",验收方式:").append(this.qtAcceptType);
+        sb.append(",付款方式:").append(this.qtPayMethod);
+        sb.append(",补充说明:").append(this.qtDesc);
+        sb.append(",报价总额:").append(this.qtTotalPrice);
+        return sb.toString();
+    }
 }

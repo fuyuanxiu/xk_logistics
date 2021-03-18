@@ -26,13 +26,20 @@ public class KeywordsController extends WebController {
     @Autowired
     private KeywordsService keywordsService;
 
+    private String module = "规格匹配关键字信息";
+
+
     @ApiOperation(value = "新增规格匹配关键字信息", notes = "新增规格匹配关键字信息")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(Keywords keywords){
+        String method="/keywords/add";String methodName="新增规格匹配关键字信息";
         try{
-            return keywordsService.add(keywords);
+            ApiResponseResult add = keywordsService.add(keywords);
+            getSysLogService().success(module,method,methodName,"新增信息:"+keywords.toString());
+            return add;
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+keywords.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增规格匹配关键字信息失败！");
         }
@@ -41,10 +48,14 @@ public class KeywordsController extends WebController {
     @ApiOperation(value = "修改规格匹配关键字信息", notes = "修改规格匹配关键字信息")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(Keywords keywords){
+        String method="/keywords/edit";String methodName="修改规格匹配关键字信息";
         try{
-            return keywordsService.edit(keywords);
+            ApiResponseResult edit = keywordsService.edit(keywords);
+            getSysLogService().success(module,method,methodName,"修改信息:"+keywords.toString());
+            return edit;
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"修改信息:"+keywords.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("修改规格匹配关键字信息失败！");
         }
@@ -56,10 +67,14 @@ public class KeywordsController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/keywords/delete";String methodName="删除规格匹配关键字信息";
         try{
-            return keywordsService.delete(id);
+            ApiResponseResult delete = keywordsService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除规格匹配关键字信息失败！");
         }
@@ -84,11 +99,14 @@ public class KeywordsController extends WebController {
     //审核
     @RequestMapping(value = "/check",method = RequestMethod.POST)
     public ApiResponseResult updateCheck(Long id){
+        String method="/keywords/check";String methodName="审核";
         try {
             ApiResponseResult apiResponseResult = keywordsService.updateCheckByCid(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
             return ApiResponseResult.success("审核成功");
         } catch (Exception e) {
             e.printStackTrace();
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("审核失败");
         }
 
@@ -97,11 +115,14 @@ public class KeywordsController extends WebController {
     //反审核
     @RequestMapping(value = "/reverse",method = RequestMethod.POST)
     public ApiResponseResult reverseCheck(Long id){
+        String method="/keywords/reverse";String methodName="反审核";
         try {
             keywordsService.reverseCheckByCid(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
             return ApiResponseResult.success("反审核成功");
         } catch (Exception e) {
             e.printStackTrace();
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("反审核失败");
         }
     }

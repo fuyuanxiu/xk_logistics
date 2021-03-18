@@ -9,7 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 4.5 货运回执单详表
- * 
+ *
  * @author Ansel
  *
  */
@@ -121,9 +121,16 @@ public class CargoReceiptDetail {
 
 	@Override
 	public String toString() {
-		return "CargoReceiptDetail [goodsRevertBillId=" + goodsRevertBillId + ", goodsBillDetailId=" + goodsBillDetailId
-				+ ", pieceAmount=" + pieceAmount + ", weight=" + weight + ", volume=" + volume + ", priceMode="
-				+ priceMode + ", priceStandard=" + priceStandard + ", goodsValue=" + goodsValue + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("货物回执单ID:").append(this.goodsRevertBillId);
+		sb.append(",货运单详情ID:").append(this.goodsBillDetailId);
+		sb.append(",片数:").append(this.pieceAmount);
+		sb.append(",重量:").append(this.weight);
+		sb.append(",体积:").append(this.volume);
+		sb.append(",定价模式:").append(this.priceMode);
+		sb.append(",价格标准:").append(this.priceStandard);
+		sb.append(",货物价值:").append(this.goodsValue);
+		return sb.toString();
 	}
 
 }

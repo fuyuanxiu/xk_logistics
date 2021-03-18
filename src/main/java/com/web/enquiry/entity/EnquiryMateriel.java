@@ -246,4 +246,21 @@ public class EnquiryMateriel extends BaseEntity {
     public void setBsCusCode(String bsCusCode) {
         this.bsCusCode = bsCusCode;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("询价单ID:").append(this.eqId);
+        sb.append(",物料ID:").append(this.mateId);
+        sb.append(",物料号:").append(this.mateCode);
+        sb.append(",物料名:").append(this.mateName);
+        sb.append(",物料规格:").append(this.mateModel);
+        sb.append(",单位:").append(this.eqUnit);
+        sb.append(",预计数量:").append(this.eqMateNum);
+        sb.append(",补充信息:").append(this.eqMateDesc);
+        sb.append(",基准价:").append(this.eqBasePrice);
+        sb.append(",品牌料号:").append(this.bsCusCode);
+        sb.append(",品牌名称:").append(this.bsCusName);
+        return sb.toString();
+    }
 }

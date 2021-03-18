@@ -21,13 +21,19 @@ public class DiscountCategoryController extends WebController {
     @Autowired
     private DiscountCategoryService discountCategoryService;
 
+    private String module = "折扣方案类别信息";
+
     @ApiOperation(value = "新增", notes = "新增")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(DiscountCategory discountCategory){
+        String method="/discountCategory/add";String methodName="新增折扣方案类别信息";
         try{
-            return discountCategoryService.add(discountCategory);
+            ApiResponseResult add = discountCategoryService.add(discountCategory);
+            getSysLogService().success(module,method,methodName,"新增信息:"+discountCategory.toString());
+            return add;
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+discountCategory.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增失败！");
         }
@@ -36,10 +42,14 @@ public class DiscountCategoryController extends WebController {
     @ApiOperation(value = "编辑", notes = "编辑")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(DiscountCategory discountCategory){
+        String method="/discountCategory/edit";String methodName="编辑折扣方案类别信息";
         try{
-            return discountCategoryService.edit(discountCategory);
+            ApiResponseResult edit = discountCategoryService.edit(discountCategory);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+discountCategory.toString());
+            return edit;
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+discountCategory.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑失败！");
         }
@@ -51,10 +61,14 @@ public class DiscountCategoryController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/discountCategory/delete";String methodName="删除折扣方案类别信息";
         try{
-            return discountCategoryService.delete(id);
+            ApiResponseResult delete = discountCategoryService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除失败！");
         }

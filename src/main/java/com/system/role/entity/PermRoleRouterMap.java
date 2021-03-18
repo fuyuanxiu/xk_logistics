@@ -2,6 +2,7 @@ package com.system.role.entity;
 
 import com.app.base.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Column;
@@ -207,20 +208,13 @@ public class PermRoleRouterMap extends BaseEntity {
 
     @Override
     public String toString() {
-        return "PermRoleRouterMap{" +
-                "bsPermId=" + bsPermId +
-                ", bsPermCode='" + bsPermCode + '\'' +
-                ", bsPermName='" + bsPermName + '\'' +
-                ", bsRoleId=" + bsRoleId +
-                ", bsRoleCode='" + bsRoleCode + '\'' +
-                ", bsRoleName='" + bsRoleName + '\'' +
-                ", bsRouterId=" + bsRouterId +
-                ", bsRouterCode='" + bsRouterCode + '\'' +
-                ", bsRouterName='" + bsRouterName + '\'' +
-                ", bsIsPermit=" + bsIsPermit +
-                ", permList=" + permList +
-                ", idStr='" + idStr + '\'' +
-                ", permIdStr='" + permIdStr + '\'' +
-                '}';
+        final StringBuffer sb = new StringBuffer();
+        sb.append("角色ID:").append(this.bsRoleId);
+        sb.append(",资源ID:").append(this.bsRouterId);
+        sb.append(",是否允许:").append(this.bsIsPermit);
+        sb.append(",权限设置字符串:").append(this.idStr);
+        sb.append(",权限设置字符串2:").append(this.permIdStr);
+
+        return sb.toString();
     }
 }

@@ -204,4 +204,21 @@ public class EnquiryCost extends BaseEntity {
     public void setBsBomIds(String bsBomIds) {
         this.bsBomIds = bsBomIds;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("编号:").append(this.bsCode);
+        sb.append(",标题:").append(this.bsTitle);
+        sb.append(",询价状态:").append(this.bsStatus);
+        sb.append(",询价日期:").append(this.bsStartDate);
+        sb.append(",询价截止日期:").append(this.bsEndDate);
+        sb.append(",负责部门:").append(this.bsDept);
+        sb.append(",联系人名称:").append(this.bsContactName);
+        sb.append(",电话:").append(this.bsContactMobile);
+        sb.append(",邮箱:").append(this.bsEmail);
+        sb.append(",客户BOM文件ID:").append(this.bsFileId);
+        sb.append(",客户BOMID:").append(this.bsBomIds);
+        return sb.toString();
+    }
 }

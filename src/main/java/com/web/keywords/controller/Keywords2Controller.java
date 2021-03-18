@@ -26,13 +26,20 @@ public class Keywords2Controller extends WebController {
     @Autowired
     private Keywords2Service keywords2Service;
 
+    private String module = "类别匹配关键字信息";
+
+
     @ApiOperation(value = "新增类别匹配关键字信息", notes = "新增类别匹配关键字信息")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(Keywords2 keywords2){
+        String method="/keywords2/add";String methodName="新增类别匹配关键字信息";
         try{
-            return keywords2Service.add(keywords2);
+            ApiResponseResult add = keywords2Service.add(keywords2);
+            getSysLogService().success(module,method,methodName,"新增信息:"+keywords2.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+keywords2.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增类别匹配关键字信息失败！");
         }
@@ -41,10 +48,14 @@ public class Keywords2Controller extends WebController {
     @ApiOperation(value = "修改类别匹配关键字信息", notes = "修改类别匹配关键字信息")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(Keywords2 keywords2){
+        String method="/keywords2/edit";String methodName="修改类别匹配关键字信息";
         try{
-            return keywords2Service.edit(keywords2);
+            ApiResponseResult edit = keywords2Service.edit(keywords2);
+            getSysLogService().success(module,method,methodName,"修改信息:"+keywords2.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"修改信息:"+keywords2.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("修改类别匹配关键字信息失败！");
         }
@@ -56,10 +67,14 @@ public class Keywords2Controller extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/keywords2/delete";String methodName="删除类别匹配关键字信息";
         try{
-            return keywords2Service.delete(id);
+            ApiResponseResult delete = keywords2Service.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除类别匹配关键字信息失败！");
         }
@@ -85,10 +100,13 @@ public class Keywords2Controller extends WebController {
     //审核
     @RequestMapping(value = "/check",method = RequestMethod.POST)
     public ApiResponseResult updateCheck(Long id){
+        String method="/keywords2/check";String methodName="审核";
         try {
             ApiResponseResult apiResponseResult = keywords2Service.updateCheckByCid(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
             return ApiResponseResult.success("审核成功");
         } catch (Exception e) {
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("审核失败");
         }
@@ -98,10 +116,13 @@ public class Keywords2Controller extends WebController {
     //反审核
     @RequestMapping(value = "/reverse",method = RequestMethod.POST)
     public ApiResponseResult reverseCheck(Long id){
+        String method="/keywords2/reverse";String methodName="反审核";
         try {
             keywords2Service.reverseCheckByCid(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
             return ApiResponseResult.success("反审核成功");
         } catch (Exception e) {
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("反审核失败");
         }

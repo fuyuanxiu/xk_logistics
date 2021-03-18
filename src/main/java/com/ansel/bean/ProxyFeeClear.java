@@ -11,7 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 4.14 代收货款结算表
- * 
+ *
  * @author Ansel
  *
  */
@@ -140,11 +140,16 @@ public class ProxyFeeClear {
 
 	@Override
 	public String toString() {
-		return "ProxyFeeClear [goodsBillCode=" + goodsBillCode + ", customerCode=" + customerCode
-				+ ", accountReceivable=" + accountReceivable + ", factReceiveFund=" + factReceiveFund
-				+ ", goodsPayChange=" + goodsPayChange + ", commisionRate=" + commisionRate + ", commisionReceivable="
-				+ commisionReceivable + ", receivedCommision=" + receivedCommision + ", balanceDate=" + balanceDate
-				+ "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("货运单编号:").append(this.goodsBillCode);
+		sb.append(",客户编号:").append(this.customerCode);
+		sb.append(",应收账款:").append(this.accountReceivable);
+		sb.append(",实收:").append(this.factReceiveFund);
+		sb.append(",佣金率:").append(this.commisionRate);
+		sb.append(",应收手续费:").append(this.commisionReceivable);
+		sb.append(",实收手续费:").append(this.receivedCommision);
+		sb.append(",日期:").append(this.balanceDate);
+		return sb.toString();
 	}
 
 }

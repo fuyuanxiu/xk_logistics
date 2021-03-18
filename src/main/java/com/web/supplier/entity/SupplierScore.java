@@ -494,4 +494,19 @@ public class SupplierScore extends BaseEntity {
     public void setPriceScore(BigDecimal priceScore) {
         this.priceScore = priceScore;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("供应商得分:").append(this.suppScore);
+        sb.append(",进料抽检合格率:").append(this.batchValue);
+        sb.append(",在线时效率:").append(this.processValue);
+        sb.append(",异常回复时效:").append(this.replyValue);
+        sb.append(",是否有ROHS标识:").append(this.rohsValue);
+        sb.append(",是否有顾客中断干扰:").append(this.feedBackValue);
+        sb.append(",超额运费:").append(this.freightValue);
+        sb.append(",准时交付率:").append(this.freightValue);
+        sb.append(",降价比率:").append(this.priceValue);
+        return sb.toString();
+    }
 }

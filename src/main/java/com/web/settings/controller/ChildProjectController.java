@@ -26,6 +26,9 @@ public class ChildProjectController extends WebController {
     @Autowired
     private ChildProjectService childProjectService;
 
+    private String module = "子项目信息";
+
+
     @ApiOperation(value = "根据父项目获取子项目信息", notes = "根据父项目获取子项目信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "parentId", value = "父ID", required = false, dataType = "Long", paramType = "query", defaultValue = ""),
@@ -46,10 +49,14 @@ public class ChildProjectController extends WebController {
     @ApiOperation(value = "新增子项目信息", notes = "新增子项目信息")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(ChildProject childProject){
+        String method="/child/add";String methodName="新增子项目信息";
         try{
-            return childProjectService.add(childProject);
+            ApiResponseResult add = childProjectService.add(childProject);
+            getSysLogService().success(module,method,methodName,"新增信息:"+childProject.toString());
+            return add;
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+childProject.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增子项目信息失败！");
         }
@@ -58,10 +65,14 @@ public class ChildProjectController extends WebController {
     @ApiOperation(value = "修改子项目信息", notes = "修改子项目信息")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(ChildProject childProject){
+        String method="/child/edit";String methodName="修改子项目信息";
         try{
-            return childProjectService.edit(childProject);
+            ApiResponseResult edit = childProjectService.edit(childProject);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+childProject.toString());
+            return edit;
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+childProject.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("修改子项目信息失败！");
         }
@@ -70,10 +81,14 @@ public class ChildProjectController extends WebController {
     @ApiOperation(value = "删除子项目信息", notes = "删除子项目信息")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/child/delete";String methodName="删除子项目信息";
         try{
-            return childProjectService.delete(id);
+            ApiResponseResult delete = childProjectService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch(Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除子项目信息失败！");
         }

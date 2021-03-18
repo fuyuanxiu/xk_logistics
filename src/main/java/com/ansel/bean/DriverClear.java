@@ -11,7 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 4.12 司机结算主表
- * 
+ *
  * @author Ansel
  *
  */
@@ -189,11 +189,18 @@ public class DriverClear {
 
 	@Override
 	public String toString() {
-		return "DriverClear [backBillCode=" + backBillCode + ", driverName=" + driverCode + ", balanceType="
-				+ balanceType + ", needPayment=" + needPayment + ", carryFee=" + carryFee + ", prepayMoney="
-				+ prepayMoney + ", bindInsurance=" + bindInsurance + ", addCarriage=" + addCarriage + ", payedMoney="
-				+ payedMoney + ", balance=" + balance + ", balanceTime=" + balanceTime + ", dispatchServiceFee="
-				+ dispatchServiceFee + ", insurance=" + insurance + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("回执单编号:").append(this.backBillCode);
+		sb.append(",司机编号:").append(this.driverCode);
+		sb.append(",balanceType:").append(this.balanceType);
+		sb.append(",费用:").append(this.needPayment);
+		sb.append(",运费:").append(this.carryFee);
+		sb.append(",预付费用:").append(this.prepayMoney);
+		sb.append(",绑定保险:").append(this.bindInsurance);
+		sb.append(",已支付费用:").append(this.payedMoney);
+		sb.append(",转运服务费:").append(this.dispatchServiceFee);
+		sb.append(",保险:").append(this.insurance);
+		return sb.toString();
 	}
 
 }

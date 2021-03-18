@@ -24,6 +24,8 @@ public class SettingController extends WebController {
     @Autowired
     private SettingService settingService;
 
+    private String module = "基础设置信息";
+
 //    @ApiOperation(value = "编辑物料", notes = "编辑物料")
 //    @PostMapping("/edit")
 //    public ApiResponseResult edit(@RequestBody(required=false) MaterielInfo materielInfo){
@@ -55,10 +57,14 @@ public class SettingController extends WebController {
     @ApiOperation(value = "修改配置", notes = "修改配置")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(Setting setting){
+        String method="/setting/edit";String methodName="修改配置";
         try{
-            return settingService.edit(setting);
+            ApiResponseResult edit = settingService.edit(setting);
+            getSysLogService().success(module,method,methodName,"修改信息:"+setting.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"修改信息:"+setting.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("修改配置失败！");
         }
@@ -74,10 +80,14 @@ public class SettingController extends WebController {
     public ApiResponseResult updateSetting(@RequestParam(value = "bomCheck", required = false) Float bomCheck,
                                            @RequestParam(value = "bomLimit", required = false) Float bomLimit,
                                            @RequestParam(value = "bomNumber", required = false) Integer bomNumber){
+        String method="/setting/updateSetting";String methodName="修改设置";
         try{
-            return settingService.updateSetting(bomCheck, bomLimit, bomNumber);
+            ApiResponseResult result = settingService.updateSetting(bomCheck, bomLimit, bomNumber);
+            getSysLogService().success(module,method,methodName,"匹配率:"+bomCheck+";限制比例:"+bomLimit+";匹配数量:"+bomNumber);
+            return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"匹配率:"+bomCheck+";限制比例:"+bomLimit+";匹配数量:"+bomNumber+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("修改配置失败！");
         }
@@ -90,14 +100,17 @@ public class SettingController extends WebController {
     })
     @RequestMapping(value = "/updateStockPriceData", method = RequestMethod.POST)
     public ApiResponseResult updateStockPriceData(Integer year, Integer month){
+        String method="/setting/updateStockPriceData";String methodName="手动同步K3库存均价信息";
         try{
             Date dateStart = new Date();
             ApiResponseResult result = settingService.updateStockPriceData(year, month);
+            getSysLogService().success(module,method,methodName,"年份:"+year+";月份:"+month);
             Date dateEnd = new Date();
             logger.info("开始时间："+ dateStart + "//n结束时间："+ dateEnd);
             return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,"年份:"+year+";月份:"+month+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("手动同步K3库存均价信息失败！");
         }
@@ -106,14 +119,17 @@ public class SettingController extends WebController {
     @ApiOperation(value = "手动同步K3采购价信息", notes = "手动同步K3采购价信息")
     @RequestMapping(value = "/updateOrderBillData", method = RequestMethod.POST)
     public ApiResponseResult updateOrderBillData(){
+        String method="/setting/updateOrderBillData";String methodName="手动同步K3采购价信息";
         try{
             Date dateStart = new Date();
             ApiResponseResult result = settingService.updateOrderBillData();
+            getSysLogService().success(module,method,methodName,null);
             Date dateEnd = new Date();
             logger.info("开始时间："+ dateStart + "//n结束时间："+ dateEnd);
             return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().success(module,method,methodName,null+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("手动同步K3采购价信息失败！");
         }
@@ -122,14 +138,17 @@ public class SettingController extends WebController {
     @ApiOperation(value = "手动同步K3发票价信息", notes = "手动同步K3发票价信息")
     @RequestMapping(value = "/updateInvoiceBillData", method = RequestMethod.POST)
     public ApiResponseResult updateInvoiceBillData(){
+        String method="/setting/updateInvoiceBillData";String methodName="手动同步K3发票价信息";
         try{
             Date dateStart = new Date();
             ApiResponseResult result = settingService.updateInvoiceBillData();
+            getSysLogService().success(module,method,methodName,null);
             Date dateEnd = new Date();
             logger.info("开始时间："+ dateStart + "//n结束时间："+ dateEnd);
             return result;
         }catch (Exception e){
             logger.error(e.toString(), e);
+            getSysLogService().error(module,method,methodName,null+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("手动同步K3发票价信息失败！");
         }
@@ -138,11 +157,14 @@ public class SettingController extends WebController {
     //审核
     @RequestMapping(value = "/check",method = RequestMethod.POST)
     public ApiResponseResult updateCheck(Long id){
+        String method="/setting/check";String methodName="审核";
         try {
             ApiResponseResult apiResponseResult = settingService.updateCheckStatus(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
             return apiResponseResult;
         } catch (Exception e) {
             e.printStackTrace();
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("审核失败");
         }
 
@@ -151,10 +173,14 @@ public class SettingController extends WebController {
     //反审核
     @RequestMapping(value = "/reverse",method = RequestMethod.POST)
     public ApiResponseResult reverseCheck(Long id){
+        String method="/setting/reverse";String methodName="反审核";
         try {
-            return settingService.reverseCheckStatus(id);
+            ApiResponseResult result = settingService.reverseCheckStatus(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             return ApiResponseResult.failure("反审核失败");
         }
     }

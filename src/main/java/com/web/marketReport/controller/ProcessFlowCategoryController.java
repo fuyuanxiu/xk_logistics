@@ -22,13 +22,20 @@ public class ProcessFlowCategoryController extends WebController {
     @Autowired
     private ProcessFlowCategoryService processFlowCategoryService;
 
+    private String module = "工序流类别信息";
+
+
     @ApiOperation(value = "新增", notes = "新增")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(ProcessFlowCategory processFlowCategory){
+        String method="/processFlowCategory/add";String methodName="新增工序流类别信息";
         try{
-            return processFlowCategoryService.add(processFlowCategory);
+            ApiResponseResult add = processFlowCategoryService.add(processFlowCategory);
+            getSysLogService().success(module,method,methodName,"新增信息:"+processFlowCategory.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+processFlowCategory.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增失败！");
         }
@@ -37,10 +44,14 @@ public class ProcessFlowCategoryController extends WebController {
     @ApiOperation(value = "编辑", notes = "编辑")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(ProcessFlowCategory processFlowCategory){
+        String method="/processFlowCategory/edit";String methodName="编辑工序流类别信息";
         try{
-            return processFlowCategoryService.edit(processFlowCategory);
+            ApiResponseResult edit = processFlowCategoryService.edit(processFlowCategory);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+processFlowCategory.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+processFlowCategory.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("编辑失败！");
         }
@@ -52,10 +63,14 @@ public class ProcessFlowCategoryController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/processFlowCategory/delete";String methodName="删除工序流类别信息";
         try{
-            return processFlowCategoryService.delete(id);
+            ApiResponseResult delete = processFlowCategoryService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除失败！");
         }

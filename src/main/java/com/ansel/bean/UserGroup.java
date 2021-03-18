@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 /**
  * 4.32 用户组表
- * 
+ *
  * @author lenovo
  *
  */
@@ -51,7 +51,10 @@ public class UserGroup extends AnselBaseEntity {
 
 	@Override
 	public String toString() {
-		return "UserGroup [id=" + id + ", groupName=" + groupName + ", description=" + description + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("组名:").append(this.groupName);
+		sb.append(",描述:").append(this.description);
+		return sb.toString();
 	}
 
 }

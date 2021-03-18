@@ -61,10 +61,10 @@ public class SysPermission extends BaseEntity {
 
     @Override
     public String toString() {
-        return "SysPermission{" +
-                "bsCode='" + bsCode + '\'' +
-                ", bsName='" + bsName + '\'' +
-                ", bsRemark='" + bsRemark + '\'' +
-                '}';
+        final StringBuffer sb = new StringBuffer();
+        sb.append("编号:").append(this.bsCode);
+        sb.append(",名称:").append(this.bsName);
+        sb.append(",备注:").append(this.bsRemark);
+        return sb.toString();
     }
 }

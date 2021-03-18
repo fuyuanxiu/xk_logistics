@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModel;
 
 /**
  * 4.1 单据分发表
- * 
+ *
  * @author Ansel
  *
  */
@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiModel;
 @ApiModel
 public class BillRelease extends AnselBaseEntity {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -112,9 +112,15 @@ public class BillRelease extends AnselBaseEntity {
 
 	@Override
 	public String toString() {
-		return "BillRelease [id=" + id + ", billType=" + billType + ", billCode=" + billCode + ", receiveBillPerson="
-				+ receiveBillPerson + ", acceptStation=" + acceptStation + ", receiveBillTime=" + receiveBillTime
-				+ ", releasePerson=" + releasePerson + "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("id:").append(this.id);
+		sb.append(",单据类型:").append(this.billType);
+		sb.append(",单据编号:").append(this.billCode);
+		sb.append(",收账人:").append(this.receiveBillPerson);
+		sb.append(",接收站:").append(this.acceptStation);
+		sb.append(",收账时间:").append(this.receiveBillTime);
+		sb.append(",下发人:").append(this.releasePerson);
+		return sb.toString();
 	}
 
 }

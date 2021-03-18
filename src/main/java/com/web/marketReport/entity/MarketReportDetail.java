@@ -319,4 +319,23 @@ public class MarketReportDetail extends BaseEntity {
 	}
 
 
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("市场报价总表ID:").append(this.bsReportId);
+        sb.append(",类型:").append(this.bsType);
+        sb.append(",物料规格:").append(this.bsModel);
+        sb.append(",K3物料号:").append(this.bsCode);
+        sb.append(",项目:").append(this.bsProject);
+        sb.append(",工作流id:").append(this.bsFlowId);
+        sb.append(",工序ID:").append(this.bsProcessId);
+        sb.append(",计费方式ID:").append(this.bsFeeId);
+        sb.append(",数量:").append(this.bsQty);
+        sb.append(",单位:").append(this.bsUnit);
+        sb.append(",备注:").append(this.bsRemark);
+        sb.append(",单价1:").append(this.price1);
+        sb.append(",单价2:").append(this.price2);
+        sb.append(",单价3:").append(this.price3);
+        return sb.toString();
+    }
 }

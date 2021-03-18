@@ -22,13 +22,20 @@ public class ProcessInfoController extends WebController {
     @Autowired
     private ProcessInfoService processInfoService;
 
+    private String module = "工序信息";
+
+
     @ApiOperation(value = "新增", notes = "新增")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ApiResponseResult add(ProcessInfo processInfo){
+        String method="/processInfo/add";String methodName="新增工序信息";
         try{
-            return processInfoService.add(processInfo);
+            ApiResponseResult add = processInfoService.add(processInfo);
+            getSysLogService().success(module,method,methodName,"新增信息:"+processInfo.toString());
+            return add;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"新增信息:"+processInfo.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增失败！");
         }
@@ -37,10 +44,14 @@ public class ProcessInfoController extends WebController {
     @ApiOperation(value = "编辑", notes = "编辑")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ApiResponseResult edit(ProcessInfo processInfo){
+        String method="/processInfo/edit";String methodName="编辑工序信息";
         try{
-            return processInfoService.edit(processInfo);
+            ApiResponseResult edit = processInfoService.edit(processInfo);
+            getSysLogService().success(module,method,methodName,"编辑信息:"+processInfo.toString());
+            return edit;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"编辑信息:"+processInfo.toString()+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("新增失败！");
         }
@@ -52,10 +63,14 @@ public class ProcessInfoController extends WebController {
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ApiResponseResult delete(Long id){
+        String method="/processInfo/delete";String methodName="删除工序信息";
         try{
-            return processInfoService.delete(id);
+            ApiResponseResult delete = processInfoService.delete(id);
+            getSysLogService().success(module,method,methodName,"id:"+id);
+            return delete;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("删除失败！");
         }
@@ -86,10 +101,14 @@ public class ProcessInfoController extends WebController {
     })
     @RequestMapping(value = "/doBan", method = RequestMethod.POST)
     public ApiResponseResult doBan(Long id, Integer bsIsBan){
+        String method="/processInfo/doBan";String methodName="禁用或解禁";
         try{
-            return processInfoService.doBan(id, bsIsBan);
+            ApiResponseResult result = processInfoService.doBan(id, bsIsBan);
+            getSysLogService().success(module,method,methodName,"id:"+id+";是否禁用:"+bsIsBan);
+            return result;
         }catch (Exception e){
             logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,"id:"+id+";是否禁用:"+bsIsBan+";"+e.toString());
             e.printStackTrace();
             return ApiResponseResult.failure("操作失败！");
         }

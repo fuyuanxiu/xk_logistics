@@ -13,34 +13,34 @@ import javax.persistence.Entity;
 @Entity(name = "transferinfo")
 public class TransferInfo extends AnselBaseEntity {
 
-	
+
 	@Column(length = 50)
 	private String goodsBillCode;
-	
+
 	@Column(length = 50)
 	private String transferStation;
-	
+
 	@Column(length = 50)
 	private String transferCheck;
-	
+
 	@Column
 	private Date checkTime;
-	
+
 	@Column(length = 50)
 	private String description;
-	
+
 	@Column(length = 50)
 	private String transferCompany;
-	
+
 	@Column(length = 50)
 	private String transferAddr;
-	
+
 	@Column(length = 50)
 	private String transferStationTel;
-	
+
 	@Column(length = 50)
 	private double transferFee;
-	
+
 	@Column(length = 50)
 	private String afterTransferBill;
 
@@ -148,11 +148,19 @@ public class TransferInfo extends AnselBaseEntity {
 
 	@Override
 	public String toString() {
-		return "TransferInfo [id=" + id + ", goodsBillCode=" + goodsBillCode + ", transferStation=" + transferStation
-				+ ", transferCheck=" + transferCheck + ", checkTime=" + checkTime + ", description=" + description
-				+ ", transferCompany=" + transferCompany + ", transferAddr=" + transferAddr + ", transferStationTel="
-				+ transferStationTel + ", transferFee=" + transferFee + ", afterTransferBill=" + afterTransferBill
-				+ "]";
+		final StringBuffer sb = new StringBuffer();
+		sb.append("货运单编号:").append(this.goodsBillCode);
+		sb.append(",中转站:").append(this.transferStation);
+		sb.append(",中转检查:").append(this.transferCheck);
+		sb.append(",检查时间:").append(this.checkTime);
+		sb.append(",描述:").append(this.description);
+		sb.append(",中转公司:").append(this.transferCompany);
+		sb.append(",中转地址:").append(this.transferAddr);
+		sb.append(",中转站电话:").append(this.transferStationTel);
+		sb.append(",中转费用:").append(this.transferFee);
+
+
+		return sb.toString();
 	}
 
 }

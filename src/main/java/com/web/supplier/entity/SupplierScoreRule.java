@@ -141,4 +141,18 @@ public class SupplierScoreRule extends BaseEntity {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("评分规则类型:").append(this.ruleType);
+        sb.append(",评分规则名称:").append(this.ruleName);
+        sb.append(",占比:").append(this.rulePercent);
+        sb.append(",当前类型的总分:").append(this.ruleTypeScore);
+        sb.append(",评分标准:").append(this.ruleStandard);
+        sb.append(",评分标准等级:").append(this.ruleLevel);
+        sb.append(",评分标准得分:").append(this.ruleScore);
+        sb.append(",备注:").append(this.remark);
+        return sb.toString();
+    }
 }
