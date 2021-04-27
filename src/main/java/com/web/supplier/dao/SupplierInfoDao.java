@@ -17,15 +17,16 @@ public interface SupplierInfoDao extends CrudRepository<SupplierInfo, Long>, Jpa
     public List<SupplierInfo> findByIsDelAndLoginName(Integer isDel, String loginName);
 
     public SupplierInfo findById(long id);
-    
+
 //    @Query(value = "select  from  "+SupplierInfo.TABLE_NAME+" p where p.", nativeQuery = true)
 //    public List<SupplierInfo> findSupplierInfoByK3CodeIsNotNull();
-    
+
     public List<SupplierInfo> findBySuppK3CodeIsNullAndIsDelAndSuppGrade(Integer isDel, Integer suppGrade);
 
     public List<SupplierInfo> findByIsDelAndIdIn(Integer isDel, List<Long> idList);
 
-    public List<SupplierInfo> findByIsDelAndSuppChineseNameAndSuppContactName(Integer isDel, String suppName, String contactName);
+
+    public List<SupplierInfo> findByIsDelAndSuppChineseName(Integer isDel, String suppName);
 
     //获取有名称重复的供应商名称
     @Modifying

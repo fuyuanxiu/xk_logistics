@@ -50,7 +50,7 @@ public class SysRouterController extends WebController {
     @ApiOperation(value = "删除角色", notes = "删除角色")
     @PostMapping("/delete")
     public ApiResponseResult delete(@RequestParam(value = "id", required = false) Long id){
-        String method="/sysRouter/delete";String methodName="新增资源";
+        String method="/sysRouter/delet e";String methodName="新增资源";
         try{
             ApiResponseResult delete = sysRouterService.delete(id);
             getSysLogService().success(module,method,methodName,"id:"+id);

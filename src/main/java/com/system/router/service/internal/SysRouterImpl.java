@@ -56,8 +56,8 @@ public class SysRouterImpl implements SysRouterService {
 			s.setPkModifiedBy((currUser!=null) ? (currUser.getId()) : null);
 			sysRouterDao.save(s);
 		}
-		
-		
+
+
 		return ApiResponseResult.success("操作成功！");
 	}
 
@@ -107,7 +107,7 @@ public class SysRouterImpl implements SysRouterService {
       //return resultList;
 		return ApiResponseResult.success().data(resultList);
 	}
-	
+
 	private List<Map<String, Object>>  getTreeList(List<SysRouter> list){
 		List<Map<String, Object>> newTrees = new ArrayList<Map<String, Object>>();
 		if(list.size() > 0){
@@ -127,7 +127,7 @@ public class SysRouterImpl implements SysRouterService {
 		}
 		return newTrees;
 	}
-	
+
 	/**
 	 * 无限递归菜单tree
 	 * @param list

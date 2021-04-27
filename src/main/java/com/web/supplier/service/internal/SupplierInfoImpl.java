@@ -100,8 +100,8 @@ public class SupplierInfoImpl implements SupplierInfoService {
             }
         }
         //根据公司名和联系人信息，作唯一性检查
-        List<SupplierInfo> suppList = supplierInfoDao.findByIsDelAndSuppChineseNameAndSuppContactName(0, supplierInfo.getSuppChineseName().trim(),supplierInfo.getSuppContactName().trim());
-        if(suppList.size() > 0){
+        List<SupplierInfo> suppLists = supplierInfoDao.findByIsDelAndSuppChineseName(0, supplierInfo.getSuppChineseName().trim());
+        if(suppLists.size() > 0){
             return ApiResponseResult.failure("该供应商已经注册，请勿重复注册！");
         }
         //电话号码，作唯一性检查
@@ -187,7 +187,7 @@ public class SupplierInfoImpl implements SupplierInfoService {
         }
 
         supplierInfoDao.save(supplierInfo);
-        
+
         //4.封装登录账号及密码，并返回至前端
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("loginName", supplierInfo.getLoginName());
@@ -310,7 +310,7 @@ public class SupplierInfoImpl implements SupplierInfoService {
 
         //根据公司名和联系人信息，作唯一性检查
         if(!supplierInfo.getSuppChineseName().trim().equals(o.getSuppChineseName())){
-            List<SupplierInfo> suppList = supplierInfoDao.findByIsDelAndSuppChineseNameAndSuppContactName(0, supplierInfo.getSuppChineseName().trim(),supplierInfo.getSuppContactName().trim());
+            List<SupplierInfo> suppList = supplierInfoDao.findByIsDelAndSuppChineseName(0, supplierInfo.getSuppChineseName().trim());
             if(suppList.size() > 0){
                 return ApiResponseResult.failure("该供应商已存在，无法修改！");
             }
@@ -635,7 +635,7 @@ public class SupplierInfoImpl implements SupplierInfoService {
             filters21.add(new SearchFilter("fName", SearchFilter.Operator.LIKE, keyword));
             //filters21.add(new SearchFilter("fItemId", SearchFilter.Operator.LIKE, keyword));
         }
-        
+
         Specification<SupplierInfoK3> spec21 = Specification.where(BaseService.or(filters21, SupplierInfoK3.class));
         Page<SupplierInfoK3> page2 = supplierInfoK3dao.findAll(spec21, pageRequest2);
 
