@@ -63,4 +63,18 @@ public class PurchaseOrderK3Controller extends WebController {
         }
     }
 
+    @RequestMapping(value = "/manual", method = RequestMethod.GET)
+    @ResponseBody
+    public ApiResponseResult manual() {
+        String method="/k3order/manual";String methodName="手动同步K3采购订单";
+        try {
+            ApiResponseResult apiResponseResult = purchaseOrderK3Service.manualSync();
+            getSysLogService().success(module,method,methodName,null);
+            return apiResponseResult;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            getSysLogService().error(module,method,methodName,null);
+            return ApiResponseResult.failure("手动同步失败！");
+        }
+    }
 }

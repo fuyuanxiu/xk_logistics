@@ -3,6 +3,7 @@ package com.web.basic.service.internal;
 import com.app.base.data.ApiResponseResult;
 import com.app.base.data.DataGrid;
 import com.utils.BaseService;
+import com.utils.PrcUtils;
 import com.utils.SearchFilter;
 import com.web.basic.dao.PurchaseOrderK3Dao;
 import com.web.basic.entity.PurchaseOrderK3;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service(value="purchaseOrderK3Service")
-public class PurchaseOrderK3Impl implements PurchaseOrderK3Service {
+public class PurchaseOrderK3Impl extends PrcUtils implements PurchaseOrderK3Service  {
     @Autowired
     private PurchaseOrderK3Dao purchaseOrderK3Dao;
 
@@ -83,6 +84,12 @@ public class PurchaseOrderK3Impl implements PurchaseOrderK3Service {
     public ApiResponseResult autoSend() {
         Integer integer = purchaseOrderK3Dao.autoSend();
         return ApiResponseResult.success("自动推送成功");
+    }
+
+    @Override
+    public ApiResponseResult manualSync() {
+        executeSync();
+        return ApiResponseResult.success("K3采购订单同步成功");
     }
 
 

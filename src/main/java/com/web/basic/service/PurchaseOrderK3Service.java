@@ -11,4 +11,6 @@ public interface PurchaseOrderK3Service {
     public ApiResponseResult cancelSend(Long[] idArrays) throws Exception;
 
     public ApiResponseResult autoSend();
+
+    public ApiResponseResult manualSync() throws Exception;
 }

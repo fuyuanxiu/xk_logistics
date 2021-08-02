@@ -60,7 +60,7 @@ public class ChildProjectImpl implements ChildProjectService {
         if (childProject.getParentId() == null) {
             return ApiResponseResult.failure("父项目ID不能为空");
         }
-             String s=childProject.getChildName().replace(" ","");
+             String s=childProject.getChildName().trim();
         List<ChildProject> childProjectList= childProjectDao.findByIsDelAndChildName(BasicStateEnum.FALSE.intValue(), s);
         if(childProjectList != null && childProjectList.size() > 0){
             //Sql Server查询不区分大小写，需要查询出来后进行判断
@@ -72,7 +72,7 @@ public class ChildProjectImpl implements ChildProjectService {
             }
         }
         SysUser currUser = UserUtil.getCurrUser();
-        childProject.setChildName(childProject.getChildName().replace(" ",""));
+        childProject.setChildName(childProject.getChildName().trim());
         childProject.setCreatedTime(new Date());
         childProject.setPkCreatedBy((currUser != null) ? currUser.getId() : null);
         childProject.setParentId(childProject.getParentId());
@@ -94,7 +94,7 @@ public class ChildProjectImpl implements ChildProjectService {
             return ApiResponseResult.failure("子项目不存在");
         }
         SysUser currUser = UserUtil.getCurrUser();
-        String newName = childProject.getChildName().replace(" ","");
+        String newName = childProject.getChildName().trim();
         if (newName.equals(result.getChildName())) {
             //1.如果名称和原来一致，则不用修改名称
             result.setModifiedTime(new Date());

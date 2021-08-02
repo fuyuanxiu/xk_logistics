@@ -19,15 +19,20 @@ public class CronController extends WebController {
     @Autowired
     private CronService cronService;
 
+    private String module = "推送时间信息";
 
-    @ApiOperation(value = "修改同步时间", notes = "修改同步时间")
+
+    @ApiOperation(value = "修改推送时间", notes = "修改推送时间")
     @PostMapping("/modify")
     public ApiResponseResult modify(String date){
+        String method="/cron/modify";String methodName="修改推送时间";
         try {
-            cronService.modifyTime(date);
-            return ApiResponseResult.success("修改成功");
+            ApiResponseResult apiResponseResult = cronService.modifyTime(date);
+            getSysLogService().success(module,method,methodName,"时间:"+date);
+            return apiResponseResult;
         } catch (Exception e) {
             e.printStackTrace();
+            getSysLogService().error(module,method,methodName,"时间:"+date+";"+e.toString());
             return ApiResponseResult.failure("修改失败");
         }
     }

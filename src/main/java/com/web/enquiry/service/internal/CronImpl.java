@@ -1,7 +1,6 @@
 package com.web.enquiry.service.internal;
 
 import com.app.base.data.ApiResponseResult;
-import com.app.config.config.CompleteScheduleConfig;
 import com.utils.CronUtil;
 import com.web.enquiry.dao.CronDao;
 import com.web.enquiry.entity.Cron;
@@ -23,6 +22,9 @@ public class CronImpl implements CronService {
     @Transactional
     public ApiResponseResult modifyTime(String date) throws Exception {
         Cron cronId = cronDao.findById(5001);
+        if (date==null){
+            return ApiResponseResult.failure("推送时间不能为空");
+        }
         Date convert = CronUtil.convert(date);
         String cron = CronUtil.getCron(convert);
         cronId.setCronName(cron);
