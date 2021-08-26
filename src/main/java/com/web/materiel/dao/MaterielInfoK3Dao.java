@@ -13,4 +13,6 @@ public interface MaterielInfoK3Dao extends CrudRepository<MaterielInfoK3, Intege
     public List<MaterielInfoK3> findByFCategoryIdOrderByFItemIdAsc(Integer fCategoryId);
 
     public List<MaterielInfoK3> findAllByFNumberIsNotNull();
+
+    public List<MaterielInfoK3> findByFDeleted(Integer isDeleted);
 }

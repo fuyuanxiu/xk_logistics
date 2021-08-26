@@ -210,6 +210,7 @@ public class MaterielInfoImpl implements MaterielInfoService {
 
         //2.K3物料信息查询
         List<SearchFilter> filters1 = new ArrayList<SearchFilter>();
+        filters1.add(new SearchFilter("fDeleted", SearchFilter.Operator.EQ, BasicStateEnum.FALSE.intValue()));
         if(StringUtils.isNotEmpty(mateK3Code)){
             filters1.add(new SearchFilter("fNumber", SearchFilter.Operator.LIKE, mateK3Code));
         }

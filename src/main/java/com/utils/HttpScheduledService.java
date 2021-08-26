@@ -73,6 +73,7 @@ public class HttpScheduledService {
      * 定时获取K3物料数据
      */
     @Scheduled(cron = "0 0 2 * * ? ")
+//    @Scheduled(cron = "0 */2 * * * ?")
 //    @Scheduled(cron = "0 54 11 * * ? ")
     @Transactional
     public void updateMateData(){
