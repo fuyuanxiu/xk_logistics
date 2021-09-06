@@ -2,6 +2,9 @@ package com.web.quote.dao;
 
 import com.web.quote.entity.Quote;
 import com.web.quote.entity.QuoteMateriel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -51,4 +54,6 @@ public interface QuoteMaterielDao extends CrudRepository<QuoteMateriel, Long>, J
             " left join " + Quote.TABLE_NAME + " p on t.qt_id = p.id" +
             " where t.is_del=0 and t.bs_bom_id=(?1) order by t.mate_model,p.supp_chinese_name ", nativeQuery = true)
     public List<Map<String, Object>> findByBsBomId(Long bsBomId);
+
+
 }

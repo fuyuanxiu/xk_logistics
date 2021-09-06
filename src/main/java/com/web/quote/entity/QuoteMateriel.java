@@ -4,10 +4,10 @@ import com.app.base.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
@@ -28,6 +28,11 @@ public class QuoteMateriel extends BaseEntity {
     @ApiModelProperty(name = "qtId", value = "报价单ID")
     @Column
     protected Long qtId;
+
+    @ManyToOne
+    @JoinColumn(name = "qtId", insertable = false, updatable = false)
+    @NotFound(action = NotFoundAction.IGNORE)
+    protected Quote quote;
 
     /**
      * 询价单ID
@@ -182,6 +187,14 @@ public class QuoteMateriel extends BaseEntity {
 
     public void setQtId(Long qtId) {
         this.qtId = qtId;
+    }
+
+    public Quote getQuote() {
+        return quote;
+    }
+
+    public void setQuote(Quote quote) {
+        this.quote = quote;
     }
 
     public Long getBsEqId() {

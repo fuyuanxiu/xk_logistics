@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * 新料报价物料关联表（报价明细）
@@ -26,4 +27,7 @@ public interface QuoteMaterielService {
     public ApiResponseResult getQuoteExcel(Long qtId, HttpServletResponse response) throws Exception;
 
     public ApiResponseResult addQuoteExcel(MultipartFile file) throws Exception;
+
+    public ApiResponseResult getMaterialAll(String keyword, Date startDate, Date endDate,PageRequest pageRequest) throws Exception;
+
 }

@@ -1,9 +1,13 @@
 package com.web.quote.service.internal;
 
 import com.app.base.data.ApiResponseResult;
+import com.app.base.data.DataGrid;
 import com.system.user.entity.SysUser;
+import com.utils.BaseService;
+import com.utils.SearchFilter;
 import com.utils.UserUtil;
 import com.web.quote.dao.QuoteMaterielDao;
+import com.web.quote.entity.Quote;
 import com.web.quote.entity.QuoteMateriel;
 import com.web.quote.service.QuoteMaterielService;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +18,9 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -483,4 +489,28 @@ public class QuoteMaterielImpl implements QuoteMaterielService {
         return str;
     }
 
+    @Override
+    public ApiResponseResult getMaterialAll(String keyword,Date startDate, Date endDate,PageRequest pageRequest) throws Exception {
+        List<SearchFilter> filters = new ArrayList<SearchFilter>();
+        List<SearchFilter> filters1 = new ArrayList<SearchFilter>();
+        filters.add(new SearchFilter("bsStatus", SearchFilter.Operator.EQ, 2));
+        if(StringUtils.isNotEmpty(keyword)){
+            //报价单编号、供应商编号、询价单标题、报价人
+            filters1.add(new SearchFilter("mateName", SearchFilter.Operator.LIKE, keyword));
+            filters1.add(new SearchFilter("quote.eqTitle", SearchFilter.Operator.LIKE, keyword));
+            filters1.add(new SearchFilter("quote.suppAliaName", SearchFilter.Operator.LIKE, keyword));
+
+        }
+        if(startDate != null){
+            filters.add(new SearchFilter("quote.qtStartDate", SearchFilter.Operator.GTE, startDate));
+        }
+        if(endDate != null){
+            filters.add(new SearchFilter("quote.qtDeadLine", SearchFilter.Operator.LTE, endDate));
+        }
+        Specification<QuoteMateriel> spec = Specification.where(BaseService.and(filters, QuoteMateriel.class));
+        Specification<QuoteMateriel> spec1 = spec.and(BaseService.or(filters1, QuoteMateriel.class));
+        Page<QuoteMateriel> page = quoteMaterielDao.findAll(spec1,pageRequest);
+//        Page<Quote> page = quoteDao.findAll(keyword, pageRequest);
+        return ApiResponseResult.success().data(DataGrid.create(page.getContent(), (int) page.getTotalElements(), pageRequest.getPageNumber() + 1, pageRequest.getPageSize()));
+    }
 }

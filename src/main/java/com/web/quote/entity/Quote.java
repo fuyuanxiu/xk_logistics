@@ -212,6 +212,7 @@ public class Quote extends BaseEntity {
     @Transient
     protected List<QuoteMateriel> qtMateList;
 
+
     public Long getEqId() {
         return eqId;
     }

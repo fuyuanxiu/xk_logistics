@@ -9,8 +9,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Date;
 
 /**
  * 新料报价物料关联表（报价明细）
@@ -108,6 +111,27 @@ public class QuoteMaterielController extends WebController {
             e.printStackTrace();
             getSysLogService().error(module,method,methodName,null+";"+e.toString());
             return ApiResponseResult.failure("导入报价失败！");
+        }
+    }
+
+    @ApiOperation(value = "获取已报价物料列表", notes = "获取报价列表")
+    @ApiImplicitParams({
+
+            @ApiImplicitParam(name = "keyword", value = "关键字", required = false, dataType = "String", paramType = "query", defaultValue = ""),
+    })
+    @RequestMapping(value = "/getquoteMaterial", method = RequestMethod.GET)
+    public ApiResponseResult getquoteMaterial(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "startDate", required = false) Date startDate,
+            @RequestParam(value = "endDate", required = false) Date endDate)
+    {
+        try {
+            Sort sort = new Sort(Sort.Direction.DESC, "id");
+            return quoteMaterielService.getMaterialAll(keyword,startDate,endDate,super.getPageRequest(sort));
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            return ApiResponseResult.failure("获取已报价物料清单失败！");
         }
     }
 }

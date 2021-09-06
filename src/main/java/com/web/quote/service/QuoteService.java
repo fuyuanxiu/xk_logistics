@@ -31,4 +31,6 @@ public interface QuoteService {
 
     //采纳报价
     public ApiResponseResult doAccept(Long bsEqId, String quoMateIds) throws Exception;
+
+
 }

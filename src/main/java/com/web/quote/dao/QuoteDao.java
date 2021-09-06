@@ -1,7 +1,10 @@
 package com.web.quote.dao;
 
 import com.web.quote.entity.Quote;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -13,4 +16,6 @@ public interface QuoteDao extends CrudRepository<Quote, Long>, JpaSpecificationE
     public List<Quote> findByIsDelAndEqId(Integer isDel, Long eqId);
 
     public List<Quote> findByIsDelAndEqIdAndSuppId(Integer isDel, Long eqId, Long suppId);
+
+
 }
